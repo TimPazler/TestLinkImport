@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29318.209
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TLTCImport", "TLTCImport\TLTCImport.csproj", "{56DD6E77-5527-41F8-A247-DC07DF358E7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelToXml", "ExcelToXml\ExcelToXml.csproj", "{7A5028EA-D6F8-4C40-96E5-45168B63D2B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelToXml", "ExcelToXml\ExcelToXml.csproj", "{7A5028EA-D6F8-4C40-96E5-45168B63D2B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

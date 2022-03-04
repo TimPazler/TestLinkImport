@@ -90,6 +90,16 @@ namespace TLTCImport
                 return false;
             else 
                 testLink = new TestLink(apiDevKey, baseUrl + "/lib/api/xmlrpc/v1/xmlrpc.php");
+
+            try
+            {
+                if(testLink.GetProjects().Count > 0)                 
+                    return true;                
+            }
+            catch (TestLinkException)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -232,6 +242,11 @@ namespace TLTCImport
             return Convert.ToInt32(testLink.GetProject(projectName).id);
         }
 
+        public static int GetTestPlanIdByName(string projectName, string testPlanName)
+        {
+            return Convert.ToInt32(testLink.getTestPlanByName(projectName, testPlanName).id);
+        }
+
         public static List<TestPlan> GetAllProjectTestPlans(int projectId)
         {
             return testLink.GetProjectTestPlans(projectId);
@@ -241,7 +256,8 @@ namespace TLTCImport
         {
             return testLink.GetFirstLevelTestSuitesForTestProject(projectId);
         }
-   
+
+        //Экспорт тест кейсов в тестлинк
         public static XElement ExportTestSuite(int testSuiteId)
         {
             // Импорт тест кейсов в TestLink

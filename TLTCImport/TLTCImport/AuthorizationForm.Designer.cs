@@ -38,13 +38,12 @@ namespace TLTCImport
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(411, 312);
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "AuthorizationForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "TLTCImport";
             this.ResumeLayout(false);
-
         }
 
         #endregion
