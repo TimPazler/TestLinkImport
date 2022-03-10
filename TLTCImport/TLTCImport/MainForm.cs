@@ -36,7 +36,7 @@ namespace TLTCImport
 
         private ComboBox cbProjectNames, cbTestPlanName;    
 
-        private string pathJsonFile = "../../../Files/";
+        private string pathFile = "../../../Files/";
 
         //Поля для word импорта
         private bool outWordDocumentMode = false;
@@ -166,7 +166,7 @@ namespace TLTCImport
             {
                 comboBox.Items.Add(item.name);
             }
-        }
+        }        
 
         private void SetTestPlanName(ComboBox comboBox, int projectId)
         {
@@ -214,6 +214,7 @@ namespace TLTCImport
 
         private void btnAutoMode_Click(object sender, EventArgs e)
         {
+            var valuesCases = new Dictionary<string, string>();
             int countValuesCases = 0;
             //MessageBox.Show("Выберите файл в формете .json. Потом написать инструкцию");
 
@@ -245,7 +246,7 @@ namespace TLTCImport
                     lblMessageRecognitionJson.Text = "✔ Json файл распознан!";
 
                     //Запись значений из json в словарь
-                    var valuesCases = jsonToXml.GetDataJson(nameFile, ref jsonFileCorrect);
+                    valuesCases = jsonToXml.GetDataJson(nameFile, ref jsonFileCorrect, projectId);
 
                     //Если файл корректен, то перенос результатов в xml файл
                     jsonToXml.FillXmlFile(projectName, testPlanName, testPlanId, valuesCases, out countValuesCases);
@@ -268,7 +269,10 @@ namespace TLTCImport
                     lblMessageAddJson.Font = new Font(DefaultFont, FontStyle.Bold);
                     lblMessageAddJson.ForeColor = Color.DarkRed;
                     lblMessageAddJson.Text = "✖ Ошибка! Json файл не корректен. Попробуйте загрузить другой файл!";
-                }                                            
+                }
+
+                //Импорт xml файла в Тестлинк
+                TlReportTcResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases, projectId);
             }
             else
             {
@@ -283,14 +287,14 @@ namespace TLTCImport
 
         private void CopyFileInProject(string urlUploadedFile, string nameFile)
         {
-            if (File.Exists(pathJsonFile + nameFile + ".json"))
+            if (File.Exists(pathFile + nameFile + ".json"))
             {
                 //MessageBox.Show("Файл уже загружен в систему! Вы уверены, что хотите его изменить?", "Изменение существующего файла", MessageBoxButtons.YesNo);
-                File.Delete(pathJsonFile + nameFile + ".json");
-                File.Copy(urlUploadedFile, pathJsonFile + nameFile + ".json");
+                File.Delete(pathFile + nameFile + ".json");
+                File.Copy(urlUploadedFile, pathFile + nameFile + ".json");
             }
             else             
-                File.Copy(urlUploadedFile, pathJsonFile + nameFile + ".json");            
+                File.Copy(urlUploadedFile, pathFile + nameFile + ".json");            
         }               
     }
 }

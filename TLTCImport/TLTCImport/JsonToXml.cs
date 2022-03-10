@@ -15,7 +15,7 @@ namespace TLTCImport
     {
         private string pathFile = "../../../Files/";
 
-        public Dictionary<string, string> GetDataJson(string nameFile, ref bool jsonFileCorrect)
+        public Dictionary<string, string> GetDataJson(string nameFile, ref bool jsonFileCorrect, int projectId)
         {
             var valuesCases = new Dictionary<string, string>();
 
@@ -24,7 +24,7 @@ namespace TLTCImport
             //Перевод json файла в JObject
             JObject jsonListCase = JObject.Parse(jsonFileContent);
 
-            //Не работает с json файлами ввиде массива, отдельно проработать
+            //Не работает с json файлами ввиде массива. Отдельно проработать
             if (jsonFileCorrect)
             {
                 int count = jsonListCase["children"].Count();
@@ -33,6 +33,7 @@ namespace TLTCImport
                     foreach (JToken data in jsonListCase["children"][i]["children"])
                     {                      
                         string name = "", status = "";
+                                                
                         if (data.Value<JArray>("children") == null)
                         {
                             name = data["name"].ToString().Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
@@ -50,7 +51,7 @@ namespace TLTCImport
                         else if (status == "failed")
                             status = "f";
                         else if (status == "skipped")
-                            status = "s";
+                            status = "b";
                         valuesCases.Add(name, status);
                     }
                 }
@@ -87,21 +88,12 @@ namespace TLTCImport
                 return Encoding.Default.GetString(buffer);
             }
             return "Ошибка! Файла не существует! Попробуйте перезапустить программу!";
-        }
-
-        public void TransformJsonToXml(string nameFile)
-        {
-            string result = WriteJsonFile(nameFile);
-
-            XmlDocument xml = JsonConvert.DeserializeXmlNode(result, "results");
-            xml.Save(pathFile + nameFile + ".xml");
         }     
 
         public void FillXmlFile(string projectName, string testPlanName, int testPlanId, Dictionary<string, string> valuesCases, out int countValuesCases)
         {
             countValuesCases = valuesCases.Count();
-
-            var buildName = TlReportTcResult.GetBuildByTestPlanId(testPlanId);
+            var buildName = TlReportTcResult.GetBuildByTestPlanId(testPlanId);            
             var XmlDocument = new XDocument(new XElement("results"));
 
             XElement testproject = new XElement("testproject",
@@ -119,7 +111,7 @@ namespace TLTCImport
                 XmlDocument.Root.Add(new XElement("testcase", new XAttribute("external_id", $"{item.Key}"), new XElement("result", item.Value)));
             }
             
-            XmlDocument.Save($@"{pathFile}\FileToImport.xml");
+            XmlDocument.Save($@"{pathFile}\TestsResults.xml");
         }      
     }
 }

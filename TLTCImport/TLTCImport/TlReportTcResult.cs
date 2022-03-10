@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using System.IO;
 using System.Linq;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace TLTCImport
 {
@@ -19,6 +20,7 @@ namespace TLTCImport
 
         private static string CSRFName = "";
         private static string CSRFToken = "";
+        private static string WebKitFormBoundary = "WebKitFormBoundarywnCYxHgmP97d3sQW";
 
         private static TestLink testLinkApi;
 
@@ -26,20 +28,25 @@ namespace TLTCImport
         {
             FollowRedirects = true,
             CookieContainer = new CookieContainer()
-        };                
+        };
+
+        public struct TestCaseValues
+        {
+            public string testCaseId;
+            public string resultRun;
+        }
 
         public static bool Authorization(string apiDevKey)
         {
-            ////Получение нужных данных для входа в TestLink
-            //var request = new RestRequest("/login.php", Method.GET);
+            //Получение нужных данных для входа в TestLink
+            var request = new RestRequest("/login.php", Method.GET);
+            var response = ClientTl.Execute(request);
+            Console.WriteLine(response.ErrorException + " " + response.ErrorMessage);
 
-            //var response = ClientTl.Execute(request);
-
-            //Console.WriteLine(response.ErrorException + " " + response.ErrorMessage);
-
-            //Document doc = Dcsoup.Parse(response.Content);
-            //CSRFName = doc.GetElementById("CSRFName").Val;
-            //CSRFToken = doc.GetElementById("CSRFToken").Val;
+            Document doc = Dcsoup.Parse(response.Content);
+            CSRFName = doc.GetElementById("CSRFName").Val;
+            CSRFToken = doc.GetElementById("CSRFToken").Val;
+            CSRFName = doc.GetElementById("CSRFName").Val;
 
             //// Вход в TestLink
             //request = new RestRequest("/login.php", Method.POST);
@@ -86,6 +93,14 @@ namespace TLTCImport
             return lb.FirstOrDefault().name;
         }
 
+        /// <summary>
+        /// Получить id сборки по id тест плана
+        /// </summary>
+        public static int GetIdBuildByTestPlanId(int testPlanId)
+        {
+            List<Build> lb = testLinkApi.GetBuildsForTestPlan(testPlanId);
+            return lb.FirstOrDefault().id;
+        }
 
         private static string GetApiDevKey()
         {
@@ -99,12 +114,12 @@ namespace TLTCImport
 
             string apiValue = result.Substring(result.IndexOf(startString) + startString.Length, 32);
 
-            if (apiValue == "нет" || apiValue == "Нет")
-            {
+            //if (apiValue == "нет" || apiValue == "Нет")
+            //{
                 result = CreateNewApiDevKey();
 
                 apiValue = result.Substring(result.IndexOf(startString) + startString.Length, 32);
-            }
+            //}
             
             return apiValue;
         }
@@ -131,16 +146,18 @@ namespace TLTCImport
         }
 
         /// <summary>
-        /// Импортирует тесткейсы в тестлинк. Если объём импортируемых данных превышает 400 КБ, они отправляются частями. 
+        /// Импортирует иформацию о прогоне в тестлинк. Если объём импортируемых данных превышает 400 КБ, они отправляются частями. 
         /// </summary>
         /// <param name="importData">Импортируемые тесткейсы</param>
         /// <param name="projectName">Название тестируемого продукта</param>
         /// <returns></returns>
-        public static bool ImportTestCases(string pathToImport, string projectName)
+        public static bool ImportsRunInfoInTestLink(string pathToImport, int testPlanId, Dictionary<string, string> valuesCases, int projectId)
         {
-            string testcases = File.ReadAllText(pathToImport);
+            var buildId = GetIdBuildByTestPlanId(testPlanId);
+
+            string testcases = File.ReadAllText(pathToImport + "TestsResults.xml");
             List<string> chunks = new List<string>();
-            if (File.ReadAllBytes(pathToImport).Length >= 409600)
+            if (File.ReadAllBytes(pathToImport + "TestsResults.xml").Length >= 409600)
             {
                 var dataDoc = XDocument.Parse(testcases);
                 var xmls = dataDoc.Root.Elements().ToArray();
@@ -162,63 +179,128 @@ namespace TLTCImport
             }
             foreach (string chunk in chunks) 
             {
-                TcImport_Send(chunk, projectName);
+                //TcImport_Send(buildId, testPlanId, valuesCases);
+                //TcImport_Send(chunk, buildId, testPlanId);
+                TcImport_Send(buildId, testPlanId, valuesCases, projectId);
+
                 System.Threading.Thread.Sleep(1000);
             }
             return true;
         }
+
+
+        //Почему-то не работает
+        ///// <summary>
+        ///// Отправить запрос за импорт тесткейсов
+        ///// </summary>
+        ///// <param name="testCases">Импортируемые тесткейсы</param>
+        ///// <returns></returns>
+        //private static IRestResponse TcImport_Send(string resultsRun, int buildId, int testPlanId)
+        //{
+        //    RestRequest request = new RestRequest("lib/results/resultsImport.php", Method.POST);
+        //    request.Timeout = 600000;
+        //    request.ReadWriteTimeout = 600000;
+
+        //    request.AddHeader("content-type", $"multipart/form-data;boundary=----{WebKitFormBoundary}");
+        //    StringBuilder sb = new StringBuilder();
+        //    sb.Append(AddParameter("CSRFName", CSRFName));
+        //    sb.Append(AddParameter("CSRFToken", CSRFToken));
+        //    sb.Append(AddParameter("importType", "XML"));
+        //    sb.Append(AddParameter("MAX_FILE_SIZE", "409600"));
+        //    sb.Append(AddFile(resultsRun));
+        //    sb.Append(AddParameter("buildID", buildId.ToString()));
+        //    sb.Append(AddParameter("platformID", "0"));
+        //    sb.Append(AddParameter("tplanID", testPlanId.ToString()));
+        //    sb.Append(AddParameter("UploadFile", "Загрузить файл"));
+        //    sb.Append($"------{WebKitFormBoundary}--");
+
+        //    request.AddParameter($"multipart/form-data;boundary=----{WebKitFormBoundary}",
+        //                    sb.ToString(), ParameterType.RequestBody);
+
+        //    ////Для заполнения каждого кейса по отдельности
+        //    ////var execution = testLinkApi.ReportTCResult(testcaseId, testPlanId, result, platformId, buildId);
+
+        //    return ClientTl.Execute(request);
+        //}
 
         /// <summary>
         /// Отправить запрос за импорт тесткейсов
         /// </summary>
         /// <param name="testCases">Импортируемые тесткейсы</param>
         /// <returns></returns>
-        private static IRestResponse TcImport_Send(string testCases, string projectName) 
+        private static void TcImport_Send(int buildId, int testPlanId, Dictionary<string, string> valuesCasesJenkins, int projectId)
         {
-            string projectId = "" + testLinkApi.GetProject(projectName).id;
+            //Получаем External Id и TestCaseId для работы с тесткейсом из всех Suites
+            var testCaseExternalIDAndTestCaseId = new Dictionary<string, string>();
+            testCaseExternalIDAndTestCaseId = GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(testPlanId);
 
-            RestRequest request = new RestRequest("/lib/testcases/tcImport.php", Method.POST);
-            request.Timeout = 600000;
-            request.ReadWriteTimeout = 600000;
+            //Получаем externalId, testCaseId и resultRun для тест кейсов взятых из дженкинса
+            var ExternalId_TestCaseId_ResultRun = new Dictionary<string, TestCaseValues>();
+            ExternalId_TestCaseId_ResultRun = GetExternalId_TestCaseId_ResultRun(testCaseExternalIDAndTestCaseId, valuesCasesJenkins);
 
-            request.AddHeader("content-type", "multipart/form-data;boundary=----WebKitFormBoundary6Ghw83UDkbQ0jSRp");
-            StringBuilder sb = new StringBuilder();
-            sb.Append(AddParameter("CSRFName", CSRFName));
-            sb.Append(AddParameter("CSRFToken", CSRFToken));
-            sb.Append(AddParameter("importType", "XML"));
-            sb.Append(AddFile(testCases));
-            sb.Append(AddParameter("hit_criteria", "name"));
-            sb.Append(AddParameter("action_on_duplicated_name", "generate_new"));
-            sb.Append(AddParameter("useRecursion", "1"));
-            sb.Append(AddParameter("bIntoProject", "1"));
-            sb.Append(AddParameter("containerID", projectId));
-            sb.Append(AddParameter("MAX_FILE_SIZE", "409600"));
-            sb.Append(AddParameter("UploadFile", "Загрузить файл"));
-            sb.Append("------WebKitFormBoundary6Ghw83UDkbQ0jSRp--");
-
-            request.AddParameter("multipart/form-data;boundary=----WebKitFormBoundary6Ghw83UDkbQ0jSRp",
-            sb.ToString(), ParameterType.RequestBody);
-
-            return ClientTl.Execute(request);
+            foreach (var param in ExternalId_TestCaseId_ResultRun)
+                testLinkApi.ReportTCResult(Int32.Parse(param.Value.testCaseId), testPlanId, param.Value.resultRun, 0, buildId.ToString());
         }
 
+        //Получение External Id и TestCaseId для работы с тесткейсом из всех Suites
+        private static Dictionary<string, string> GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(int testPlanId)
+        {
+            var suitesId = testLinkApi.GetTestSuitesForTestPlan(testPlanId);
+            
+            var testCaseExternalIDAndName = new Dictionary<string, string>();
+            foreach (var item in suitesId)
+            {
+                var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
+                for (int i = 0; i < testCases.Count; i++)
+                {
+                    testCaseExternalIDAndName.Add("alphabi-" + testCases[i].external_id, testCases[i].id.ToString());
+                }
+            }
+
+            return testCaseExternalIDAndName;
+        }
+
+        //Получение External Id, TestCaseId и ResultRun для тест кейсов взятых из дженкинса
+        private static Dictionary<string, TestCaseValues> GetExternalId_TestCaseId_ResultRun(Dictionary<string, string> valuesSuites, Dictionary<string, string> valuesJenkins)
+        {
+            var ExternalIDAndTestCaseIdAndResults = new DictionaryWtihThreeValues();
+            foreach (var valueSuite in valuesSuites)
+            {
+                foreach (var value in valuesJenkins)
+                {
+                    if (valueSuite.Key == value.Key)
+                    {
+                        ExternalIDAndTestCaseIdAndResults.Add(valueSuite.Key, valueSuite.Value, value.Value);
+                    }
+                }
+            }
+            return ExternalIDAndTestCaseIdAndResults;
+        }
+       
         private static string AddParameter(string name, string value)
         {
-            return $"------WebKitFormBoundary6Ghw83UDkbQ0jSRp\r\nContent-Disposition: form-data; name=\"{name}\"\r\n\r\n{value}\r\n";
+            return $"------{WebKitFormBoundary}\r\nContent-Disposition: form-data; name=\"{name}\"\r\n\r\n{value}\r\n";
         }
 
         private static string AddFile(string value)
         {
-            return $"------WebKitFormBoundary6Ghw83UDkbQ0jSRp\r\nContent-Disposition: " +
+            return $"------{WebKitFormBoundary}\r\nContent-Disposition: " +
                 $"form-data; name=\"uploadedFile\"; filename=\"TestsResults.xml\"\n" +
                 $"Content-Type: text/xml" +
-                $"\r\n\r\n{value}\n";
+                $"\r\n\r\n{value}\r\n";
         }
 
         public static List<TestProject> GetAllProjects()
         {
             return testLinkApi.GetProjects();
         }
+
+        //public static int GetTestCaseIdByName(int a, int b)
+        //{
+        //    var id = testLinkApi.GetTestCaseIDByName(a, b);
+           
+        //    return 0;
+        //}
 
         public static int GetProjectIdByName(string projectName)
         {
@@ -238,37 +320,6 @@ namespace TLTCImport
         public static List<TestSuite> GetAllTestProjectSuites(int projectId)
         {
             return testLinkApi.GetFirstLevelTestSuitesForTestProject(projectId);
-        }
-
-        //Экспорт тест кейсов в тестлинк
-        public static XElement ExportTestSuite(int testSuiteId)
-        {
-            // Импорт тест кейсов в TestLink
-            RestRequest request = new RestRequest("/lib/testcases/tcExport.php", Method.POST);
-
-            request.AddHeader("content-type", "multipart/form-data;boundary=----WebKitFormBoundary6Ghw83UDkbQ0jSRp");
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append(AddParameter("CSRFName", CSRFName));
-            sb.Append(AddParameter("CSRFToken", CSRFToken));
-            sb.Append(AddParameter("export_filename", "TLTC import.xml"));
-            sb.Append(AddParameter("exportType", "XML"));
-            sb.Append(AddParameter("exportTestCaseExternalID", "1"));
-            sb.Append(AddParameter("exportReqs", "1"));
-            sb.Append(AddParameter("exportCFields", "1"));
-            sb.Append(AddParameter("testcase_id", "0"));
-            sb.Append(AddParameter("tcversion_id", "0"));
-            sb.Append(AddParameter("containerID", "" + testSuiteId));
-            sb.Append(AddParameter("useRecursion", "1"));
-            sb.Append(AddParameter("export", "Export"));
-            sb.Append("------WebKitFormBoundary6Ghw83UDkbQ0jSRp--");
-
-            request.AddParameter("multipart/form-data;boundary=----WebKitFormBoundary6Ghw83UDkbQ0jSRp",
-                sb.ToString(), ParameterType.RequestBody);
-
-            var response = ClientTl.Execute(request);
-
-            return XElement.Parse(response.Content);
-        }
+        }        
     }
 }
