@@ -95,10 +95,10 @@ namespace TLTCImport
         }       
 
         private void btnLogin_Click(object sender, EventArgs e)
-        {          
-            apiDevKey = "bf9a98dc1791a5c7115b9e4322b4f3bc";
+        {
+            //apiDevKey = "";
 
-            //apiDevKey = tbApiDevKey.Text;
+            apiDevKey = tbApiDevKey.Text;
             pbLoading.Visible = true;
             if (TlReportTcResult.Authorization(apiDevKey))
             {
