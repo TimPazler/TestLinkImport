@@ -10,6 +10,8 @@ using System.Xml.Linq;
 using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Windows.Forms;
+using System.Threading;
 
 namespace TLTCImport
 {
@@ -20,6 +22,8 @@ namespace TLTCImport
 
         private static string CSRFName = "";
         private static string CSRFToken = "";
+        
+        //Просто рандомный набор символов, можно указать что угодно
         private static string WebKitFormBoundary = "WebKitFormBoundarywnCYxHgmP97d3sQW";
 
         private static TestLink testLinkApi;
@@ -151,8 +155,9 @@ namespace TLTCImport
         /// <param name="importData">Импортируемые тесткейсы</param>
         /// <param name="projectName">Название тестируемого продукта</param>
         /// <returns></returns>
-        public static bool ImportsRunInfoInTestLink(string pathToImport, int testPlanId, Dictionary<string, string> valuesCases, int projectId)
+        public static int ImportsRunInfoInTestLink(string pathToImport, int testPlanId, Dictionary<string, string> valuesCases)
         {
+            var countSubmittedЕestСases = 0;
             var buildId = GetIdBuildByTestPlanId(testPlanId);
 
             string testcases = File.ReadAllText(pathToImport + "TestsResults.xml");
@@ -179,70 +184,35 @@ namespace TLTCImport
             }
             foreach (string chunk in chunks) 
             {
-                //TcImport_Send(buildId, testPlanId, valuesCases);
-                //TcImport_Send(chunk, buildId, testPlanId);
-                TcImport_Send(buildId, testPlanId, valuesCases, projectId);
-
-                System.Threading.Thread.Sleep(1000);
+                //С крупными файлами пока не работает, но реализовано                               
+                countSubmittedЕestСases = ResultImport_Send(buildId, testPlanId, valuesCases);                               
             }
-            return true;
+            return countSubmittedЕestСases;
         }
 
-
-        //Почему-то не работает
-        ///// <summary>
-        ///// Отправить запрос за импорт тесткейсов
-        ///// </summary>
-        ///// <param name="testCases">Импортируемые тесткейсы</param>
-        ///// <returns></returns>
-        //private static IRestResponse TcImport_Send(string resultsRun, int buildId, int testPlanId)
-        //{
-        //    RestRequest request = new RestRequest("lib/results/resultsImport.php", Method.POST);
-        //    request.Timeout = 600000;
-        //    request.ReadWriteTimeout = 600000;
-
-        //    request.AddHeader("content-type", $"multipart/form-data;boundary=----{WebKitFormBoundary}");
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.Append(AddParameter("CSRFName", CSRFName));
-        //    sb.Append(AddParameter("CSRFToken", CSRFToken));
-        //    sb.Append(AddParameter("importType", "XML"));
-        //    sb.Append(AddParameter("MAX_FILE_SIZE", "409600"));
-        //    sb.Append(AddFile(resultsRun));
-        //    sb.Append(AddParameter("buildID", buildId.ToString()));
-        //    sb.Append(AddParameter("platformID", "0"));
-        //    sb.Append(AddParameter("tplanID", testPlanId.ToString()));
-        //    sb.Append(AddParameter("UploadFile", "Загрузить файл"));
-        //    sb.Append($"------{WebKitFormBoundary}--");
-
-        //    request.AddParameter($"multipart/form-data;boundary=----{WebKitFormBoundary}",
-        //                    sb.ToString(), ParameterType.RequestBody);
-
-        //    ////Для заполнения каждого кейса по отдельности
-        //    ////var execution = testLinkApi.ReportTCResult(testcaseId, testPlanId, result, platformId, buildId);
-
-        //    return ClientTl.Execute(request);
-        //}
-
         /// <summary>
-        /// Отправить запрос за импорт тесткейсов
+        /// Импорт результатов в TestLink
         /// </summary>
         /// <param name="testCases">Импортируемые тесткейсы</param>
         /// <returns></returns>
-        private static void TcImport_Send(int buildId, int testPlanId, Dictionary<string, string> valuesCasesJenkins, int projectId)
+        public static int ResultImport_Send(int buildId, int testPlanId, Dictionary<string, string> valuesCasesJenkins)
         {
-            //Получаем External Id и TestCaseId для работы с тесткейсом из всех Suites
-            var testCaseExternalIDAndTestCaseId = new Dictionary<string, string>();
+            //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
+            Dictionary<string, string> testCaseExternalIDAndTestCaseId;
             testCaseExternalIDAndTestCaseId = GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(testPlanId);
 
-            //Получаем externalId, testCaseId и resultRun для тест кейсов взятых из дженкинса
-            var ExternalId_TestCaseId_ResultRun = new Dictionary<string, TestCaseValues>();
+            //Получаем externalId, testCaseId и resultRun.
+            //Файлы объединены на основе данных с TestLink и Jenkins.
+            Dictionary<string, TestCaseValues> ExternalId_TestCaseId_ResultRun;
             ExternalId_TestCaseId_ResultRun = GetExternalId_TestCaseId_ResultRun(testCaseExternalIDAndTestCaseId, valuesCasesJenkins);
 
             foreach (var param in ExternalId_TestCaseId_ResultRun)
                 testLinkApi.ReportTCResult(Int32.Parse(param.Value.testCaseId), testPlanId, param.Value.resultRun, 0, buildId.ToString());
+
+            return ExternalId_TestCaseId_ResultRun.Count;
         }
 
-        //Получение External Id и TestCaseId для работы с тесткейсом из всех Suites
+        //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
         private static Dictionary<string, string> GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(int testPlanId)
         {
             var suitesId = testLinkApi.GetTestSuitesForTestPlan(testPlanId);
@@ -250,17 +220,29 @@ namespace TLTCImport
             var testCaseExternalIDAndName = new Dictionary<string, string>();
             foreach (var item in suitesId)
             {
-                var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
-                for (int i = 0; i < testCases.Count; i++)
+                try
                 {
-                    testCaseExternalIDAndName.Add("alphabi-" + testCases[i].external_id, testCases[i].id.ToString());
+                    var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
+                    for (int i = 0; i < testCases.Count; i++)
+                    {
+                        testCaseExternalIDAndName.Add("alphabi-" + testCases[i].external_id, testCases[i].id.ToString());
+                    }
                 }
+                catch(CookComputing.XmlRpc.XmlRpcIllFormedXmlException)
+                {
+                    var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
+                    for (int i = 0; i < testCases.Count; i++)
+                    {
+                        testCaseExternalIDAndName.Add("alphabi-" + testCases[i].external_id, testCases[i].id.ToString());
+                    }
+                }                
             }
 
             return testCaseExternalIDAndName;
         }
 
-        //Получение External Id, TestCaseId и ResultRun для тест кейсов взятых из дженкинса
+        //Получение External Id, TestCaseId и ResultRun для последующего переноса в TestLink
+        //Инфа собирается на основе информации взятой из TestLink и Jenkins.
         private static Dictionary<string, TestCaseValues> GetExternalId_TestCaseId_ResultRun(Dictionary<string, string> valuesSuites, Dictionary<string, string> valuesJenkins)
         {
             var ExternalIDAndTestCaseIdAndResults = new DictionaryWtihThreeValues();
@@ -268,6 +250,7 @@ namespace TLTCImport
             {
                 foreach (var value in valuesJenkins)
                 {
+                    //Проверяем, что ключи, указанные в Json файле и в TestLink одинаковые
                     if (valueSuite.Key == value.Key)
                     {
                         ExternalIDAndTestCaseIdAndResults.Add(valueSuite.Key, valueSuite.Value, value.Value);
@@ -276,7 +259,38 @@ namespace TLTCImport
             }
             return ExternalIDAndTestCaseIdAndResults;
         }
-       
+
+        //Почему-то не работает
+        ///// <summary>
+        ///// Отправить запрос за импорт тесткейсов
+        ///// </summary>
+        ///WebKitFormBoundary - просто рандомный набор символов, можно указать что угодно
+        private static IRestResponse TcImport_Send(string resultsRun, int buildId, int testPlanId)
+        {
+            RestRequest request = new RestRequest("lib/results/resultsImport.php", Method.POST);
+            //Неуверен, что таймеры нужны
+            request.Timeout = 600000;
+            request.ReadWriteTimeout = 600000;
+
+            request.AddHeader("content-type", $"multipart/form-data;boundary=----{WebKitFormBoundary}");
+            StringBuilder sb = new StringBuilder();
+            sb.Append(AddParameter("CSRFName", CSRFName));
+            sb.Append(AddParameter("CSRFToken", CSRFToken));
+            sb.Append(AddParameter("importType", "XML"));
+            sb.Append(AddParameter("MAX_FILE_SIZE", "409600"));
+            sb.Append(AddFile(resultsRun));
+            sb.Append(AddParameter("buildID", buildId.ToString()));
+            sb.Append(AddParameter("platformID", "0"));
+            sb.Append(AddParameter("tplanID", testPlanId.ToString()));
+            sb.Append(AddParameter("UploadFile", "Загрузить файл"));
+            sb.Append($"------{WebKitFormBoundary}--");
+
+            request.AddParameter($"multipart/form-data;boundary=----{WebKitFormBoundary}",
+                            sb.ToString(), ParameterType.RequestBody);
+
+            return ClientTl.Execute(request);
+        }
+
         private static string AddParameter(string name, string value)
         {
             return $"------{WebKitFormBoundary}\r\nContent-Disposition: form-data; name=\"{name}\"\r\n\r\n{value}\r\n";
@@ -294,14 +308,7 @@ namespace TLTCImport
         {
             return testLinkApi.GetProjects();
         }
-
-        //public static int GetTestCaseIdByName(int a, int b)
-        //{
-        //    var id = testLinkApi.GetTestCaseIDByName(a, b);
-           
-        //    return 0;
-        //}
-
+    
         public static int GetProjectIdByName(string projectName)
         {
             return Convert.ToInt32(testLinkApi.GetProject(projectName).id);

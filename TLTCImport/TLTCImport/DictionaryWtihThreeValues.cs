@@ -5,6 +5,7 @@ using static TLTCImport.TlReportTcResult;
 
 namespace TLTCImport
 {    
+    //Словарь для хранения трех значений
     public class DictionaryWtihThreeValues : Dictionary<string, TestCaseValues>
     {       
         public void Add(string key, string testCaseId, string resultRun)

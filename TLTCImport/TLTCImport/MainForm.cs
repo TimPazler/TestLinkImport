@@ -26,28 +26,25 @@ namespace TLTCImport
 
         private Label lblSoftware, lblCurrentTestPlan, lblTestRun;
         public Label lblMessageAddJson, lblMessageRecognitionJson;
-        public Label lblMessageDataTransferXmlFile;
+        public Label lblMessageDataTransferXmlFile, lblAddCasesTestlink;
+        public Label lblNotAllTestCasesRecognized;
 
         private int projectId, testPlanId;
         private string projectName, testPlanName;
 
 
-        private Button btnAutoMode, btnManualMode;    
+        private Button btnAutoMode, btnManualMode;
 
-        private ComboBox cbProjectNames, cbTestPlanName;    
+        private ComboBox cbProjectNames, cbTestPlanName;
 
         private string pathFile = "../../../Files/";
-
-        //Поля для word импорта
-        private bool outWordDocumentMode = false;
-        XElement testCasesXmlExport;
 
         public MainForm()
         {
             InitializeComponent();
-            
+
             var font = new Font("Century Gothic", 12);
-            
+
             leftPanel = new Panel();
             leftPanel.Dock = DockStyle.Left;
             leftPanel.Size = new Size(210, leftPanel.Size.Height);
@@ -108,7 +105,7 @@ namespace TLTCImport
             //Кнопка Автоматизированный режим
             btnAutoMode = new Button();
             btnAutoMode.FlatStyle = FlatStyle.Flat;
-            btnAutoMode.BackColor = Color.DarkGray;            
+            btnAutoMode.BackColor = Color.DarkGray;
             btnAutoMode.FlatAppearance.BorderSize = 0;
             btnAutoMode.Name = "AutoMode";
             btnAutoMode.Size = new Size(200, 30);
@@ -147,51 +144,74 @@ namespace TLTCImport
             lblMessageRecognitionJson.TextAlign = ContentAlignment.MiddleCenter;
             Controls.Add(lblMessageRecognitionJson);
 
-            //Текст отображающий сообщение что Данные перенесены в xml файл
-            lblMessageDataTransferXmlFile = new Label();
-            lblMessageDataTransferXmlFile.BackColor = Color.DarkGray;
-            lblMessageDataTransferXmlFile.Size = new Size(200, 50);
-            lblMessageDataTransferXmlFile.Location = new Point(5, 350);
-            lblMessageDataTransferXmlFile.TextAlign = ContentAlignment.MiddleCenter;
-            Controls.Add(lblMessageDataTransferXmlFile);                     
+            //пока не используется (для вывода сообщения на экран )
+            ////Текст отображающий сообщение что Данные перенесены в xml файл
+            //lblMessageDataTransferXmlFile = new Label();
+            //lblMessageDataTransferXmlFile.BackColor = Color.DarkGray;
+            //lblMessageDataTransferXmlFile.Size = new Size(200, 50);
+            //lblMessageDataTransferXmlFile.Location = new Point(5, 350);
+            //lblMessageDataTransferXmlFile.TextAlign = ContentAlignment.MiddleCenter;
+            //Controls.Add(lblMessageDataTransferXmlFile);
+
+            //Текст отображающий сообщение что Результаты прогона перенесены в TestLink
+            lblAddCasesTestlink = new Label();
+            lblAddCasesTestlink.BackColor = Color.DarkGray;
+            lblAddCasesTestlink.Size = new Size(200, 100);
+            lblAddCasesTestlink.Location = new Point(5, 350);
+            lblAddCasesTestlink.TextAlign = ContentAlignment.MiddleCenter;
+            Controls.Add(lblAddCasesTestlink);
+
+            //Текст отображающий сообщение о том почему не все кейсы были распознаны
+            lblNotAllTestCasesRecognized = new Label();
+            lblNotAllTestCasesRecognized.BackColor = Color.DarkGray;
+            lblNotAllTestCasesRecognized.Font = new Font(Label.DefaultFont, FontStyle.Bold);
+            lblNotAllTestCasesRecognized.ForeColor = Color.IndianRed;
+            lblNotAllTestCasesRecognized.Size = new Size(200, 200);
+            lblNotAllTestCasesRecognized.Location = new Point(5, 400);
+            lblNotAllTestCasesRecognized.TextAlign = ContentAlignment.MiddleCenter;
+            Controls.Add(lblNotAllTestCasesRecognized);
 
             //Добавление панелей на экран
-            Controls.Add(leftPanel);           
+            Controls.Add(leftPanel);
             Controls.Add(topPanel);
         }
 
         private void SetProjectNames(ComboBox comboBox)
         {
-            foreach(var item in TlReportTcResult.GetAllProjects())
+            foreach (var item in TlReportTcResult.GetAllProjects())
             {
                 comboBox.Items.Add(item.name);
             }
-        }        
+        }
 
         private void SetTestPlanName(ComboBox comboBox, int projectId)
         {
-            var count = 0;
             foreach (var item in TlReportTcResult.GetAllProjectTestPlans(projectId))
             {
-                comboBox.Items.Add(item.name);
-                count++;
+                comboBox.Items.Add(item.name);               
             }
 
-            if (count > 0)
-            {
-                Thread.Sleep(250);
-                cbTestPlanName.Enabled = true;
-            }
-            //добавить проверку что не выбрано другое значение в выпадающем списке.
+            Thread.Sleep(250);
+            cbTestPlanName.Enabled = true;
         }
 
         private void cbProjectNames_SelectedIndexChanged(object sender, EventArgs e)
         {
-            projectId = TlReportTcResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
-            projectName = cbProjectNames.SelectedItem.ToString();
-            if (projectId != 0)
+            if (projectId == 0)
+            {
+                projectId = TlReportTcResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
+                projectName = cbProjectNames.SelectedItem.ToString();
                 SetTestPlanName(cbTestPlanName, projectId);
-            else MessageBox.Show("Ошибка! Проект не выбран или не существует!");
+            }
+            else if (projectId != 0)
+            {
+                cbTestPlanName.Items.Clear();
+                cbTestPlanName.Text = "";
+
+                projectId = TlReportTcResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
+                projectName = cbProjectNames.SelectedItem.ToString();
+                SetTestPlanName(cbTestPlanName, projectId);
+            }
         }
 
         private void cbTestPlanName_SelectedIndexChanged(object sender, EventArgs e)
@@ -204,18 +224,20 @@ namespace TLTCImport
                 btnAutoMode.Enabled = true;
                 btnManualMode.Enabled = true;
             }
-            else MessageBox.Show("Ошибка! Проект не выбран или не существует!");
-        }
+        }    
         
         private void btnManualMode_Click(object sender, EventArgs e)
         {
          
         }
 
+
         private void btnAutoMode_Click(object sender, EventArgs e)
         {
-            var valuesCases = new Dictionary<string, string>();
-            int countValuesCases = 0;
+            ClearAllMessages();
+
+            int countSubmittedЕestСases, countValuesCases;
+            Dictionary<string, string> valuesCases;
             //MessageBox.Show("Выберите файл в формете .json. Потом написать инструкцию");
 
             OpenFileDialog fileDialog = new OpenFileDialog();
@@ -231,65 +253,141 @@ namespace TLTCImport
                 //Перенос файла в проект
                 CopyFileInProject(urlUploadedFile, nameFile);
 
-                lblMessageAddJson.Font = new Font(DefaultFont, FontStyle.Bold);
-                lblMessageAddJson.ForeColor = Color.Green;
-                lblMessageAddJson.Text = "✔ Файл \"" + nameFile + ".json" + "\" успешно добавлен";
+                MessagejsonAdd(nameFile);
 
                 JsonToXml jsonToXml = new JsonToXml();
                 var jsonFileCorrect = jsonToXml.JsonValidation(nameFile);
-                
+
                 //Проверка коректен ли файл
                 if (jsonFileCorrect)
-                {                   
-                    lblMessageRecognitionJson.Font = new Font(DefaultFont, FontStyle.Bold);
-                    lblMessageRecognitionJson.ForeColor = Color.Green;
-                    lblMessageRecognitionJson.Text = "✔ Json файл распознан!";
+                {
+                    MessagejsonRecognize();
 
                     //Запись значений из json в словарь
                     valuesCases = jsonToXml.GetDataJson(nameFile, ref jsonFileCorrect, projectId);
 
+                    //Пока не используется, т.к. не работает
                     //Если файл корректен, то перенос результатов в xml файл
                     jsonToXml.FillXmlFile(projectName, testPlanName, testPlanId, valuesCases, out countValuesCases);
 
-                    if (countValuesCases > 0)
-                    {
-                        lblMessageDataTransferXmlFile.Font = new Font(DefaultFont, FontStyle.Bold);
-                        lblMessageDataTransferXmlFile.ForeColor = Color.Green;
-                        lblMessageDataTransferXmlFile.Text = "✔ XML файл был создан и заполнен!";
-                    }
-                    else
-                    {
-                        lblMessageDataTransferXmlFile.Font = new Font(DefaultFont, FontStyle.Bold);
-                        lblMessageDataTransferXmlFile.ForeColor = Color.DarkRed;
-                        lblMessageDataTransferXmlFile.Text = "✖ Ошибка! Json файл не содержит информацию о тест кейсах!";
-                    }
+                    //Выводит на экран сообщение
+                    //MessageXMLFileFull(countValuesCases);
+
+                    //Перед импортом блокируем кнопки и списки
+                    BlockAllElementsMainForm();
+
+                    //Окно загрузки
+                    LoadingScreen OpenLoadForm = new LoadingScreen();
+                    OpenLoadForm.Location = Location;
+                    OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
+                    OpenLoadForm.FormClosing += delegate { Show(); };
+                    OpenLoadForm.Show();
+
+                    //Импорт xml файла в Тестлинк               
+                    countSubmittedЕestСases = TlReportTcResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases);
+
+                    //Закрытие окна закрузки
+                    OpenLoadForm.Close();
+                    OpenAllElementsMainForm();
+
+                    MessageAddCasesTestlink(valuesCases.Count, countSubmittedЕestСases);
                 }
                 else
-                {
-                    lblMessageAddJson.Font = new Font(DefaultFont, FontStyle.Bold);
-                    lblMessageAddJson.ForeColor = Color.DarkRed;
-                    lblMessageAddJson.Text = "✖ Ошибка! Json файл не корректен. Попробуйте загрузить другой файл!";
-                }
+                    MessagejsonInvalid();
+            }
+            else
+                MessageFileNotAdd();
 
-                //Импорт xml файла в Тестлинк
-                TlReportTcResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases, projectId);
+        }
+        
+        private void MessageFileNotAdd()
+        {
+            lblMessageAddJson.Font = new Font(Label.DefaultFont, FontStyle.Bold);
+            lblMessageAddJson.ForeColor = Color.Red;
+            lblMessageAddJson.Text = "✖ Файл не был добавлен";
+
+            lblMessageRecognitionJson.Text = "";
+            lblMessageDataTransferXmlFile.Text = "";
+            lblAddCasesTestlink.Text = "";
+        }
+
+        private void MessagejsonInvalid()
+        {
+            lblMessageAddJson.Font = new Font(DefaultFont, FontStyle.Bold);
+            lblMessageAddJson.ForeColor = Color.DarkRed;
+            lblMessageAddJson.Text = "✖ Ошибка! Json файл не корректен. Попробуйте загрузить другой файл!";
+        }
+
+        private void MessagejsonAdd(string nameFile)
+        {
+            lblMessageAddJson.Font = new Font(DefaultFont, FontStyle.Bold);
+            lblMessageAddJson.ForeColor = Color.Green;
+            lblMessageAddJson.Text = "✔ Файл \"" + nameFile + ".json" + "\" успешно добавлен";
+        }
+
+        private void MessagejsonRecognize()
+        {
+            lblMessageRecognitionJson.Font = new Font(DefaultFont, FontStyle.Bold);
+            lblMessageRecognitionJson.ForeColor = Color.Green;
+            lblMessageRecognitionJson.Text = "✔ Json файл распознан!";
+        }
+
+        private void MessageXMLFileFull(int countValuesCases)
+        {
+            if (countValuesCases > 0)
+            {
+                lblMessageDataTransferXmlFile.Font = new Font(DefaultFont, FontStyle.Bold);
+                lblMessageDataTransferXmlFile.ForeColor = Color.Green;
+                lblMessageDataTransferXmlFile.Text = "✔ XML файл был создан и заполнен!";
             }
             else
             {
-                lblMessageAddJson.Font = new Font(Label.DefaultFont, FontStyle.Bold);
-                lblMessageAddJson.ForeColor = Color.Red;
-                lblMessageAddJson.Text = "✖ Файл не был добавлен";
-
-                lblMessageRecognitionJson.Text = "";
-                lblMessageDataTransferXmlFile.Text = "";
+                lblMessageDataTransferXmlFile.Font = new Font(DefaultFont, FontStyle.Bold);
+                lblMessageDataTransferXmlFile.ForeColor = Color.DarkRed;
+                lblMessageDataTransferXmlFile.Text = "✖ Ошибка! Json файл не содержит информацию о тест кейсах!";
             }
-        }               
+        }
+
+        private void MessageAddCasesTestlink(int countTestCasesJenkins, int countSubmittedЕestСases)
+        {
+            lblAddCasesTestlink.Font = new Font(DefaultFont, FontStyle.Bold);
+            lblAddCasesTestlink.ForeColor = Color.Green;
+            lblAddCasesTestlink.Text = $"✔ Информация о прогоне успешно добавлена ​​в Testlink!" +
+                $" \r\n Тестов перенесено {countSubmittedЕestСases} из {countTestCasesJenkins}, имеющихся в json файле.";
+            if (countSubmittedЕestСases < countTestCasesJenkins)
+                lblNotAllTestCasesRecognized.Text = "Причина по которой не все тест кейсы были отправлены, возможно, связана с тем, что " +
+                     "названия тестов в Jenkins отличаются от названий кейсов в TestLink!";
+        }
+
+        private void BlockAllElementsMainForm()
+        {
+            cbProjectNames.Enabled = false;
+            cbTestPlanName.Enabled = false;
+            btnAutoMode.Enabled = false;
+            btnManualMode.Enabled = false;
+        }
+
+        private void OpenAllElementsMainForm()
+        {
+            cbProjectNames.Enabled = true;
+            cbTestPlanName.Enabled = true;
+            btnAutoMode.Enabled = true;
+            btnManualMode.Enabled = true;
+        }
+
+        private void ClearAllMessages()
+        {
+            lblMessageAddJson.Text = "";
+            lblMessageRecognitionJson.Text = "";
+            lblAddCasesTestlink.Text = "";
+            lblNotAllTestCasesRecognized.Text = "";
+        }
 
         private void CopyFileInProject(string urlUploadedFile, string nameFile)
         {
             if (File.Exists(pathFile + nameFile + ".json"))
             {
-                //MessageBox.Show("Файл уже загружен в систему! Вы уверены, что хотите его изменить?", "Изменение существующего файла", MessageBoxButtons.YesNo);
+                MessageBox.Show("Файл уже загружен в систему! Вы уверены, что хотите его изменить?", "Изменение существующего файла", MessageBoxButtons.YesNo);
                 File.Delete(pathFile + nameFile + ".json");
                 File.Copy(urlUploadedFile, pathFile + nameFile + ".json");
             }

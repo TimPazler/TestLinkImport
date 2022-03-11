@@ -19,7 +19,7 @@ namespace TLTCImport
         {
             var valuesCases = new Dictionary<string, string>();
 
-            string jsonFileContent = WriteJsonFile(nameFile);
+            string jsonFileContent = ReadJsonFile(nameFile);
                       
             //Перевод json файла в JObject
             JObject jsonListCase = JObject.Parse(jsonFileContent);
@@ -59,11 +59,13 @@ namespace TLTCImport
             return valuesCases;
         }
 
+        //Проверяем что Json файл корректный
+        //Json файл ввиде массива данных, не поддерживается
         public bool JsonValidation(string nameFile)
         {
             try
             {
-                string jsonFileContent = WriteJsonFile(nameFile);
+                string jsonFileContent = ReadJsonFile(nameFile);
                 if (JObject.Parse(jsonFileContent) != null)
                 {
                     return true;
@@ -76,7 +78,8 @@ namespace TLTCImport
             }
         }
 
-        private  string WriteJsonFile(string nameFile)
+        //Читаем json файл
+        private string ReadJsonFile(string nameFile)
         {
             if (File.Exists(pathFile + nameFile + ".json"))
             {
@@ -90,6 +93,8 @@ namespace TLTCImport
             return "Ошибка! Файла не существует! Попробуйте перезапустить программу!";
         }     
 
+        //Преобразует полученные рез-ты из Json в XML
+        //XML файл содержит в себе название тестплана и список тесткейсов
         public void FillXmlFile(string projectName, string testPlanName, int testPlanId, Dictionary<string, string> valuesCases, out int countValuesCases)
         {
             countValuesCases = valuesCases.Count();
