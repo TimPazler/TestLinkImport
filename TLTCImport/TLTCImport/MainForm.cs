@@ -140,7 +140,7 @@ namespace TLTCImport
             lblMessageRecognitionJson = new Label();
             lblMessageRecognitionJson.BackColor = Color.DarkGray;
             lblMessageRecognitionJson.Size = new Size(200, 50);
-            lblMessageRecognitionJson.Location = new Point(5, 280);
+            lblMessageRecognitionJson.Location = new Point(5, 260);
             lblMessageRecognitionJson.TextAlign = ContentAlignment.MiddleCenter;
             Controls.Add(lblMessageRecognitionJson);
 
@@ -157,7 +157,7 @@ namespace TLTCImport
             lblAddCasesTestlink = new Label();
             lblAddCasesTestlink.BackColor = Color.DarkGray;
             lblAddCasesTestlink.Size = new Size(200, 100);
-            lblAddCasesTestlink.Location = new Point(5, 350);
+            lblAddCasesTestlink.Location = new Point(5, 300);
             lblAddCasesTestlink.TextAlign = ContentAlignment.MiddleCenter;
             Controls.Add(lblAddCasesTestlink);
 
@@ -167,7 +167,7 @@ namespace TLTCImport
             lblNotAllTestCasesRecognized.Font = new Font(Label.DefaultFont, FontStyle.Bold);
             lblNotAllTestCasesRecognized.ForeColor = Color.IndianRed;
             lblNotAllTestCasesRecognized.Size = new Size(200, 200);
-            lblNotAllTestCasesRecognized.Location = new Point(5, 400);
+            lblNotAllTestCasesRecognized.Location = new Point(5, 350);
             lblNotAllTestCasesRecognized.TextAlign = ContentAlignment.MiddleCenter;
             Controls.Add(lblNotAllTestCasesRecognized);
 
@@ -178,10 +178,8 @@ namespace TLTCImport
 
         private void SetProjectNames(ComboBox comboBox)
         {
-            foreach (var item in TlReportTcResult.GetAllProjects())
-            {
-                comboBox.Items.Add(item.name);
-            }
+            foreach (var item in TlReportTcResult.GetAllProjects())            
+                comboBox.Items.Add(item.name);            
         }
 
         private void SetTestPlanName(ComboBox comboBox, int projectId)
@@ -234,11 +232,12 @@ namespace TLTCImport
 
         private void btnAutoMode_Click(object sender, EventArgs e)
         {
-            ClearAllMessages();
-
+            bool FileExistence;
             int countSubmittedЕestСases, countValuesCases;
             Dictionary<string, string> valuesCases;
             //MessageBox.Show("Выберите файл в формете .json. Потом написать инструкцию");
+
+            ClearAllMessages();
 
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Filter = "json files (*.json)|*.json";
@@ -251,49 +250,55 @@ namespace TLTCImport
                 string nameFile = names[names.Length - 1].Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
                 //Перенос файла в проект
-                CopyFileInProject(urlUploadedFile, nameFile);
+                FileExistence = CopyFileInProject(urlUploadedFile, nameFile);
 
-                MessagejsonAdd(nameFile);
-
-                JsonToXml jsonToXml = new JsonToXml();
-                var jsonFileCorrect = jsonToXml.JsonValidation(nameFile);
-
-                //Проверка коректен ли файл
-                if (jsonFileCorrect)
+                //Проверка условия, что мы готовы добавить файл
+                if (FileExistence == true)
                 {
-                    MessagejsonRecognize();
+                    MessagejsonAdd(nameFile);
 
-                    //Запись значений из json в словарь
-                    valuesCases = jsonToXml.GetDataJson(nameFile, ref jsonFileCorrect, projectId);
+                    JsonToXml jsonToXml = new JsonToXml();
+                    var jsonFileCorrect = jsonToXml.JsonValidation(nameFile);
 
-                    //Пока не используется, т.к. не работает
-                    //Если файл корректен, то перенос результатов в xml файл
-                    jsonToXml.FillXmlFile(projectName, testPlanName, testPlanId, valuesCases, out countValuesCases);
+                    //Проверка коректен ли файл
+                    if (jsonFileCorrect)
+                    {
+                        MessagejsonRecognize();
 
-                    //Выводит на экран сообщение
-                    //MessageXMLFileFull(countValuesCases);
+                        //Запись значений из json в словарь
+                        valuesCases = jsonToXml.GetDataJson(nameFile, ref jsonFileCorrect, projectId);
 
-                    //Перед импортом блокируем кнопки и списки
-                    BlockAllElementsMainForm();
+                        //Пока не используется, т.к. не работает
+                        //Если файл корректен, то перенос результатов в xml файл
+                        jsonToXml.FillXmlFile(projectName, testPlanName, testPlanId, valuesCases, out countValuesCases);
 
-                    //Окно загрузки
-                    LoadingScreen OpenLoadForm = new LoadingScreen();
-                    OpenLoadForm.Location = Location;
-                    OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
-                    OpenLoadForm.FormClosing += delegate { Show(); };
-                    OpenLoadForm.Show();
+                        //Выводит на экран сообщение
+                        //MessageXMLFileFull(countValuesCases);
 
-                    //Импорт xml файла в Тестлинк               
-                    countSubmittedЕestСases = TlReportTcResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases);
+                        //Перед импортом блокируем кнопки и списки
+                        BlockAllElementsMainForm();
 
-                    //Закрытие окна закрузки
-                    OpenLoadForm.Close();
-                    OpenAllElementsMainForm();
+                        //Окно загрузки
+                        LoadingScreen OpenLoadForm = new LoadingScreen();
+                        OpenLoadForm.Location = Location;
+                        OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
+                        OpenLoadForm.FormClosing += delegate { Show(); };
+                        OpenLoadForm.Show();
 
-                    MessageAddCasesTestlink(valuesCases.Count, countSubmittedЕestСases);
+                        //Импорт xml файла в Тестлинк               
+                        countSubmittedЕestСases = TlReportTcResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases);
+
+                        //Закрытие окна закрузки
+                        OpenLoadForm.Close();
+                        OpenAllElementsMainForm();
+
+                        MessageAddCasesTestlink(valuesCases.Count, countSubmittedЕestСases);
+                    }
+                    else
+                        MessagejsonInvalid();
                 }
                 else
-                    MessagejsonInvalid();
+                    MessageFileNotAdd();
             }
             else
                 MessageFileNotAdd();
@@ -307,8 +312,8 @@ namespace TLTCImport
             lblMessageAddJson.Text = "✖ Файл не был добавлен";
 
             lblMessageRecognitionJson.Text = "";
-            lblMessageDataTransferXmlFile.Text = "";
             lblAddCasesTestlink.Text = "";
+            lblNotAllTestCasesRecognized.Text = "";
         }
 
         private void MessagejsonInvalid()
@@ -322,7 +327,7 @@ namespace TLTCImport
         {
             lblMessageAddJson.Font = new Font(DefaultFont, FontStyle.Bold);
             lblMessageAddJson.ForeColor = Color.Green;
-            lblMessageAddJson.Text = "✔ Файл \"" + nameFile + ".json" + "\" успешно добавлен";
+            lblMessageAddJson.Text = "✔ Файл \"" + nameFile + ".json" + "\" успешно добавлен!";
         }
 
         private void MessagejsonRecognize()
@@ -383,16 +388,26 @@ namespace TLTCImport
             lblNotAllTestCasesRecognized.Text = "";
         }
 
-        private void CopyFileInProject(string urlUploadedFile, string nameFile)
+        private bool CopyFileInProject(string urlUploadedFile, string nameFile)
         {
             if (File.Exists(pathFile + nameFile + ".json"))
             {
-                MessageBox.Show("Файл уже загружен в систему! Вы уверены, что хотите его изменить?", "Изменение существующего файла", MessageBoxButtons.YesNo);
-                File.Delete(pathFile + nameFile + ".json");
-                File.Copy(urlUploadedFile, pathFile + nameFile + ".json");
+                DialogResult dialogResult = MessageBox.Show("Файл уже загружен в систему! Вы уверены, что хотите его изменить?", "Изменение существующего файла", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    File.Delete(pathFile + nameFile + ".json");
+                    File.Copy(urlUploadedFile, pathFile + nameFile + ".json");
+                    return true;
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    MessageFileNotAdd();
+                    return false;
+                }
             }
             else             
-                File.Copy(urlUploadedFile, pathFile + nameFile + ".json");            
-        }               
+                File.Copy(urlUploadedFile, pathFile + nameFile + ".json");
+            return true;
+        }
     }
 }

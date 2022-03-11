@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace TLTCImport
@@ -99,6 +100,8 @@ namespace TLTCImport
             //apiDevKey = "";
 
             apiDevKey = tbApiDevKey.Text;
+            lblLoginResult.Text = "";
+            Thread.Sleep(500);
             pbLoading.Visible = true;
             if (TlReportTcResult.Authorization(apiDevKey))
             {
