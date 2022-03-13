@@ -42,6 +42,7 @@ namespace TLTCImport
         public MainForm()
         {
             InitializeComponent();
+            this.Closing += MainForm_Closing;
 
             var font = new Font("Century Gothic", 12);
 
@@ -408,6 +409,23 @@ namespace TLTCImport
             else             
                 File.Copy(urlUploadedFile, pathFile + nameFile + ".json");
             return true;
+        }
+
+        private void MainForm_Closing(object sender, CancelEventArgs e)
+        {
+            Application.Exit();
+
+            DeleteAllFiles();
+        }
+
+        private void DeleteAllFiles()
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(pathFile);
+
+            foreach (FileInfo file in dirInfo.GetFiles())
+            {
+                file.Delete();
+            }
         }
     }
 }
