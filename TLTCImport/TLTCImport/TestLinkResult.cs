@@ -9,14 +9,11 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using System.IO;
 using System.Linq;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System.Windows.Forms;
-using System.Threading;
 
 namespace TLTCImport
 {
 
-    public static class TlReportTcResult
+    public static class TestLinkResult
     {
         private static string baseUrl = "http://93.170.52.203:80";
 
@@ -26,7 +23,7 @@ namespace TLTCImport
         //Просто рандомный набор символов, можно указать что угодно
         private static string WebKitFormBoundary = "WebKitFormBoundarywnCYxHgmP97d3sQW";
 
-        private static TestLink testLinkApi;
+        public static TestLink testLinkApi;
 
         private static RestClient ClientTl = new RestClient(baseUrl)
         {
@@ -245,7 +242,7 @@ namespace TLTCImport
         //Инфа собирается на основе информации взятой из TestLink и Jenkins.
         private static Dictionary<string, TestCaseValues> GetExternalId_TestCaseId_ResultRun(Dictionary<string, string> valuesSuites, Dictionary<string, string> valuesJenkins)
         {
-            var ExternalIDAndTestCaseIdAndResults = new DictionaryWtihThreeValues();
+            var ExternalIDAndTestCaseIdAndResults = new DictionaryForTestCase();
             foreach (var valueSuite in valuesSuites)
             {
                 foreach (var value in valuesJenkins)
@@ -253,7 +250,7 @@ namespace TLTCImport
                     //Проверяем, что ключи, указанные в Json файле и в TestLink одинаковые
                     if (valueSuite.Key == value.Key)
                     {
-                        ExternalIDAndTestCaseIdAndResults.Add(valueSuite.Key, valueSuite.Value, value.Value);
+                        ExternalIDAndTestCaseIdAndResults.AddTestCase(valueSuite.Key, valueSuite.Value, value.Value);
                     }
                 }
             }

@@ -28,7 +28,9 @@ namespace TLTCImport
         public Label lblMessageAddJson, lblMessageRecognitionJson;
         public Label lblMessageDataTransferXmlFile, lblAddCasesTestlink;
         public Label lblNotAllTestCasesRecognized;
-
+        public TreeView treeView;
+        public ImageList imageList;
+        public TreeNode treeNode;
         private int projectId, testPlanId;
         private string projectName, testPlanName;
 
@@ -38,6 +40,8 @@ namespace TLTCImport
         private ComboBox cbProjectNames, cbTestPlanName;
 
         private string pathFile = "../../../Files/";
+        private string pathContent = "../../../Content/";
+
 
         public MainForm()
         {
@@ -172,20 +176,54 @@ namespace TLTCImport
             lblNotAllTestCasesRecognized.TextAlign = ContentAlignment.MiddleCenter;
             Controls.Add(lblNotAllTestCasesRecognized);
 
+            //Дерево, содеражащее в себе все папки и тест кейсы            
+            treeView = new TreeView();
+            imageList = new ImageList();
+            imageList.Images.Add(Image.FromFile(pathContent + "folder.gif"));
+            imageList.Images.Add(Image.FromFile(pathContent + "leaf.gif"));                       
+            treeView.ImageList = imageList;
+            treeView.ImageIndex = 0;
+            treeView.BorderStyle = BorderStyle.None;
+            treeView.Location = new Point(220, 110);
+            treeView.Size = new Size(580, 470);
+            treeNode = new TreeNode("Пусто");            
+            treeView.Nodes.Add(treeNode);            
+            Controls.Add(treeView);            
+
             //Добавление панелей на экран
             Controls.Add(leftPanel);
             Controls.Add(topPanel);
         }
 
+        private void TreeCreate(DictionaryForWorkWithFolders namesFoldersAndSubfolders)
+        {
+            treeView.Nodes.Remove(treeNode);
+            foreach (var names in namesFoldersAndSubfolders)
+            {
+                var folderValue = names.Value;
+                foreach (var folderVal in folderValue)
+                {
+                    treeNode = new TreeNode(folderVal.Key);
+                    for (int i = 0; i < folderVal.Value.Count(); i++)
+                    {
+                        // Добавляем новый дочерний узел к treeNode
+                        treeNode.Nodes.Add(new TreeNode(folderVal.Value[i]));
+                    }
+                    // Добавляем treeNode вместе с дочерними узлами в TreeView
+                    treeView.Nodes.Add(treeNode);
+                }
+            }            
+        }
+
         private void SetProjectNames(ComboBox comboBox)
         {
-            foreach (var item in TlReportTcResult.GetAllProjects())            
+            foreach (var item in TestLinkResult.GetAllProjects())            
                 comboBox.Items.Add(item.name);            
         }
 
         private void SetTestPlanName(ComboBox comboBox, int projectId)
         {
-            foreach (var item in TlReportTcResult.GetAllProjectTestPlans(projectId))
+            foreach (var item in TestLinkResult.GetAllProjectTestPlans(projectId))
             {
                 comboBox.Items.Add(item.name);               
             }
@@ -198,7 +236,7 @@ namespace TLTCImport
         {
             if (projectId == 0)
             {
-                projectId = TlReportTcResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
+                projectId = TestLinkResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
                 projectName = cbProjectNames.SelectedItem.ToString();
                 SetTestPlanName(cbTestPlanName, projectId);
             }
@@ -207,7 +245,7 @@ namespace TLTCImport
                 cbTestPlanName.Items.Clear();
                 cbTestPlanName.Text = "";
 
-                projectId = TlReportTcResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
+                projectId = TestLinkResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
                 projectName = cbProjectNames.SelectedItem.ToString();
                 SetTestPlanName(cbTestPlanName, projectId);
             }
@@ -215,7 +253,7 @@ namespace TLTCImport
 
         private void cbTestPlanName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            testPlanId = TlReportTcResult.GetTestPlanIdByName(cbProjectNames.SelectedItem.ToString(), cbTestPlanName.SelectedItem.ToString());
+            testPlanId = TestLinkResult.GetTestPlanIdByName(cbProjectNames.SelectedItem.ToString(), cbTestPlanName.SelectedItem.ToString());
             testPlanName = cbTestPlanName.SelectedItem.ToString();
 
             if (testPlanId != 0)
@@ -227,7 +265,8 @@ namespace TLTCImport
         
         private void btnManualMode_Click(object sender, EventArgs e)
         {
-         
+            TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
+            TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));
         }
 
 
@@ -287,7 +326,7 @@ namespace TLTCImport
                         OpenLoadForm.Show();
 
                         //Импорт xml файла в Тестлинк               
-                        countSubmittedЕestСases = TlReportTcResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases);
+                        countSubmittedЕestСases = TestLinkResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases);
 
                         //Закрытие окна закрузки
                         OpenLoadForm.Close();

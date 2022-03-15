@@ -98,7 +98,7 @@ namespace TLTCImport
         public void FillXmlFile(string projectName, string testPlanName, int testPlanId, Dictionary<string, string> valuesCases, out int countValuesCases)
         {
             countValuesCases = valuesCases.Count();
-            var buildName = TlReportTcResult.GetBuildByTestPlanId(testPlanId);            
+            var buildName = TestLinkResult.GetBuildByTestPlanId(testPlanId);            
             var XmlDocument = new XDocument(new XElement("results"));
 
             XElement testproject = new XElement("testproject",
