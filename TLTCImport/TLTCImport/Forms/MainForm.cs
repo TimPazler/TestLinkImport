@@ -261,12 +261,14 @@ namespace TLTCImport
                 btnAutoMode.Enabled = true;
                 btnManualMode.Enabled = true;
             }
-        }    
-        
+        }
+
         private void btnManualMode_Click(object sender, EventArgs e)
         {
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
-            TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));
+            //TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));                     
+            treeWithTestCases.NamesFoldersAndSubfolders(projectId);
+
         }
 
 

@@ -25,19 +25,5 @@ namespace TLTCImport
             folders.Add(nameFolder, subfolders);
             this.Add(idFolder, folders);
         }
-    }
-
-    //public class DictionaryForWorkWithFolders : Dictionary<Dictionary<int, string>, Dictionary<int, string>>
-    //{
-    //    public void AddFolder(int idFolder, string nameFolder, int idSubfolder, string nameSubfolder)
-    //    {
-    //        var folders = new Dictionary<int, string>();
-    //        folders.Add(idFolder, nameFolder);
-
-    //        var subfolders = new Dictionary<int, string>();
-    //        subfolders.Add(idSubfolder, nameSubfolder);
-
-    //        this.Add(folders, subfolders);
-    //    }
-    //}
+    }   
 }
