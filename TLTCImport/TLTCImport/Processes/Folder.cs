@@ -4,6 +4,8 @@ using System.Text;
 
 namespace TLTCImport
 {
+    //Класс, содержащий id и имя папки
+    //А также ссылку на другой массив с данными о подпапки
     public class Folder
     {
         public int idFolder { get; set; } 
