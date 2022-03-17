@@ -12,24 +12,30 @@ namespace TLTCImport
         private TestLink testLinkApi = TestLinkResult.testLinkApi;
         List<TestSuite> suitesIdFirst;        
 
-        public void NamesFoldersAndSubfolders(int projectId)
+        public Folder[][] NamesFoldersAndSubfolders(int projectId)
         {           
             var firstLevelFolder = GetFirstLevelFolder(projectId);
             var arrFoldersAndSubfolders = FillArrayFoldersAndSubfolders(firstLevelFolder);
-            var a = RemoveEmptyArrayElements(arrFoldersAndSubfolders);
-            //return GetAllTestCase(a);
+            return RemoveEmptyArrayElements(arrFoldersAndSubfolders);
         }
 
         //Удаление лишних элементов массива
         private Folder[][] RemoveEmptyArrayElements(Folder[][] arrFoldersAndSubfolders)
         {
-            //for (int i = 0; i < arrFoldersAndSubfolders.Length; i++)
-            //{
-            //    if(arrFoldersAndSubfolders[i] == null)
-            //        arrFoldersAndSubfolders.
-            //}
+            int count = 0;
 
-                return arrFoldersAndSubfolders;
+            for (int i = 0; i < arrFoldersAndSubfolders.Length; i++)            
+                if (arrFoldersAndSubfolders[i] != null)
+                    count++;
+
+            Folder[][] newArr = new Folder[count][];
+
+            for (int i = 0; i < arrFoldersAndSubfolders.Length; i++)
+            {
+                if (arrFoldersAndSubfolders[i] != null)
+                    newArr[i] = arrFoldersAndSubfolders[i];
+            }
+            return newArr;
         }
 
         public Folder[] FillArrays(Dictionary<int, string> firstLevelFolder, Dictionary<int, string> secondLevelFolder, int numberArrayFirstLevelFolder)
@@ -76,9 +82,14 @@ namespace TLTCImport
                 {
                     subfolders.Add(suite.id, suite.name);
                 }
-                root[i] = FillArrays(IdAndNameFolder, subfolders, i);
-                subfolders.Clear();
-                i++;
+                if (FillArrays(IdAndNameFolder, subfolders, i) != null)
+                {
+                    root[i] = FillArrays(IdAndNameFolder, subfolders, i);
+                    subfolders.Clear();
+                    i++;
+                }
+                else                
+                    subfolders.Clear();                
             }
 
             return root;

@@ -16,6 +16,7 @@ namespace TLTCImport
         private Button btnLogin;
 
         private Label lblLoginResult, lbApiKey;
+        private Label lblhelp;
 
         private PictureBox pbLoading;
 
@@ -46,7 +47,7 @@ namespace TLTCImport
             lbApiKey.Text = "Укажите Api Key:";
             lbApiKey.ForeColor = Color.Black;
             lbApiKey.Size = new Size(350, 30);
-            lbApiKey.Location = new Point((panel.Width - lbApiKey.Width) / 2, 120);
+            lbApiKey.Location = new Point((panel.Width - lbApiKey.Width) / 2, 90);
             lbApiKey.TextAlign = ContentAlignment.MiddleCenter;
 
             //Текстбок Api Key
@@ -55,7 +56,7 @@ namespace TLTCImport
             tbApiDevKey.PasswordChar = '*';
             tbApiDevKey.BackColor = Color.WhiteSmoke;
             tbApiDevKey.Size = new Size(150, 30);
-            tbApiDevKey.Location = new Point((panel.Width - tbApiDevKey.Width) / 2, 155);
+            tbApiDevKey.Location = new Point((panel.Width - tbApiDevKey.Width) / 2, 125);
 
             //Кнопка Login
             btnLogin = new Button();
@@ -64,7 +65,7 @@ namespace TLTCImport
             btnLogin.BackColor = Color.Gray;
             btnLogin.FlatAppearance.BorderSize = 0;
             btnLogin.Size = new Size(105, 30);
-            btnLogin.Location = new Point((panel.Width - btnLogin.Width) / 2, 200);
+            btnLogin.Location = new Point((panel.Width - btnLogin.Width) / 2, 160);
             btnLogin.Text = "Login";
             btnLogin.Click += new EventHandler(btnLogin_Click);
 
@@ -73,7 +74,7 @@ namespace TLTCImport
             lblLoginResult.Font = font;
             lblLoginResult.ForeColor = Color.Black;
             lblLoginResult.Size = new Size(350, 30);
-            lblLoginResult.Location = new Point((panel.Width - lblLoginResult.Width) / 2, 235);
+            lblLoginResult.Location = new Point((panel.Width - lblLoginResult.Width) / 2, 195);
             lblLoginResult.TextAlign = ContentAlignment.MiddleCenter;
 
             //Картинка отвечающая за загрузку 
@@ -81,12 +82,21 @@ namespace TLTCImport
             pbLoading.Size = new Size(25, 25);
             pbLoading.SizeMode = PictureBoxSizeMode.Zoom;
             pbLoading.Image = Image.FromFile("../../../Content/load.gif");
-            pbLoading.Location = new Point((panel.Width) / 2 - 13, 250);
-
+            pbLoading.Location = new Point((panel.Width) / 2 - 13, 200);
             pbLoading.Enabled = true;
             pbLoading.Visible = false;
 
+            //Текст отображающий сообщение ссылку на профиль для просьбы о помощи
+            lblhelp = new Label();
+            lblhelp.Font = new Font("Century Gothic", 9);
+            lblhelp.ForeColor = Color.Black;
+            lblhelp.Size = new Size(350, 30);
+            lblhelp.Text = "Проблема?";
+            lblhelp.Location = new Point((panel.Width - lblhelp.Width) / 2, 230);
+            lblhelp.TextAlign = ContentAlignment.MiddleLeft;
+
             //Добавление элементов на экран
+            panel.Controls.Add(lblhelp);
             panel.Controls.Add(pbLoading);
             panel.Controls.Add(tbApiDevKey);
             panel.Controls.Add(btnLogin);
