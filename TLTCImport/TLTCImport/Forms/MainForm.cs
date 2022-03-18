@@ -42,7 +42,6 @@ namespace TLTCImport
         private string pathFile = "../../../Files/";
         private string pathContent = "../../../Content/";
 
-
         public MainForm()
         {
             InitializeComponent();
@@ -195,26 +194,28 @@ namespace TLTCImport
             Controls.Add(topPanel);
         }
 
-        private void TreeCreate(DictionaryForWorkWithFolders namesFoldersAndSubfolders)
+        private void TreeCreate(Folder[][] foldersAndSubfolders)
         {
+            //Удаление пустой папки
             treeView.Nodes.Remove(treeNode);
-            foreach (var names in namesFoldersAndSubfolders)
+            
+            foreach (var values in foldersAndSubfolders)
             {
-                var folderValue = names.Value;
-                foreach (var folderVal in folderValue)
+                foreach (var value in values)
                 {
-                    treeNode = new TreeNode(folderVal.Key);
-                    for (int i = 0; i < folderVal.Value.Count(); i++)
+                    var subfolderNames = value.arr;
+                    treeNode = new TreeNode(value.nameFolder);
+                    foreach (var subfolderName in subfolderNames)
                     {
                         // Добавляем новый дочерний узел к treeNode
-                        treeNode.Nodes.Add(new TreeNode(folderVal.Value[i]));
+                        treeNode.Nodes.Add(new TreeNode(subfolderName.nameSubfolder));                        
                     }
                     // Добавляем treeNode вместе с дочерними узлами в TreeView
                     treeView.Nodes.Add(treeNode);
-                }
-            }            
+                }              
+            }
         }
-
+            
         private void SetProjectNames(ComboBox comboBox)
         {
             foreach (var item in TestLinkResult.GetAllProjects())            
@@ -266,9 +267,7 @@ namespace TLTCImport
         private void btnManualMode_Click(object sender, EventArgs e)
         {
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
-            //TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));                     
-            treeWithTestCases.NamesFoldersAndSubfolders(projectId);
-
+            TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));                     
         }
 
 
