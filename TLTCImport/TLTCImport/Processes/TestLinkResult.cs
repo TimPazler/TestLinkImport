@@ -152,7 +152,7 @@ namespace TLTCImport
         /// <param name="importData">Импортируемые тесткейсы</param>
         /// <param name="projectName">Название тестируемого продукта</param>
         /// <returns></returns>
-        public static int ImportsRunInfoInTestLink(string pathToImport, int testPlanId, Dictionary<string, string> valuesCases)
+        public static int ImportsRunInfoInTestLink(string pathToImport, int testPlanId, Dictionary<string, string> valuesCases, string projectName)
         {
             var countSubmittedЕestСases = 0;
             var buildId = GetIdBuildByTestPlanId(testPlanId);
@@ -182,7 +182,7 @@ namespace TLTCImport
             foreach (string chunk in chunks) 
             {
                 //С крупными файлами пока не работает, но реализовано                               
-                countSubmittedЕestСases = ResultImport_Send(buildId, testPlanId, valuesCases);                               
+                countSubmittedЕestСases = ResultImport_Send(buildId, testPlanId, valuesCases, projectName);                               
             }
             return countSubmittedЕestСases;
         }
@@ -192,11 +192,11 @@ namespace TLTCImport
         /// </summary>
         /// <param name="testCases">Импортируемые тесткейсы</param>
         /// <returns></returns>
-        public static int ResultImport_Send(int buildId, int testPlanId, Dictionary<string, string> valuesCasesJenkins)
+        public static int ResultImport_Send(int buildId, int testPlanId, Dictionary<string, string> valuesCasesJenkins, string projectName)
         {
             //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
             Dictionary<string, string> testCaseExternalIDAndTestCaseId;
-            testCaseExternalIDAndTestCaseId = GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(testPlanId);
+            testCaseExternalIDAndTestCaseId = GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(testPlanId, projectName);
 
             //Получаем externalId, testCaseId и resultRun.
             //Файлы объединены на основе данных с TestLink и Jenkins.
@@ -210,10 +210,11 @@ namespace TLTCImport
         }
 
         //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
-        private static Dictionary<string, string> GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(int testPlanId)
+        private static Dictionary<string, string> GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(int testPlanId, string projectName)
         {
             var suitesId = testLinkApi.GetTestSuitesForTestPlan(testPlanId);
-            
+            var prefixName = GetPrefixProjectByName(projectName); 
+
             var testCaseExternalIDAndName = new Dictionary<string, string>();
             foreach (var item in suitesId)
             {
@@ -222,7 +223,7 @@ namespace TLTCImport
                     var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
                     for (int i = 0; i < testCases.Count; i++)
                     {
-                        testCaseExternalIDAndName.Add("alphabi-" + testCases[i].external_id, testCases[i].id.ToString());
+                        testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].id.ToString());
                     }
                 }
                 catch(CookComputing.XmlRpc.XmlRpcIllFormedXmlException)
@@ -230,7 +231,7 @@ namespace TLTCImport
                     var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
                     for (int i = 0; i < testCases.Count; i++)
                     {
-                        testCaseExternalIDAndName.Add("alphabi-" + testCases[i].external_id, testCases[i].id.ToString());
+                        testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].id.ToString());
                     }
                 }                
             }
@@ -309,6 +310,11 @@ namespace TLTCImport
         public static int GetProjectIdByName(string projectName)
         {
             return Convert.ToInt32(testLinkApi.GetProject(projectName).id);
+        }
+
+        public static string GetPrefixProjectByName(string projectName)
+        {
+            return testLinkApi.GetProject(projectName).prefix;
         }
 
         public static int GetTestPlanIdByName(string projectName, string testPlanName)

@@ -236,7 +236,7 @@ namespace TLTCImport
         private void cbProjectNames_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (projectId == 0)
-            {
+            {                
                 projectId = TestLinkResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
                 projectName = cbProjectNames.SelectedItem.ToString();
                 SetTestPlanName(cbTestPlanName, projectId);
@@ -327,7 +327,7 @@ namespace TLTCImport
                         OpenLoadForm.Show();
 
                         //Импорт xml файла в Тестлинк               
-                        countSubmittedЕestСases = TestLinkResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases);
+                        countSubmittedЕestСases = TestLinkResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases, projectName);
 
                         //Закрытие окна закрузки
                         OpenLoadForm.Close();
