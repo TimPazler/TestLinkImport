@@ -12,7 +12,7 @@ namespace TLTCImport
         public int idSubfolder { get; set; }
         public string nameSubfolder { get; set; }
 
-        public InfoTestCase[] arr;
+        public InfoTestCase[] testCases;
 
         public Subfolder(int idSubfolder, string nameSubfolder)
         {

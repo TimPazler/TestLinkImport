@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using TestLinkApi;
+using TLTCImport.FolderStorageTestLink;
 
 namespace TLTCImport
 {
@@ -28,19 +29,25 @@ namespace TLTCImport
         public Label lblMessageAddJson, lblMessageRecognitionJson;
         public Label lblMessageDataTransferXmlFile, lblAddCasesTestlink;
         public Label lblNotAllTestCasesRecognized;
+      
         public TreeView treeView;
         public ImageList imageList;
-        public TreeNode treeNode;
-        private int projectId, testPlanId;
-        private string projectName, testPlanName;
+        public TreeNode tNSubfolder, tNTestCase;
 
-
-        private Button btnAutoMode, btnManualMode;
+        private Button btnExpandTree, btnCollapseTree;
+        private Button btnAutoMode, btnManualMode;       
 
         private ComboBox cbProjectNames, cbTestPlanName;
-
+        
+        private int projectId, testPlanId;
+        private string projectName, testPlanName;
         private string pathFile = "../../../Files/";
         private string pathContent = "../../../Content/";
+
+        void aboutItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("О программе");
+        }
 
         public MainForm()
         {
@@ -48,12 +55,14 @@ namespace TLTCImport
             this.Closing += MainForm_Closing;
 
             var font = new Font("Century Gothic", 12);
-
+            
+            //Панель слева
             leftPanel = new Panel();
             leftPanel.Dock = DockStyle.Left;
             leftPanel.Size = new Size(210, leftPanel.Size.Height);
             leftPanel.BackColor = Color.DarkGray;
 
+            //Панель справа сверху
             topPanel = new Panel();
             topPanel.Dock = DockStyle.Top;
             topPanel.BackColor = Color.DarkGray;
@@ -64,14 +73,14 @@ namespace TLTCImport
             lblSoftware.Name = "lblSoftware";
             lblSoftware.Text = "Программный продукт:";
             lblSoftware.Size = new Size(200, 30);
-            lblSoftware.Location = new Point(5, 5);
+            lblSoftware.Location = new Point(5, 30);
             lblSoftware.TextAlign = ContentAlignment.MiddleLeft;
             Controls.Add(lblSoftware);
 
             //Комбобокс для выбора программного продукта
             cbProjectNames = new ComboBox();
             cbProjectNames.Size = new Size(200, 30);
-            cbProjectNames.Location = new Point(5, 35);
+            cbProjectNames.Location = new Point(5, 60);
             cbProjectNames.DropDownStyle = ComboBoxStyle.DropDown;
             cbProjectNames.SelectedIndexChanged += cbProjectNames_SelectedIndexChanged;
             SetProjectNames(cbProjectNames);
@@ -83,14 +92,14 @@ namespace TLTCImport
             lblCurrentTestPlan.Name = "lblCurrentTestPlan";
             lblCurrentTestPlan.Text = "Текущий тест-план: ";
             lblCurrentTestPlan.Size = new Size(200, 30);
-            lblCurrentTestPlan.Location = new Point(5, 60);
+            lblCurrentTestPlan.Location = new Point(5, 85);
             lblCurrentTestPlan.TextAlign = ContentAlignment.MiddleLeft;
             Controls.Add(lblCurrentTestPlan);
 
             //Комбобокс для выбора Текущего тестового-плана:
             cbTestPlanName = new ComboBox();
             cbTestPlanName.Size = new Size(200, 30);
-            cbTestPlanName.Location = new Point(5, 90);
+            cbTestPlanName.Location = new Point(5, 115);
             cbTestPlanName.DropDownStyle = ComboBoxStyle.DropDown;
             cbTestPlanName.SelectedIndexChanged += cbTestPlanName_SelectedIndexChanged;
             cbTestPlanName.Enabled = false;
@@ -102,7 +111,7 @@ namespace TLTCImport
             lblTestRun.Name = "lblTestRun";
             lblTestRun.Text = "Прогон тестов:";
             lblTestRun.Size = new Size(200, 30);
-            lblTestRun.Location = new Point(5, 120);
+            lblTestRun.Location = new Point(5, 145);
             lblTestRun.TextAlign = ContentAlignment.MiddleLeft;
             Controls.Add(lblTestRun);
 
@@ -113,7 +122,7 @@ namespace TLTCImport
             btnAutoMode.FlatAppearance.BorderSize = 0;
             btnAutoMode.Name = "AutoMode";
             btnAutoMode.Size = new Size(200, 30);
-            btnAutoMode.Location = new Point(5, 150);
+            btnAutoMode.Location = new Point(5, 175);
             btnAutoMode.Text = "Авто режим";
             btnAutoMode.Click += new EventHandler(btnAutoMode_Click);
             btnAutoMode.Enabled = false;
@@ -126,17 +135,43 @@ namespace TLTCImport
             btnManualMode.FlatAppearance.BorderSize = 0;
             btnManualMode.Name = "ManualMode";
             btnManualMode.Size = new Size(200, 30);
-            btnManualMode.Location = new Point(5, 180);
+            btnManualMode.Location = new Point(5, 205);
             btnManualMode.Text = "Ручной режим";
             btnManualMode.Click += new EventHandler(btnManualMode_Click);
             btnManualMode.Enabled = false;
             Controls.Add(btnManualMode);
 
+            //Кнопка Раскрыть дерево
+            btnExpandTree = new Button();
+            btnExpandTree.FlatStyle = FlatStyle.Flat;
+            btnExpandTree.BackColor = Color.DarkGray;
+            btnExpandTree.FlatAppearance.BorderSize = 0;
+            btnExpandTree.Name = "UncoverTree";
+            btnExpandTree.Size = new Size(130, 30);
+            btnExpandTree.Location = new Point(210, 85);
+            btnExpandTree.Text = "Раскрыть дерево";
+            btnExpandTree.Click += new EventHandler(btnExpandTree_Click);
+            btnExpandTree.Enabled = false;
+            Controls.Add(btnExpandTree);
+
+            //Кнопка Закрыть дерево
+            btnCollapseTree = new Button();
+            btnCollapseTree.FlatStyle = FlatStyle.Flat;
+            btnCollapseTree.BackColor = Color.DarkGray;
+            btnCollapseTree.FlatAppearance.BorderSize = 0;
+            btnCollapseTree.Name = "UncoverTree";
+            btnCollapseTree.Size = new Size(130, 30);
+            btnCollapseTree.Location = new Point(325, 85);
+            btnCollapseTree.Text = "Закрыть дерево";
+            btnCollapseTree.Click += new EventHandler(btnCollapseTree_Click);
+            btnCollapseTree.Enabled = false;
+            Controls.Add(btnCollapseTree);
+
             //Текст отображающий сообщение о добавлении файла
             lblMessageAddJson = new Label();
             lblMessageAddJson.BackColor = Color.DarkGray;
             lblMessageAddJson.Size = new Size(200, 50);
-            lblMessageAddJson.Location = new Point(5, 220);
+            lblMessageAddJson.Location = new Point(5, 245);
             lblMessageAddJson.TextAlign = ContentAlignment.MiddleCenter;
             Controls.Add(lblMessageAddJson);
 
@@ -144,7 +179,7 @@ namespace TLTCImport
             lblMessageRecognitionJson = new Label();
             lblMessageRecognitionJson.BackColor = Color.DarkGray;
             lblMessageRecognitionJson.Size = new Size(200, 50);
-            lblMessageRecognitionJson.Location = new Point(5, 260);
+            lblMessageRecognitionJson.Location = new Point(5, 285);
             lblMessageRecognitionJson.TextAlign = ContentAlignment.MiddleCenter;
             Controls.Add(lblMessageRecognitionJson);
 
@@ -161,7 +196,7 @@ namespace TLTCImport
             lblAddCasesTestlink = new Label();
             lblAddCasesTestlink.BackColor = Color.DarkGray;
             lblAddCasesTestlink.Size = new Size(200, 100);
-            lblAddCasesTestlink.Location = new Point(5, 300);
+            lblAddCasesTestlink.Location = new Point(5, 325);
             lblAddCasesTestlink.TextAlign = ContentAlignment.MiddleCenter;
             Controls.Add(lblAddCasesTestlink);
 
@@ -171,7 +206,7 @@ namespace TLTCImport
             lblNotAllTestCasesRecognized.Font = new Font(Label.DefaultFont, FontStyle.Bold);
             lblNotAllTestCasesRecognized.ForeColor = Color.IndianRed;
             lblNotAllTestCasesRecognized.Size = new Size(200, 200);
-            lblNotAllTestCasesRecognized.Location = new Point(5, 350);
+            lblNotAllTestCasesRecognized.Location = new Point(5, 375);
             lblNotAllTestCasesRecognized.TextAlign = ContentAlignment.MiddleCenter;
             Controls.Add(lblNotAllTestCasesRecognized);
 
@@ -183,15 +218,28 @@ namespace TLTCImport
             treeView.ImageList = imageList;
             treeView.ImageIndex = 0;
             treeView.BorderStyle = BorderStyle.None;
-            treeView.Location = new Point(220, 110);
+            treeView.Location = new Point(220, 135);
             treeView.Size = new Size(580, 470);
-            treeNode = new TreeNode("Пусто");            
-            treeView.Nodes.Add(treeNode);            
-            Controls.Add(treeView);            
+            tNSubfolder = new TreeNode("Пусто");            
+            treeView.Nodes.Add(tNSubfolder);            
+            Controls.Add(treeView);
 
             //Добавление панелей на экран
             Controls.Add(leftPanel);
             Controls.Add(topPanel);
+
+            //Меню
+            ToolStripMenuItem fileItem = new ToolStripMenuItem("Загрузить файл");
+            //fileItem.Image = Image.FromFile(pathContent + "JsonDownload.jpg");
+            menuStrip1.Items.Add(fileItem);
+
+            ToolStripMenuItem aboutItem1 = new ToolStripMenuItem("Справка");
+            menuStrip1.Items.Add(aboutItem1);
+
+            ToolStripMenuItem aboutItem = new ToolStripMenuItem("О программе");
+            aboutItem.Click += aboutItem_Click;
+            menuStrip1.Items.Add(aboutItem);
+            Controls.Add(menuStrip1);
         }
 
         private void TreeCreate(Folder[][] foldersAndSubfolders)
@@ -216,6 +264,23 @@ namespace TLTCImport
             }
         }
             
+
+        private void AddSubfolders(Subfolder[] subfolderNames, TreeNode tNSubfolder)
+        {
+            // Добавляем подпапки к папкам
+            foreach (var subfolderName in subfolderNames)
+                tNSubfolder.Nodes.Add(new TreeNode(subfolderName.nameSubfolder));            
+        }
+
+        private void AddTestCases(InfoTestCase[] testCases, TreeNode tNTestCase)
+        {
+            // Добавляем тесткейсы к подпапкам
+            foreach (var testCase in testCases)
+                //tNTestCase.Nodes.Add(new TreeNode(testCase.nameTestCase))  ;
+                treeView.Nodes[0].Nodes.Add(new TreeNode(testCase.nameTestCase));
+
+        }
+
         private void SetProjectNames(ComboBox comboBox)
         {
             foreach (var item in TestLinkResult.GetAllProjects())            
@@ -268,6 +333,36 @@ namespace TLTCImport
         {
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
             TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));                     
+        }
+
+        private void btnExpandTree_Click(object sender, EventArgs e)
+        {
+            //tovarNode.ExpandAll();
+
+            //e.Node.Nodes.Clear();
+            //string[] dirs;
+            //try
+            //{
+            //    if (Directory.Exists(e.Node.FullPath))
+            //    {
+            //        dirs = Directory.GetDirectories(e.Node.FullPath);
+            //        if (dirs.Length != 0)
+            //        {
+            //            //for (int i = 0; i < dirs.Length; i++)
+            //            //{
+            //            //    TreeNode dirNode = new TreeNode(new DirectoryInfo(dirs[i]).Name);
+            //            //    FillTreeNode(dirNode, dirs[i]);
+            //            //    e.Node.Nodes.Add(dirNode);
+            //            //}
+            //        }
+            //    }
+            //}
+            //catch (Exception ex) { }
+        }
+
+        private void btnCollapseTree_Click(object sender, EventArgs e)
+        {
+            //tovarNode.Collapse();
         }
 
 

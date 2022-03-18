@@ -11,7 +11,7 @@ namespace TLTCImport
         public int idFolder { get; set; } 
         public string nameFolder { get; set; }
 
-        public Subfolder[] arr;
+        public Subfolder[] subfolders;
 
         public Folder(int idFolder, string nameFolder)
         {

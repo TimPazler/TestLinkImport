@@ -7,9 +7,11 @@ namespace TLTCImport
 {
     public partial class AuthorizationForm : Form
     {
-        private PictureBox pictureBox;
-
         private string apiDevKey;
+
+        private PictureBox pictureBox, pbLoading;
+
+        private Panel panel;
 
         private TextBox tbApiDevKey;
 
@@ -18,11 +20,9 @@ namespace TLTCImport
         private Label lblLoginResult, lbApiKey;
         private Label lblhelp;
 
-        private PictureBox pbLoading;
+        private LinkLabel llHelp;
 
         private Font font;        
-
-        private Panel panel;
 
         public AuthorizationForm()
         {
@@ -90,20 +90,51 @@ namespace TLTCImport
             lblhelp = new Label();
             lblhelp.Font = new Font("Century Gothic", 9);
             lblhelp.ForeColor = Color.Black;
-            lblhelp.Size = new Size(350, 30);
+            lblhelp.Size = new Size(82, 30);
             lblhelp.Text = "Проблема?";
-            lblhelp.Location = new Point((panel.Width - lblhelp.Width) / 2, 230);
+            lblhelp.Location = new Point(5, 230);
             lblhelp.TextAlign = ContentAlignment.MiddleLeft;
+
+            //Гипперссылка на телегу
+            llHelp = new LinkLabel();
+            llHelp.Font = new Font("Century Gothic", 9);
+            llHelp.ForeColor = Color.Black;
+            llHelp.Text = "Есть решение!";
+            llHelp.Location = new Point(85, 236);
+            llHelp.LinkClicked += llHelp_LinkClicked;
+
+            //Меню
+            ToolStripMenuItem fileItem = new ToolStripMenuItem("Справка");
+            fileItem.DropDownItems.Add(new ToolStripMenuItem("Что такое Api Key?"));
+            fileItem.DropDownItems.Add(new ToolStripMenuItem("Не удается войти.."));
+
+            menuStrip1.Items.Add(fileItem);          
+
+            ToolStripMenuItem aboutItem = new ToolStripMenuItem("О программе");
+            aboutItem.Click += aboutItem_Click;
+            menuStrip1.Items.Add(aboutItem);
+            Controls.Add(menuStrip1);
 
             //Добавление элементов на экран
             panel.Controls.Add(lblhelp);
+            panel.Controls.Add(llHelp);
             panel.Controls.Add(pbLoading);
             panel.Controls.Add(tbApiDevKey);
             panel.Controls.Add(btnLogin);
             panel.Controls.Add(lblLoginResult);
             panel.Controls.Add(lbApiKey);
             this.AcceptButton = btnLogin;
-        }       
+        }
+
+        void aboutItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("О программе");
+        }
+
+        private void llHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://metanit.com");
+        }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
