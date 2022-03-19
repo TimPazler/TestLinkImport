@@ -7,15 +7,17 @@ namespace TLTCImport
 {
     public partial class LoadingScreen : Form
     {
+        public Label lblLoading;
+
         //Форма для отображения загрузки, во переноса рез-ов в TestLink
-        public LoadingScreen()
+        public LoadingScreen(string message = "Выполняется перенос результатов в TestLink...")
         {
             this.FormBorderStyle = FormBorderStyle.None;
             this.Size = new Size(350, 100);
-            var lbl = new Label() { Text = "Выполняется перенос результатов в TestLink..." };
-            lbl.Size = new Size(350, 100);
-            lbl.TextAlign = ContentAlignment.MiddleCenter;
-            this.Controls.Add(lbl);           
+            lblLoading = new Label() { Text = message };
+            lblLoading.Size = new Size(350, 100);
+            lblLoading.TextAlign = ContentAlignment.MiddleCenter;
+            this.Controls.Add(lblLoading);           
         }       
     }
 }
