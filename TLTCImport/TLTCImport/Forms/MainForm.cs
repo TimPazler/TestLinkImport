@@ -147,7 +147,7 @@ namespace TLTCImport
             btnExpandTree.BackColor = Color.DarkGray;
             btnExpandTree.FlatAppearance.BorderSize = 0;
             btnExpandTree.Name = "UncoverTree";
-            btnExpandTree.Size = new Size(130, 30);
+            btnExpandTree.Size = new Size(120, 30);
             btnExpandTree.Location = new Point(210, 85);
             btnExpandTree.Text = "Раскрыть дерево";
             btnExpandTree.Click += new EventHandler(btnExpandTree_Click);
@@ -160,8 +160,8 @@ namespace TLTCImport
             btnCollapseTree.BackColor = Color.DarkGray;
             btnCollapseTree.FlatAppearance.BorderSize = 0;
             btnCollapseTree.Name = "UncoverTree";
-            btnCollapseTree.Size = new Size(130, 30);
-            btnCollapseTree.Location = new Point(325, 85);
+            btnCollapseTree.Size = new Size(120, 30);
+            btnCollapseTree.Location = new Point(330, 85);
             btnCollapseTree.Text = "Закрыть дерево";
             btnCollapseTree.Click += new EventHandler(btnCollapseTree_Click);
             btnCollapseTree.Enabled = false;
@@ -229,8 +229,7 @@ namespace TLTCImport
             Controls.Add(topPanel);
 
             //Меню
-            ToolStripMenuItem fileItem = new ToolStripMenuItem("Загрузить файл");
-            //fileItem.Image = Image.FromFile(pathContent + "JsonDownload.jpg");
+            ToolStripMenuItem fileItem = new ToolStripMenuItem("Загрузить json файл");
             menuStrip1.Items.Add(fileItem);
 
             ToolStripMenuItem aboutItem1 = new ToolStripMenuItem("Справка");
@@ -331,8 +330,21 @@ namespace TLTCImport
 
         private void btnManualMode_Click(object sender, EventArgs e)
         {
+            //Окно загрузки
+            LoadingScreen OpenLoadForm = new LoadingScreen("Получении информации о папках..");
+            OpenLoadForm.Location = Location;
+            OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
+            OpenLoadForm.FormClosing += delegate { Show(); };
+            OpenLoadForm.Show();
+
+            //Постройка дерева
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
-            TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));                     
+            TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));
+
+            //Закрытие окна закрузки и отображение кнопок
+            OpenLoadForm.Close();
+            btnExpandTree.Enabled = true;
+            btnCollapseTree.Enabled = true;
         }
 
         private void btnExpandTree_Click(object sender, EventArgs e)
