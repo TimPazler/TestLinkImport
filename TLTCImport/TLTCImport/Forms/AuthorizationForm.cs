@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -18,7 +19,7 @@ namespace TLTCImport
         private Button btnLogin;
 
         private Label lblLoginResult, lbApiKey;
-        private Label lblhelp;
+        private Label lblhelp, lblProductVersion;
 
         private LinkLabel llHelp;
 
@@ -36,9 +37,10 @@ namespace TLTCImport
 
             //Изображение Testlink
             pictureBox = new PictureBox();
-            pictureBox.Size = new Size(300, 65);
+            pictureBox.Size = new Size(200, 65);
+            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox.Image = Image.FromFile("../../../Content/TestlinkMini.png");
-            pictureBox.Location = new Point((panel.Width - pictureBox.Width) / 2, 5);
+            pictureBox.Location = new Point((panel.Width - pictureBox.Width) / 2, 15);
             panel.Controls.Add(pictureBox);
 
             //Текст отображающий сообщение о результатах входа в систему
@@ -47,7 +49,7 @@ namespace TLTCImport
             lbApiKey.Text = "Укажите Api Key:";
             lbApiKey.ForeColor = Color.Black;
             lbApiKey.Size = new Size(350, 30);
-            lbApiKey.Location = new Point((panel.Width - lbApiKey.Width) / 2, 90);
+            lbApiKey.Location = new Point((panel.Width - lbApiKey.Width) / 2, 80);
             lbApiKey.TextAlign = ContentAlignment.MiddleCenter;
 
             //Текстбок Api Key
@@ -56,7 +58,7 @@ namespace TLTCImport
             tbApiDevKey.PasswordChar = '*';
             tbApiDevKey.BackColor = Color.WhiteSmoke;
             tbApiDevKey.Size = new Size(150, 30);
-            tbApiDevKey.Location = new Point((panel.Width - tbApiDevKey.Width) / 2, 125);
+            tbApiDevKey.Location = new Point((panel.Width - tbApiDevKey.Width) / 2, 115);
 
             //Кнопка Login
             btnLogin = new Button();
@@ -65,7 +67,7 @@ namespace TLTCImport
             btnLogin.BackColor = Color.Gray;
             btnLogin.FlatAppearance.BorderSize = 0;
             btnLogin.Size = new Size(105, 30);
-            btnLogin.Location = new Point((panel.Width - btnLogin.Width) / 2, 160);
+            btnLogin.Location = new Point((panel.Width - btnLogin.Width) / 2, 150);
             btnLogin.Text = "Login";
             btnLogin.Click += new EventHandler(btnLogin_Click);
 
@@ -74,7 +76,7 @@ namespace TLTCImport
             lblLoginResult.Font = font;
             lblLoginResult.ForeColor = Color.Black;
             lblLoginResult.Size = new Size(350, 30);
-            lblLoginResult.Location = new Point((panel.Width - lblLoginResult.Width) / 2, 195);
+            lblLoginResult.Location = new Point((panel.Width - lblLoginResult.Width) / 2, 185);
             lblLoginResult.TextAlign = ContentAlignment.MiddleCenter;
 
             //Картинка отвечающая за загрузку 
@@ -82,7 +84,7 @@ namespace TLTCImport
             pbLoading.Size = new Size(25, 25);
             pbLoading.SizeMode = PictureBoxSizeMode.Zoom;
             pbLoading.Image = Image.FromFile("../../../Content/load.gif");
-            pbLoading.Location = new Point((panel.Width) / 2 - 13, 200);
+            pbLoading.Location = new Point((panel.Width) / 2 - 13, 190);
             pbLoading.Enabled = true;
             pbLoading.Visible = false;
 
@@ -92,24 +94,29 @@ namespace TLTCImport
             lblhelp.ForeColor = Color.Black;
             lblhelp.Size = new Size(82, 30);
             lblhelp.Text = "Проблема?";
-            lblhelp.Location = new Point(5, 230);
+            lblhelp.Location = new Point(5, 220);
             lblhelp.TextAlign = ContentAlignment.MiddleLeft;
 
             //Гипперссылка на телегу
             llHelp = new LinkLabel();
             llHelp.Font = new Font("Century Gothic", 9);
             llHelp.ForeColor = Color.Black;
-            llHelp.Text = "Есть решение!";
-            llHelp.Location = new Point(85, 236);
+            llHelp.Text = "Пиши, решим!";
+            llHelp.Location = new Point(85, 226);
             llHelp.LinkClicked += llHelp_LinkClicked;
 
+            //Текст отображающий версию продукта
+            lblProductVersion = new Label();
+            lblProductVersion.Font = new Font("Century Gothic", 9);
+            lblProductVersion.ForeColor = Color.Gray;
+            lblProductVersion.Size = new Size(82, 30);
+            lblProductVersion.Text = "v0.1";
+            lblProductVersion.Location = new Point(215, 220);
+            lblProductVersion.TextAlign = ContentAlignment.MiddleRight;
+
             //Меню
-            ToolStripMenuItem fileItem = new ToolStripMenuItem("Справка");
-            fileItem.DropDownItems.Add(new ToolStripMenuItem("Что такое Api Key?"));
-            fileItem.DropDownItems.Add(new ToolStripMenuItem("Не удается войти.."));
-
+            ToolStripMenuItem fileItem = new ToolStripMenuItem("Где взять Api Key?");
             menuStrip1.Items.Add(fileItem);          
-
             ToolStripMenuItem aboutItem = new ToolStripMenuItem("О программе");
             aboutItem.Click += aboutItem_Click;
             menuStrip1.Items.Add(aboutItem);
@@ -118,6 +125,7 @@ namespace TLTCImport
             //Добавление элементов на экран
             panel.Controls.Add(lblhelp);
             panel.Controls.Add(llHelp);
+            panel.Controls.Add(lblProductVersion);
             panel.Controls.Add(pbLoading);
             panel.Controls.Add(tbApiDevKey);
             panel.Controls.Add(btnLogin);
@@ -133,7 +141,7 @@ namespace TLTCImport
 
         private void llHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://metanit.com");
+            Process.Start(new ProcessStartInfo("cmd", $"/c start https://t.me/TimPazler"));
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
