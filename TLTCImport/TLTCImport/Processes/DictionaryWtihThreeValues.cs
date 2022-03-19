@@ -15,15 +15,5 @@ namespace TLTCImport
             val.resultRun = resultRun;
             this.Add(key, val);
         }      
-    }
-
-    public class DictionaryForWorkWithFolders : Dictionary<int, Dictionary<string, string[]>>
-    {
-        public void AddFolder(int idFolder, string nameFolder, string[] subfolders)
-        {
-            var folders = new Dictionary<string, string[]>();
-            folders.Add(nameFolder, subfolders);
-            this.Add(idFolder, folders);
-        }
-    }   
+    }    
 }
