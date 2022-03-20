@@ -138,37 +138,6 @@ namespace TLTCImport
                 IdAndNameFolder.Add(suite.id, suite.name);                     
 
             return IdAndNameFolder;
-        }           
-        
-        ////Получаем Id и Name тест кейсов из всех Suites. Взято с TestLink.
-        //private Dictionary<string, string> GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(int testPlanId)
-        //{
-        //    var suitesId = testLinkApi.GetTestSuitesForTestPlan(testPlanId);
-
-        //    var testCaseExternalIDAndName = new Dictionary<string, string>();
-        //    foreach (var item in suitesId)
-        //    {
-        //        try
-        //        {
-        //            var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
-        //            for (int i = 0; i < testCases.Count; i++)
-        //            {
-        //                var testCaseName = "alphabi-" + testCases[i].external_id + ":" + testCases[i].name;
-        //                testCaseExternalIDAndName.Add(testCaseName, testCases[i].id.ToString());
-        //            }
-        //        }
-        //        catch (CookComputing.XmlRpc.XmlRpcIllFormedXmlException)
-        //        {
-        //            var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
-        //            for (int i = 0; i < testCases.Count; i++)
-        //            {
-        //                var testCaseName = "alphabi-" + testCases[i].external_id + ":" + testCases[i].name;
-        //                testCaseExternalIDAndName.Add(testCaseName, testCases[i].id.ToString());
-        //            }
-        //        }
-        //    }
-
-        //    return testCaseExternalIDAndName;
-        //}       
+        }                         
     }
 }
