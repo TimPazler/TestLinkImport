@@ -111,7 +111,7 @@ namespace TLTCImport
             lblProductVersion.Font = new Font("Century Gothic", 9);
             lblProductVersion.ForeColor = Color.Gray;
             lblProductVersion.Size = new Size(82, 30);
-            lblProductVersion.Text = "v0.16.5";
+            lblProductVersion.Text = "v0.17";
             lblProductVersion.Location = new Point(215, 220);
             lblProductVersion.TextAlign = ContentAlignment.MiddleRight;
 

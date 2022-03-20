@@ -249,7 +249,7 @@ namespace TLTCImport
             //Удаление пустой папки
             treeView.Nodes.Remove(tNSubfolder);
             int j = 0;
-           
+
             foreach (var folders in foldersAndSubfolders)
             {
                 foreach (var valueFolder in folders)
@@ -268,10 +268,14 @@ namespace TLTCImport
                     j++;
                 }
             }
+           
+            treeView.Visible = false;
 
             //Для лечения бага
             treeView.ExpandAll();
             treeView.CollapseAll();
+           
+            treeView.Visible = true;
         }
 
         private string CreateTestCaseFullName(InfoTestCase testCaseFullName)
