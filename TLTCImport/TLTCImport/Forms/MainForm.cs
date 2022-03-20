@@ -249,6 +249,7 @@ namespace TLTCImport
             //Удаление пустой папки
             treeView.Nodes.Remove(tNSubfolder);
             int j = 0;
+           
             foreach (var folders in foldersAndSubfolders)
             {
                 foreach (var valueFolder in folders)
@@ -267,8 +268,12 @@ namespace TLTCImport
                     j++;
                 }
             }
+
+            //Для лечения бага
+            treeView.ExpandAll();
+            treeView.CollapseAll();
         }
-      
+
         private string CreateTestCaseFullName(InfoTestCase testCaseFullName)
         {
             var prefixName = TestLinkResult.GetPrefixProjectByName(projectName);      
@@ -359,32 +364,12 @@ namespace TLTCImport
 
         private void btnExpandTree_Click(object sender, EventArgs e)
         {
-            //tovarNode.ExpandAll();
-
-            //e.Node.Nodes.Clear();
-            //string[] dirs;
-            //try
-            //{
-            //    if (Directory.Exists(e.Node.FullPath))
-            //    {
-            //        dirs = Directory.GetDirectories(e.Node.FullPath);
-            //        if (dirs.Length != 0)
-            //        {
-            //            //for (int i = 0; i < dirs.Length; i++)
-            //            //{
-            //            //    TreeNode dirNode = new TreeNode(new DirectoryInfo(dirs[i]).Name);
-            //            //    FillTreeNode(dirNode, dirs[i]);
-            //            //    e.Node.Nodes.Add(dirNode);
-            //            //}
-            //        }
-            //    }
-            //}
-            //catch (Exception ex) { }
+            treeView.ExpandAll();
         }
 
         private void btnCollapseTree_Click(object sender, EventArgs e)
         {
-            //tovarNode.Collapse();
+            treeView.CollapseAll();
         }
 
 
