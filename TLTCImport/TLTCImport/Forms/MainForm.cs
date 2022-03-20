@@ -43,7 +43,7 @@ namespace TLTCImport
         private string projectName, testPlanName;
         private string pathFile = "../../../Files/";
         private string pathContent = "../../../Content/";
-
+        private int IconFoldersAndSubfolders = 0, IconTestCases = 1;
         void aboutItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("О программе");
@@ -215,14 +215,14 @@ namespace TLTCImport
             imageList = new ImageList();
             imageList.Images.Add(Image.FromFile(pathContent + "folder.gif"));
             imageList.Images.Add(Image.FromFile(pathContent + "leaf.gif"));                       
-            treeView.ImageList = imageList;
-            treeView.ImageIndex = 0;
+            treeView.ImageList = imageList;                                   
+            treeView.ImageIndex = IconFoldersAndSubfolders;
             treeView.BorderStyle = BorderStyle.None;
             treeView.Location = new Point(220, 135);
             treeView.Size = new Size(580, 470);
             tNSubfolder = new TreeNode("Пусто");            
             treeView.Nodes.Add(tNSubfolder);            
-            Controls.Add(treeView);
+            Controls.Add(treeView);           
 
             //Добавление панелей на экран
             Controls.Add(leftPanel);
@@ -230,40 +230,47 @@ namespace TLTCImport
 
             //Меню
             ToolStripMenuItem fileItem = new ToolStripMenuItem("Загрузить json файл");
-            menuStrip1.Items.Add(fileItem);
+            MainFormMenu.Items.Add(fileItem);
 
             ToolStripMenuItem aboutItem1 = new ToolStripMenuItem("Справка");
-            menuStrip1.Items.Add(aboutItem1);
+            MainFormMenu.Items.Add(aboutItem1);
 
             ToolStripMenuItem aboutItem = new ToolStripMenuItem("О программе");
             aboutItem.Click += aboutItem_Click;
-            menuStrip1.Items.Add(aboutItem);
-            Controls.Add(menuStrip1);
+            MainFormMenu.Items.Add(aboutItem);
+            Controls.Add(MainFormMenu);
         }
 
         private void TreeCreate(Folder[][] foldersAndSubfolders)
         {
             //Удаление пустой папки
-            treeView.Nodes.Remove(treeNode);
-            
-            foreach (var values in foldersAndSubfolders)
+            treeView.Nodes.Remove(tNSubfolder);
+            int j = 0;
+            foreach (var folders in foldersAndSubfolders)
             {
-                foreach (var value in values)
+                foreach (var valueFolder in folders)
                 {
-                    var subfolderNames = value.arr;
-                    treeNode = new TreeNode(value.nameFolder);
-                    foreach (var subfolderName in subfolderNames)
+                    //Добавление папок
+                    tNSubfolder = new TreeNode(valueFolder.nameFolder);
+                    treeView.Nodes.Add(tNSubfolder);
+
+                    //Добавление тесткейсов в подпапки
+                    for (int i = 0; i < valueFolder.subfolders.Length; i++)
                     {
-                        // Добавляем новый дочерний узел к treeNode
-                        treeNode.Nodes.Add(new TreeNode(subfolderName.nameSubfolder));                        
+                        tNTestCase = new TreeNode(valueFolder.subfolders[i].nameSubfolder);
+                        AddTestCases(valueFolder.subfolders[i].testCases, tNTestCase);
+                        treeView.Nodes[j].Nodes.Add(tNTestCase);
                     }
-                    // Добавляем treeNode вместе с дочерними узлами в TreeView
-                    treeView.Nodes.Add(treeNode);
-                }              
+                    j++;
+                }
             }
         }
-            
 
+        private string CreateTestCaseFullName(InfoTestCase testCaseFullName)
+        {
+            var prefixName = TestLinkResult.GetPrefixProjectByName(projectName);      
+            return prefixName + "-" + testCaseFullName.externalIdTestCase + ":" + testCaseFullName.nameTestCase;
+        }        
         private void AddSubfolders(Subfolder[] subfolderNames, TreeNode tNSubfolder)
         {
             // Добавляем подпапки к папкам
@@ -274,10 +281,8 @@ namespace TLTCImport
         private void AddTestCases(InfoTestCase[] testCases, TreeNode tNTestCase)
         {
             // Добавляем тесткейсы к подпапкам
-            foreach (var testCase in testCases)
-                //tNTestCase.Nodes.Add(new TreeNode(testCase.nameTestCase))  ;
-                treeView.Nodes[0].Nodes.Add(new TreeNode(testCase.nameTestCase));
-
+            foreach (var testCase in testCases)            
+                tNTestCase.Nodes.Add(new TreeNode(CreateTestCaseFullName(testCase), IconTestCases, IconFoldersAndSubfolders));                     
         }
 
         private void SetProjectNames(ComboBox comboBox)
@@ -329,9 +334,12 @@ namespace TLTCImport
         }
 
         private void btnManualMode_Click(object sender, EventArgs e)
-        {
+        {   
+            //Перед ручным режимом блокируем все элементы
+            BlockAllElementsMainForm();
+
             //Окно загрузки
-            LoadingScreen OpenLoadForm = new LoadingScreen("Получении информации о папках..");
+            LoadingScreen OpenLoadForm = new LoadingScreen("Получение информации о папках..");
             OpenLoadForm.Location = Location;
             OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
             OpenLoadForm.FormClosing += delegate { Show(); };
@@ -343,8 +351,7 @@ namespace TLTCImport
 
             //Закрытие окна закрузки и отображение кнопок
             OpenLoadForm.Close();
-            btnExpandTree.Enabled = true;
-            btnCollapseTree.Enabled = true;
+            OpenAllElementsMainForm();
         }
 
         private void btnExpandTree_Click(object sender, EventArgs e)
@@ -514,18 +521,24 @@ namespace TLTCImport
 
         private void BlockAllElementsMainForm()
         {
+            MainFormMenu.Enabled = false;
             cbProjectNames.Enabled = false;
             cbTestPlanName.Enabled = false;
             btnAutoMode.Enabled = false;
             btnManualMode.Enabled = false;
+            btnExpandTree.Enabled = false;
+            btnCollapseTree.Enabled = false;
         }
 
         private void OpenAllElementsMainForm()
         {
+            MainFormMenu.Enabled = true;
             cbProjectNames.Enabled = true;
             cbTestPlanName.Enabled = true;
             btnAutoMode.Enabled = true;
             btnManualMode.Enabled = true;
+            btnExpandTree.Enabled = true;
+            btnCollapseTree.Enabled = true;
         }
 
         private void ClearAllMessages()

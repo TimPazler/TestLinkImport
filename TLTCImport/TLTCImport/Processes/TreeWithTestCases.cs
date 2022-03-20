@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using TestLinkApi;
+using TLTCImport.FolderStorageTestLink;
 
 namespace TLTCImport
 {
-    //Класс для работы с деревов, состоящим из папок и тесткейсов
+    //Класс для работы с деревом, состоящим из папок и тесткейсов
     public class TreeWithTestCases
     {
         private TestLink testLinkApi = TestLinkResult.testLinkApi;
@@ -16,7 +17,8 @@ namespace TLTCImport
         {           
             var firstLevelFolder = GetFirstLevelFolder(projectId);
             var arrFoldersAndSubfolders = FillArrayFoldersAndSubfolders(firstLevelFolder);
-            return RemoveEmptyArrayElements(arrFoldersAndSubfolders);
+            var newArrFoldersAndSubfolders = RemoveEmptyArrayElements(arrFoldersAndSubfolders);
+            return GetTestCases(newArrFoldersAndSubfolders);
         }
 
         //Удаление лишних элементов массива
@@ -42,18 +44,18 @@ namespace TLTCImport
         {
             if (secondLevelFolder.Count != 0)
             {
-                Subfolder[] arr1 = new Subfolder[secondLevelFolder.Count];
-                Folder class1 = null;
+                Subfolder[] subfolders = new Subfolder[secondLevelFolder.Count];
+                Folder folderValue = null;
 
                 int i = 0, j = 0;
                 foreach (var subfolder in secondLevelFolder)
                 {
-                    arr1[i] = new Subfolder(subfolder.Key, subfolder.Value);
+                    subfolders[i] = new Subfolder(subfolder.Key, subfolder.Value);
                     foreach (var folder in firstLevelFolder)
                     {
                         if (j == numberArrayFirstLevelFolder)
                         {
-                            class1 = new Folder(folder.Key, folder.Value);
+                            folderValue = new Folder(folder.Key, folder.Value);
                             break;
                         }
                         j++;
@@ -61,10 +63,41 @@ namespace TLTCImport
                     j = 0;
                     i++;
                 }
-                class1.arr = arr1;
-                return new Folder[] { class1 };
+                folderValue.subfolders = subfolders;
+                return new Folder[] { folderValue };
             }
             return null;
+        }
+
+        //тест кейсы
+        private Folder[][] GetTestCases(Folder[][] arrFoldersAndSubfolders)
+        {
+            InfoTestCase[] testCase;
+
+            List<TestCaseFromTestSuite> testCaseAllInfo;
+            foreach (var foldersAndSubfolders in arrFoldersAndSubfolders)
+            {                
+                foreach (var subfolder in foldersAndSubfolders)
+                {
+                    for (int i = 0; i < subfolder.subfolders.Length; i++)
+                    {
+                        var nameSubfolder = subfolder.subfolders[i].nameSubfolder;
+                        var idSubfolder = subfolder.subfolders[i].idSubfolder;
+
+                        testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
+                        testCase = new InfoTestCase[testCaseAllInfo.Count];
+                        int j = 0;
+                        foreach (var testCaseInfo in testCaseAllInfo)
+                        {
+                            testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                            j++;
+                        }
+                        subfolder.subfolders[i].testCases = testCase;
+                    }
+                }
+            }
+
+            return arrFoldersAndSubfolders;
         }
 
         //Заполнение массива папками и подпапками
@@ -106,16 +139,7 @@ namespace TLTCImport
 
             return IdAndNameFolder;
         }           
-
-        //Получить имена папок второго уровня
-        public DictionaryForWorkWithFolders GetAllTestCase(DictionaryForWorkWithFolders secondLevelFolder)
-        {
-            //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
-            DictionaryForWorkWithFolders testCaseExternalIDAndTestCaseId = GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(secondLevelFolder);
-
-            return testCaseExternalIDAndTestCaseId;
-        }
-
+        
         ////Получаем Id и Name тест кейсов из всех Suites. Взято с TestLink.
         //private Dictionary<string, string> GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(int testPlanId)
         //{
@@ -145,40 +169,6 @@ namespace TLTCImport
         //    }
 
         //    return testCaseExternalIDAndName;
-        //}
-
-
-        //Получаем Id и Name тест кейсов из всех Suites. Взято с TestLink.
-        private DictionaryForWorkWithFolders GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(DictionaryForWorkWithFolders secondLevelFolder)
-        {
-            List<TestCaseFromTestSuite> testCaseExternalIDAndTestCaseId;
-            foreach (var folder in secondLevelFolder)
-            {
-                testCaseExternalIDAndTestCaseId = testLinkApi.GetTestCasesForTestSuite(folder.Key, true);
-            }
-            //foreach (var item in suitesId)
-            //{
-            //    try
-            //    {
-            //        var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
-            //        for (int i = 0; i < testCases.Count; i++)
-            //        {
-            //            var testCaseName = "alphabi-" + testCases[i].external_id + ":" + testCases[i].name;
-            //            testCaseExternalIDAndName.Add(testCaseName, testCases[i].id.ToString());
-            //        }
-            //    }
-            //    catch (CookComputing.XmlRpc.XmlRpcIllFormedXmlException)
-            //    {
-            //        var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
-            //        for (int i = 0; i < testCases.Count; i++)
-            //        {
-            //            var testCaseName = "alphabi-" + testCases[i].external_id + ":" + testCases[i].name;
-            //            testCaseExternalIDAndName.Add(testCaseName, testCases[i].id.ToString());
-            //        }
-            //    }
-            //}
-
-            return secondLevelFolder;
-        }
+        //}       
     }
 }

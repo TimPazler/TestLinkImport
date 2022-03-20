@@ -30,7 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.foldersIcons = new System.Windows.Forms.ImageList(this.components);
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.MainFormMenu = new System.Windows.Forms.MenuStrip();
+            this.MainFormStatus = new System.Windows.Forms.StatusStrip();
             this.SuspendLayout();
             // 
             // foldersIcons
@@ -39,22 +40,31 @@
             this.foldersIcons.ImageSize = new System.Drawing.Size(16, 16);
             this.foldersIcons.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // menuStrip1
+            // MainFormMenu
             // 
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
+            this.MainFormMenu.Location = new System.Drawing.Point(0, 0);
+            this.MainFormMenu.Name = "MainFormMenu";
+            this.MainFormMenu.Size = new System.Drawing.Size(800, 24);
+            this.MainFormMenu.TabIndex = 0;
+            this.MainFormMenu.Text = "menuStrip1";
+            // 
+            // MainFormStatus
+            // 
+            this.MainFormStatus.Location = new System.Drawing.Point(0, 608);
+            this.MainFormStatus.Name = "MainFormStatus";
+            this.MainFormStatus.Size = new System.Drawing.Size(800, 22);
+            this.MainFormStatus.TabIndex = 1;
+            this.MainFormStatus.Text = "statusStrip1";
             // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(800, 595);
-            this.Controls.Add(this.menuStrip1);
+            this.ClientSize = new System.Drawing.Size(800, 630);
+            this.Controls.Add(this.MainFormStatus);
+            this.Controls.Add(this.MainFormMenu);
             this.ForeColor = System.Drawing.Color.White;
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.MainFormMenu;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = " ";
@@ -66,7 +76,8 @@
         #endregion
 
         private System.Windows.Forms.ImageList foldersIcons;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip MainFormMenu;
+        private System.Windows.Forms.StatusStrip MainFormStatus;
     }
 }
 
