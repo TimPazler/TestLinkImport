@@ -30,7 +30,7 @@ namespace TLTCImport
         public Label lblMessageDataTransferXmlFile, lblAddCasesTestlink;
         public Label lblNotAllTestCasesRecognized;
       
-        public TreeView treeView;
+        public UcTreeView treeView;
         public ImageList imageList;
         public TreeNode tNSubfolder, tNTestCase;
 
@@ -52,10 +52,11 @@ namespace TLTCImport
         public MainForm()
         {
             InitializeComponent();
+
             this.Closing += MainForm_Closing;
 
             var font = new Font("Century Gothic", 12);
-            
+
             //Панель слева
             leftPanel = new Panel();
             leftPanel.Dock = DockStyle.Left;
@@ -211,18 +212,20 @@ namespace TLTCImport
             Controls.Add(lblNotAllTestCasesRecognized);
 
             //Дерево, содеражащее в себе все папки и тест кейсы            
-            treeView = new TreeView();
+            treeView = new UcTreeView();
             imageList = new ImageList();
             imageList.Images.Add(Image.FromFile(pathContent + "folder.gif"));
-            imageList.Images.Add(Image.FromFile(pathContent + "leaf.gif"));                       
-            treeView.ImageList = imageList;                                   
+            imageList.Images.Add(Image.FromFile(pathContent + "leaf.gif"));
+            treeView.ImageList = imageList;
             treeView.ImageIndex = IconFoldersAndSubfolders;
             treeView.BorderStyle = BorderStyle.None;
             treeView.Location = new Point(220, 135);
             treeView.Size = new Size(580, 470);
-            tNSubfolder = new TreeNode("Пусто");            
-            treeView.Nodes.Add(tNSubfolder);            
-            Controls.Add(treeView);           
+
+            //Создание пустой папки дерева
+            tNSubfolder = new TreeNode("Пусто");
+            treeView.Nodes.Add(tNSubfolder);
+            Controls.Add(treeView);
 
             //Добавление панелей на экран
             Controls.Add(leftPanel);
@@ -239,7 +242,7 @@ namespace TLTCImport
             aboutItem.Click += aboutItem_Click;
             MainFormMenu.Items.Add(aboutItem);
             Controls.Add(MainFormMenu);
-        }
+        }       
 
         private void TreeCreate(Folder[][] foldersAndSubfolders)
         {
@@ -265,7 +268,7 @@ namespace TLTCImport
                 }
             }
         }
-
+      
         private string CreateTestCaseFullName(InfoTestCase testCaseFullName)
         {
             var prefixName = TestLinkResult.GetPrefixProjectByName(projectName);      
@@ -281,8 +284,8 @@ namespace TLTCImport
         private void AddTestCases(InfoTestCase[] testCases, TreeNode tNTestCase)
         {
             // Добавляем тесткейсы к подпапкам
-            foreach (var testCase in testCases)            
-                tNTestCase.Nodes.Add(new TreeNode(CreateTestCaseFullName(testCase), IconTestCases, IconFoldersAndSubfolders));                     
+            foreach (var testCase in testCases)
+                tNTestCase.Nodes.Add(new TreeNodeVirtual(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
         }
 
         private void SetProjectNames(ComboBox comboBox)

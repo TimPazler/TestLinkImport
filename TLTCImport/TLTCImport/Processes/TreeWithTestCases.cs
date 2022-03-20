@@ -72,31 +72,60 @@ namespace TLTCImport
         //тест кейсы
         private Folder[][] GetTestCases(Folder[][] arrFoldersAndSubfolders)
         {
-            InfoTestCase[] testCase;
+            try
+            {
+                InfoTestCase[] testCase;
 
-            List<TestCaseFromTestSuite> testCaseAllInfo;
-            foreach (var foldersAndSubfolders in arrFoldersAndSubfolders)
-            {                
-                foreach (var subfolder in foldersAndSubfolders)
+                List<TestCaseFromTestSuite> testCaseAllInfo;
+                foreach (var foldersAndSubfolders in arrFoldersAndSubfolders)
                 {
-                    for (int i = 0; i < subfolder.subfolders.Length; i++)
+                    foreach (var subfolder in foldersAndSubfolders)
                     {
-                        var nameSubfolder = subfolder.subfolders[i].nameSubfolder;
-                        var idSubfolder = subfolder.subfolders[i].idSubfolder;
-
-                        testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
-                        testCase = new InfoTestCase[testCaseAllInfo.Count];
-                        int j = 0;
-                        foreach (var testCaseInfo in testCaseAllInfo)
+                        for (int i = 0; i < subfolder.subfolders.Length; i++)
                         {
-                            testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
-                            j++;
+                            var nameSubfolder = subfolder.subfolders[i].nameSubfolder;
+                            var idSubfolder = subfolder.subfolders[i].idSubfolder;
+
+                            testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
+                            testCase = new InfoTestCase[testCaseAllInfo.Count];
+                            int j = 0;
+                            foreach (var testCaseInfo in testCaseAllInfo)
+                            {
+                                testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                                j++;
+                            }
+                            subfolder.subfolders[i].testCases = testCase;
                         }
-                        subfolder.subfolders[i].testCases = testCase;
                     }
                 }
             }
+            catch (System.Net.WebException) 
+            {
+                InfoTestCase[] testCase;
 
+                List<TestCaseFromTestSuite> testCaseAllInfo;
+                foreach (var foldersAndSubfolders in arrFoldersAndSubfolders)
+                {
+                    foreach (var subfolder in foldersAndSubfolders)
+                    {
+                        for (int i = 0; i < subfolder.subfolders.Length; i++)
+                        {
+                            var nameSubfolder = subfolder.subfolders[i].nameSubfolder;
+                            var idSubfolder = subfolder.subfolders[i].idSubfolder;
+
+                            testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
+                            testCase = new InfoTestCase[testCaseAllInfo.Count];
+                            int j = 0;
+                            foreach (var testCaseInfo in testCaseAllInfo)
+                            {
+                                testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                                j++;
+                            }
+                            subfolder.subfolders[i].testCases = testCase;
+                        }
+                    }
+                }
+            }
             return arrFoldersAndSubfolders;
         }
 
