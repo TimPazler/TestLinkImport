@@ -12,6 +12,8 @@ namespace TLTCImport
 {    
     public partial class UcTreeView : TreeView
     {
+        private string pathContent = "../../../Content/";
+
         [DisplayName("Checkbox Spacing"), CategoryAttribute("Appearance"),
          Description("Number of pixels between the checkboxes.")]
         public int Spacing { get; set; }
@@ -60,13 +62,13 @@ namespace TLTCImport
             }
             else
             {
-                //тут баг
+                //тут баг (исправлен в MainForm открытием и закрытием всех узлов)
                 CheckBoxRenderer.DrawParentBackground(e.Graphics, e.Bounds, this);
                 //new MainForm().treeView.Refresh();
                 e.Graphics.DrawString(n.Label, Font, Brushes.Black,
                                       e.Bounds.X + offset, e.Bounds.Y);
             }
-
+            
             CheckBoxState bs1 = n.Check1 ? cbsTrue : cbsFalse;
             CheckBoxState bs2 = n.Check2 ? cbsTrue : cbsFalse;
             CheckBoxState bs3 = n.Check3 ? cbsTrue : cbsFalse;
@@ -82,7 +84,7 @@ namespace TLTCImport
             if (e == null) return;
 
             if (n != null)
-            {                
+            {                        
                 if (cbx(n.Bounds, 0).Contains(e.Location)) n.Check1 = !n.Check1;
                 else if (cbx(n.Bounds, 1).Contains(e.Location)) n.Check2 = !n.Check2;
                 else if (cbx(n.Bounds, 2).Contains(e.Location)) n.Check3 = !n.Check3;

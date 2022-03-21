@@ -44,7 +44,7 @@
             // 
             this.MainFormMenu.Location = new System.Drawing.Point(0, 0);
             this.MainFormMenu.Name = "MainFormMenu";
-            this.MainFormMenu.Size = new System.Drawing.Size(800, 24);
+            this.MainFormMenu.Size = new System.Drawing.Size(1075, 24);
             this.MainFormMenu.TabIndex = 0;
             this.MainFormMenu.Text = "menuStrip1";
             // 
@@ -52,7 +52,7 @@
             // 
             this.MainFormStatus.Location = new System.Drawing.Point(0, 608);
             this.MainFormStatus.Name = "MainFormStatus";
-            this.MainFormStatus.Size = new System.Drawing.Size(800, 22);
+            this.MainFormStatus.Size = new System.Drawing.Size(1075, 22);
             this.MainFormStatus.TabIndex = 1;
             this.MainFormStatus.Text = "statusStrip1";
             // 
@@ -60,7 +60,7 @@
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(800, 630);
+            this.ClientSize = new System.Drawing.Size(1075, 630);
             this.Controls.Add(this.MainFormStatus);
             this.Controls.Add(this.MainFormMenu);
             this.ForeColor = System.Drawing.Color.White;

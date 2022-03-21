@@ -220,7 +220,7 @@ namespace TLTCImport
             treeView.ImageIndex = IconFoldersAndSubfolders;
             treeView.BorderStyle = BorderStyle.None;
             treeView.Location = new Point(220, 135);
-            treeView.Size = new Size(580, 470);
+            treeView.Size = new Size(850, 470);
 
             //Создание пустой папки дерева
             tNSubfolder = new TreeNode("Пусто");
@@ -268,10 +268,10 @@ namespace TLTCImport
                     j++;
                 }
             }
-           
+
+            //Для лечения бага прорисовки тесткейсов
             treeView.Visible = false;
 
-            //Для лечения бага
             treeView.ExpandAll();
             treeView.CollapseAll();
            
