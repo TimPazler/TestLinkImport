@@ -29,16 +29,16 @@ namespace TLTCImport
         public Label lblMessageAddJson, lblMessageRecognitionJson;
         public Label lblMessageDataTransferXmlFile, lblAddCasesTestlink;
         public Label lblNotAllTestCasesRecognized;
-      
+
         public UcTreeView treeView;
         public ImageList imageList;
         public TreeNode tNSubfolder, tNTestCase;
 
         private Button btnExpandTree, btnCollapseTree;
-        private Button btnAutoMode, btnManualMode;       
+        private Button btnAutoMode, btnManualMode;
 
         private ComboBox cbProjectNames, cbTestPlanName;
-        
+
         private int projectId, testPlanId;
         private string projectName, testPlanName;
         private string pathFile = "../../../Files/";
@@ -242,31 +242,36 @@ namespace TLTCImport
             aboutItem.Click += aboutItem_Click;
             MainFormMenu.Items.Add(aboutItem);
             Controls.Add(MainFormMenu);
-        }       
+        }
 
-        private void TreeCreate(Folder[][] foldersAndSubfolders)
+        private void TreeCreate(Folder[] folders)
         {
-            //Удаление пустой папки
-            treeView.Nodes.Remove(tNSubfolder);
+            //Удаление пустой папки или старых
+            treeView.Nodes.Clear();
+
             int j = 0;
 
-            foreach (var folders in foldersAndSubfolders)
+            foreach (var subfolder in folders)
             {
-                foreach (var valueFolder in folders)
-                {
-                    //Добавление папок
-                    tNSubfolder = new TreeNode(valueFolder.nameFolder);
-                    treeView.Nodes.Add(tNSubfolder);
+                //Добавление папок
+                tNSubfolder = new TreeNode(subfolder.nameFolder);
+                treeView.Nodes.Add(tNSubfolder);
 
-                    //Добавление тесткейсов в подпапки
-                    for (int i = 0; i < valueFolder.subfolders.Length; i++)
-                    {
-                        tNTestCase = new TreeNode(valueFolder.subfolders[i].nameSubfolder);
-                        AddTestCases(valueFolder.subfolders[i].testCases, tNTestCase);
-                        treeView.Nodes[j].Nodes.Add(tNTestCase);
-                    }
-                    j++;
+                ////Добавление тесткейсов в папки
+                //for (int i = 0; i < subfolder.subfolders.Length; i++)
+                //{
+                //    AddTestCases(subfolder.testCases, tNSubfolder);
+                //}
+                //treeView.Nodes.Add(tNSubfolder);
+
+                //Добавление тесткейсов в подпапки
+                for (int i = 0; i < subfolder.subfolders.Length; i++)
+                {
+                    tNTestCase = new TreeNode(subfolder.subfolders[i].nameFolder);
+                    AddTestCases(subfolder.subfolders[i].testCases, tNTestCase);
+                    treeView.Nodes[j].Nodes.Add(tNTestCase);
                 }
+                j++;
             }
 
             //Для лечения бага прорисовки тесткейсов
@@ -274,7 +279,7 @@ namespace TLTCImport
 
             treeView.ExpandAll();
             treeView.CollapseAll();
-           
+
             treeView.Visible = true;
         }
 
@@ -283,11 +288,11 @@ namespace TLTCImport
             var prefixName = TestLinkResult.GetPrefixProjectByName(projectName);      
             return prefixName + "-" + testCaseFullName.externalIdTestCase + ":" + testCaseFullName.nameTestCase;
         }        
-        private void AddSubfolders(Subfolder[] subfolderNames, TreeNode tNSubfolder)
+        private void AddSubfolders(Folder[] folderNames, TreeNode tNSubfolder)
         {
             // Добавляем подпапки к папкам
-            foreach (var subfolderName in subfolderNames)
-                tNSubfolder.Nodes.Add(new TreeNode(subfolderName.nameSubfolder));            
+            foreach (var folderName in folderNames)
+                tNSubfolder.Nodes.Add(new TreeNode(folderName.nameFolder));            
         }
 
         private void AddTestCases(InfoTestCase[] testCases, TreeNode tNTestCase)
@@ -360,7 +365,6 @@ namespace TLTCImport
             //Постройка дерева
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
             TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));
-
             //Закрытие окна закрузки и отображение кнопок
             OpenLoadForm.Close();
             OpenAllElementsMainForm();

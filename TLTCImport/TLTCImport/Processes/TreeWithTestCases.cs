@@ -11,162 +11,144 @@ namespace TLTCImport
     public class TreeWithTestCases
     {
         private TestLink testLinkApi = TestLinkResult.testLinkApi;
-        List<TestSuite> suitesIdFirst;        
 
-        public Folder[][] NamesFoldersAndSubfolders(int projectId)
+        public Folder[] NamesFoldersAndSubfolders(int projectId)
         {           
-            var firstLevelFolder = GetFirstLevelFolder(projectId);
-            var arrFoldersAndSubfolders = FillArrayFoldersAndSubfolders(firstLevelFolder);
-            var newArrFoldersAndSubfolders = RemoveEmptyArrayElements(arrFoldersAndSubfolders);
-            return GetTestCases(newArrFoldersAndSubfolders);
+            var Folder = GetFolder(projectId);
+            var Subfolder = GetSubfolder(Folder);
+            //var newArrFoldersAndSubfolders = RemoveEmptyArrayElements(Subfolder);
+            //Исключить лишние
+            //var testCasesForFolders = GetTestCasesForFolders(Folder);
+            var testCasesForSubfolders = GetTestCasesForSubfolders(Subfolder);
+            return testCasesForSubfolders;
         }
 
         //Удаление лишних элементов массива
-        private Folder[][] RemoveEmptyArrayElements(Folder[][] arrFoldersAndSubfolders)
+        private Folder[] RemoveEmptyArrayElements(Folder[] arrFolders)
         {
             int count = 0;
 
-            for (int i = 0; i < arrFoldersAndSubfolders.Length; i++)            
-                if (arrFoldersAndSubfolders[i] != null)
-                    count++;
-
-            Folder[][] newArr = new Folder[count][];
-
-            for (int i = 0; i < arrFoldersAndSubfolders.Length; i++)
+            for (int i = 0; i < arrFolders.Length; i++)
             {
-                if (arrFoldersAndSubfolders[i] != null)
-                    newArr[i] = arrFoldersAndSubfolders[i];
+                if (arrFolders[i].subfolders.Length != 0)
+                    count++;
+            }
+
+            Folder[] newArr = new Folder[count];
+
+            for (int i = 0; i < newArr.Length; i++)
+            {
+                if (arrFolders[i] != null)
+                    newArr[i] = arrFolders[i];
             }
             return newArr;
         }
 
-        public Folder[] FillArrays(Dictionary<int, string> firstLevelFolder, Dictionary<int, string> secondLevelFolder, int numberArrayFirstLevelFolder)
-        {
-            if (secondLevelFolder.Count != 0)
-            {
-                Subfolder[] subfolders = new Subfolder[secondLevelFolder.Count];
-                Folder folderValue = null;
-
-                int i = 0, j = 0;
-                foreach (var subfolder in secondLevelFolder)
-                {
-                    subfolders[i] = new Subfolder(subfolder.Key, subfolder.Value);
-                    foreach (var folder in firstLevelFolder)
-                    {
-                        if (j == numberArrayFirstLevelFolder)
-                        {
-                            folderValue = new Folder(folder.Key, folder.Value);
-                            break;
-                        }
-                        j++;
-                    }
-                    j = 0;
-                    i++;
-                }
-                folderValue.subfolders = subfolders;
-                return new Folder[] { folderValue };
-            }
-            return null;
-        }
-
-        //тест кейсы
-        private Folder[][] GetTestCases(Folder[][] arrFoldersAndSubfolders)
+        private Folder[] GetTestCasesForFolders(Folder[] folders)
         {
             try
             {
                 InfoTestCase[] testCase;
 
                 List<TestCaseFromTestSuite> testCaseAllInfo;
-                foreach (var foldersAndSubfolders in arrFoldersAndSubfolders)
+                foreach (var folder in folders)
                 {
-                    foreach (var subfolder in foldersAndSubfolders)
+                    for (int i = 0; i < folder.subfolders.Length; i++)
                     {
-                        for (int i = 0; i < subfolder.subfolders.Length; i++)
-                        {
-                            var nameSubfolder = subfolder.subfolders[i].nameSubfolder;
-                            var idSubfolder = subfolder.subfolders[i].idSubfolder;
+                        var nameSubfolder = folder.nameFolder;
+                        var idSubfolder = folder.idFolder;
 
-                            testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
-                            testCase = new InfoTestCase[testCaseAllInfo.Count];
-                            int j = 0;
-                            foreach (var testCaseInfo in testCaseAllInfo)
-                            {
-                                testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
-                                j++;
-                            }
-                            subfolder.subfolders[i].testCases = testCase;
+                        testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
+                        testCase = new InfoTestCase[testCaseAllInfo.Count];
+                        int j = 0;
+                        foreach (var testCaseInfo in testCaseAllInfo)
+                        {
+                            testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                            j++;
                         }
+                        folder.testCases = testCase;
                     }
                 }
+                return folders;
             }
-            catch (System.Net.WebException) 
+            catch (System.Net.WebException)
+            {
+                //Повтор того что в try
+            }
+           
+            return folders;
+        }
+
+        //тест кейсы
+        private Folder[] GetTestCasesForSubfolders(Folder[] subfolders)
+        {
+            try
             {
                 InfoTestCase[] testCase;
 
                 List<TestCaseFromTestSuite> testCaseAllInfo;
-                foreach (var foldersAndSubfolders in arrFoldersAndSubfolders)
+                foreach (var subfolder in subfolders)
                 {
-                    foreach (var subfolder in foldersAndSubfolders)
+                    for (int i = 0; i < subfolder.subfolders.Length; i++)
                     {
-                        for (int i = 0; i < subfolder.subfolders.Length; i++)
-                        {
-                            var nameSubfolder = subfolder.subfolders[i].nameSubfolder;
-                            var idSubfolder = subfolder.subfolders[i].idSubfolder;
+                        var nameSubfolder = subfolder.subfolders[i].nameFolder;
+                        var idSubfolder = subfolder.subfolders[i].idFolder;
 
-                            testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
-                            testCase = new InfoTestCase[testCaseAllInfo.Count];
-                            int j = 0;
-                            foreach (var testCaseInfo in testCaseAllInfo)
-                            {
-                                testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
-                                j++;
-                            }
-                            subfolder.subfolders[i].testCases = testCase;
+                        testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
+                        testCase = new InfoTestCase[testCaseAllInfo.Count];
+                        int j = 0;
+                        foreach (var testCaseInfo in testCaseAllInfo)
+                        {
+                            testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                            j++;
                         }
+                        subfolder.subfolders[i].testCases = testCase;
                     }
                 }
+                return subfolders;
             }
-            return arrFoldersAndSubfolders;
-        }
-
-        //Заполнение массива папками и подпапками
-        private Folder[][] FillArrayFoldersAndSubfolders(Dictionary<int, string> IdAndNameFolder)
-        {
-            Folder[][] root = new Folder[IdAndNameFolder.Count][];           
-
-            Dictionary<int, string> subfolders = new Dictionary<int, string>();
-            List<TestSuite> suitesIdFirst;
-            int i = 0;
-            foreach (var testSuiteId in IdAndNameFolder.Keys)
+            catch (System.Net.WebException) 
             {
-                suitesIdFirst = testLinkApi.GetTestSuitesForTestSuite(testSuiteId);
-                foreach (var suite in suitesIdFirst)
-                {
-                    subfolders.Add(suite.id, suite.name);
-                }
-                if (FillArrays(IdAndNameFolder, subfolders, i) != null)
-                {
-                    root[i] = FillArrays(IdAndNameFolder, subfolders, i);
-                    subfolders.Clear();
-                    i++;
-                }
-                else                
-                    subfolders.Clear();                
+               //Повтор того что в try
             }
-
-            return root;
-        }
+            return subfolders;
+        }       
     
         //Получить имена папок первого уровня и их id
-        private Dictionary<int, string> GetFirstLevelFolder(int projectId)
+        private Folder[] GetFolder(int projectId)
         {
-            suitesIdFirst = testLinkApi.GetFirstLevelTestSuitesForTestProject(projectId);
-            Dictionary<int, string> IdAndNameFolder = new Dictionary<int, string>();
+            List<TestSuite> suites = testLinkApi.GetFirstLevelTestSuitesForTestProject(projectId);
+            Folder[] folders = new Folder[suites.Count];
 
-            foreach (var suite in suitesIdFirst) 
-                IdAndNameFolder.Add(suite.id, suite.name);                     
+            int i = 0;
+            foreach (var suite in suites)
+            {
+                folders[i] = new Folder(suite.id, suite.name);
+                i++;
+            }
+            return folders;
+        }
 
-            return IdAndNameFolder;
-        }                         
+        //Получить имена папок второго уровня и их id
+        private Folder[] GetSubfolder(Folder[] folders)
+        {
+            List<TestSuite> suites = null;
+            int folderNumber = 0;
+            for (int k = 0; k < folders.Length; k++)
+            {              
+                suites = testLinkApi.GetTestSuitesForTestSuite(folders[k].idFolder);
+
+                folders[folderNumber].subfolders = new Folder[suites.Count];
+
+                int j = 0;
+                foreach (var suite in suites)
+                {
+                    folders[folderNumber].subfolders[j] = new Folder(suite.id, suite.name);
+                    j++;
+                }
+                folderNumber++;
+            }
+            return folders;
+        }
     }
 }

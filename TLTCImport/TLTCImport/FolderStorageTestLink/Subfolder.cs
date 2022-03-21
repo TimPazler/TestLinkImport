@@ -9,15 +9,15 @@ namespace TLTCImport
     //А также ссылку на другой массив с данными о тесткейсе
     public class Subfolder
     {
-        public int idSubfolder { get; set; }
-        public string nameSubfolder { get; set; }
+        //public int idSubfolder { get; set; }
+        //public string nameSubfolder { get; set; }
 
-        public InfoTestCase[] testCases;
+        //public InfoTestCase[] testCases;
 
-        public Subfolder(int idSubfolder, string nameSubfolder)
-        {
-            this.idSubfolder = idSubfolder;
-            this.nameSubfolder = nameSubfolder;
-        }
+        //public Subfolder(int idSubfolder, string nameSubfolder)
+        //{
+        //    this.idSubfolder = idSubfolder;
+        //    this.nameSubfolder = nameSubfolder;
+        //}
     }
 }

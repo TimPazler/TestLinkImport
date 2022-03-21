@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TLTCImport.FolderStorageTestLink;
 
 namespace TLTCImport
 {
@@ -11,7 +12,9 @@ namespace TLTCImport
         public int idFolder { get; set; } 
         public string nameFolder { get; set; }
 
-        public Subfolder[] subfolders;
+        public Folder[] subfolders;
+
+        public InfoTestCase[] testCases;
 
         public Folder(int idFolder, string nameFolder)
         {
