@@ -59,5 +59,15 @@ namespace TLTCImport.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TestlinkMini {
+            get {
+                object obj = ResourceManager.GetObject("TestlinkMini", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
