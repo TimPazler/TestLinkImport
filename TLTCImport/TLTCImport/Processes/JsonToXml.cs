@@ -7,66 +7,52 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using TLTCImport.FolderStorageTestLink;
 
 namespace TLTCImport
 {
     //Переработка json и создании на его основе xml файла
     class JsonToXml
     {
-        private string pathFile = "../../../Files/";
+        private string pathFile = "../../../Files/";      
 
-        public Dictionary<string, string> GetDataJson(string nameFile, ref bool jsonFileCorrect, int projectId)
+        //Работает с файлом duration.json в папке widgets
+        public Dictionary<string, string> GetDataJson(string nameFile, ref bool jsonFileCorrect, int projectId, string projectName)
         {
             var valuesCases = new Dictionary<string, string>();
 
-            string jsonFileContent = ReadJsonFile(nameFile);
-                      
-            //Перевод json файла в JObject
-            JObject jsonListCase = JObject.Parse(jsonFileContent);
+            var nameAndStatusTestCases = ReadJsonFile(nameFile);
 
-            //Не работает с json файлами ввиде массива. Отдельно проработать
             if (jsonFileCorrect)
             {
-                int count = jsonListCase["children"].Count();
-                for (int i = 0; i < count-1; i++)
-                {
-                    foreach (JToken data in jsonListCase["children"][i]["children"])
-                    {                      
-                        string name = "", status = "";
-                                                
-                        if (data.Value<JArray>("children") == null)
-                        {
-                            name = data["name"].ToString().Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
-                            status = data["status"].ToString().Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
-                        }
-                        else if (data.Value<JArray>("children").Count == 1)
-                        {
-                            var dataNew = data.Value<JArray>("children");
-                            name = dataNew[0]["name"].ToString().Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
-                            status = dataNew[0]["status"].ToString().Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
-                        }
+                string name = "", status = "";
+
+                for (int i = 0; i < nameAndStatusTestCases.Count; i++)
+                {  
+                    //Обрезаем название кейса
+                    name = nameAndStatusTestCases[i].name.Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    status = nameAndStatusTestCases[i].status;
 
                         if (status == "passed")
-                            status = "p";
-                        else if (status == "failed")
-                            status = "f";
-                        else if (status == "skipped")
-                            status = "b";
-                        valuesCases.Add(name, status);
-                    }
+                        status = "p";
+                    else if (status == "failed")
+                        status = "f";
+                    else if (status == "skipped")
+                        status = "b";
+
+                    valuesCases.Add(name, status);
                 }
             }
             return valuesCases;
         }
 
         //Проверяем что Json файл корректный
-        //Json файл ввиде массива данных, не поддерживается
         public bool JsonValidation(string nameFile)
         {
             try
             {
-                string jsonFileContent = ReadJsonFile(nameFile);
-                if (JObject.Parse(jsonFileContent) != null)
+                var jsonFileContent = ReadJsonFile(nameFile);
+                if (jsonFileContent != null)
                 {
                     return true;
                 }
@@ -76,22 +62,15 @@ namespace TLTCImport
             {
                 return false;
             }
-        }
+        }       
 
         //Читаем json файл
-        private string ReadJsonFile(string nameFile)
-        {
-            if (File.Exists(pathFile + nameFile + ".json"))
-            {
-                FileStream file = File.OpenRead(pathFile + nameFile + ".json");
-                byte[] buffer = new byte[file.Length];
-                // считываем данные
-                file.Read(buffer, 0, buffer.Length);
-                // декодируем байты в строку
-                return Encoding.Default.GetString(buffer);
-            }
-            return "Ошибка! Файла не существует! Попробуйте перезапустить программу!";
-        }     
+        private List<JenkinsResults> ReadJsonFile(string nameFile)
+        {            
+            if (File.Exists(pathFile + nameFile + ".json"))            
+                return JsonConvert.DeserializeObject<List<JenkinsResults>>(File.ReadAllText(pathFile + nameFile + ".json"));                            
+            return null;
+        }
 
         //Преобразует полученные рез-ты из Json в XML
         //XML файл содержит в себе название тестплана и список тесткейсов
