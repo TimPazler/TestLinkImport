@@ -45,39 +45,50 @@ namespace TLTCImport
         {
             TreeNodeVirtual n = e.Node as TreeNodeVirtual;
             if (n == null) { e.DrawDefault = true; return; }
-
             CheckBoxState cbsTrue = CheckBoxState.CheckedNormal;
             CheckBoxState cbsFalse = CheckBoxState.UncheckedNormal;
-          
+
             Rectangle rect = new Rectangle(e.Bounds.Location,
                                  new Size(ClientSize.Width, e.Bounds.Height));
+
             glyph = CheckBoxRenderer.GetGlyphSize(e.Graphics, cbsTrue);
+
             int offset = glyph.Width * 3 + Spacing * 2 + LeftPadding;
 
+            //Работа с текстом
             if (n.IsSelected)
             {
+                //Выделение строки (тесткейс)
                 e.Graphics.FillRectangle(SystemBrushes.MenuHighlight, rect);
                 e.Graphics.DrawString(n.Label, Font, Brushes.White,
                                       e.Bounds.X + offset, e.Bounds.Y);
             }
             else
             {
-                //тут баг (исправлен в MainForm открытием и закрытием всех узлов)
+                //Отображает текст
+                //тут баг (исправлен в MainForm открытием и закрытием всех узлов)               
                 CheckBoxRenderer.DrawParentBackground(e.Graphics, e.Bounds, this);
-                //new MainForm().treeView.Refresh();
                 e.Graphics.DrawString(n.Label, Font, Brushes.Black,
                                       e.Bounds.X + offset, e.Bounds.Y);
             }
-            
             CheckBoxState bs1 = n.Check1 ? cbsTrue : cbsFalse;
             CheckBoxState bs2 = n.Check2 ? cbsTrue : cbsFalse;
             CheckBoxState bs3 = n.Check3 ? cbsTrue : cbsFalse;
 
+            Pen cbx1False = new Pen(Color.Red, 4);
+            Pen cbx2True = new Pen(Color.Green, 4);
+            Pen cbx3Blocked = new Pen(Color.Purple, 4);
+
+            e.Graphics.DrawRectangle(cbx1False, cbx(e.Bounds, 0));
+            e.Graphics.DrawRectangle(cbx2True, cbx(e.Bounds, 1));
+            e.Graphics.DrawRectangle(cbx3Blocked, cbx(e.Bounds, 2));
+
             CheckBoxRenderer.DrawCheckBox(e.Graphics, cbx(e.Bounds, 0).Location, bs1);
             CheckBoxRenderer.DrawCheckBox(e.Graphics, cbx(e.Bounds, 1).Location, bs2);
-            CheckBoxRenderer.DrawCheckBox(e.Graphics, cbx(e.Bounds, 2).Location, bs3);            
-        }
-       
+            CheckBoxRenderer.DrawCheckBox(e.Graphics, cbx(e.Bounds, 2).Location, bs3);
+
+        }      
+        
         protected override void OnNodeMouseClick(TreeNodeMouseClickEventArgs e)
         {
             TreeNodeVirtual n = e.Node as TreeNodeVirtual;

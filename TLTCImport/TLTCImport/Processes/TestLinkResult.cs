@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace TLTCImport
 {
@@ -152,9 +153,9 @@ namespace TLTCImport
         /// <param name="importData">Импортируемые тесткейсы</param>
         /// <param name="projectName">Название тестируемого продукта</param>
         /// <returns></returns>
-        public static int ImportsRunInfoInTestLink(string pathToImport, int testPlanId, Dictionary<string, string> valuesCases, string projectName)
+        public static (int, bool) ImportsRunInfoInTestLink(string pathToImport, int testPlanId, Dictionary<string, string> valuesCases, string projectName)
         {
-            var countSubmittedЕestСases = 0;
+            var testCaseTransferResults = (0, false);
             var buildId = GetIdBuildByTestPlanId(testPlanId);
 
             string testcases = File.ReadAllText(pathToImport + "TestsResults.xml");
@@ -182,9 +183,9 @@ namespace TLTCImport
             foreach (string chunk in chunks) 
             {
                 //С крупными файлами пока не работает, но реализовано                               
-                countSubmittedЕestСases = ResultImport_Send(buildId, testPlanId, valuesCases, projectName);                               
+                testCaseTransferResults = ResultImport_Send(buildId, testPlanId, valuesCases, projectName);                               
             }
-            return countSubmittedЕestСases;
+            return testCaseTransferResults;
         }
 
         /// <summary>
@@ -192,7 +193,7 @@ namespace TLTCImport
         /// </summary>
         /// <param name="testCases">Импортируемые тесткейсы</param>
         /// <returns></returns>
-        public static int ResultImport_Send(int buildId, int testPlanId, Dictionary<string, string> valuesCasesJenkins, string projectName)
+        public static (int, bool) ResultImport_Send(int buildId, int testPlanId, Dictionary<string, string> valuesCasesJenkins, string projectName)
         {
             //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
             Dictionary<string, string> testCaseExternalIDAndTestCaseId;
@@ -203,10 +204,38 @@ namespace TLTCImport
             Dictionary<string, TestCaseValues> ExternalId_TestCaseId_ResultRun;
             ExternalId_TestCaseId_ResultRun = GetExternalId_TestCaseId_ResultRun(testCaseExternalIDAndTestCaseId, valuesCasesJenkins);
 
-            foreach (var param in ExternalId_TestCaseId_ResultRun)
-                testLinkApi.ReportTCResult(Int32.Parse(param.Value.testCaseId), testPlanId, param.Value.resultRun, 0, buildId.ToString());
+            bool finishAddTestCases = false, processInterrupted = false;
+            int countAddTestCases = 0;
 
-            return ExternalId_TestCaseId_ResultRun.Count;
+            foreach (var param in ExternalId_TestCaseId_ResultRun)
+            {
+                try
+                {
+                    testLinkApi.ReportTCResult(Int32.Parse(param.Value.testCaseId), testPlanId, param.Value.resultRun, 0, buildId.ToString());
+                    countAddTestCases++;
+                }
+                catch (TestLinkException e)
+                {
+                    foreach (var error in e.errors)
+                    {
+                        if (error.message.Contains("is not associated with Test Plan"))
+                        {
+                            DialogResult dialogResult = MessageBox.Show($"В Тест Плане отсутстсвует тест кейс {param.Key}! \r\n Пропустить тест кейс и продолжить?", $"В Тест Плане отсутстсвует тест кейс {param.Key}!", MessageBoxButtons.YesNo);
+                            if (dialogResult == DialogResult.Yes)
+                                continue;
+                            else if (dialogResult == DialogResult.No)
+                            {
+                                finishAddTestCases = true;
+                                processInterrupted = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (finishAddTestCases == true)
+                    break;
+            }
+            return (countAddTestCases, processInterrupted);
         }
 
         //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.

@@ -367,7 +367,7 @@ namespace TLTCImport
             TreeCreate(treeWithTestCases.NamesFoldersAndSubfolders(projectId));
             //Закрытие окна закрузки и отображение кнопок
             OpenLoadForm.Close();
-            OpenAllElementsMainForm();
+            OpenAllElementsMainForm("manual");
         }
 
         private void btnExpandTree_Click(object sender, EventArgs e)
@@ -384,7 +384,8 @@ namespace TLTCImport
         private void btnAutoMode_Click(object sender, EventArgs e)
         {
             bool FileExistence;
-            int countSubmittedЕestСases, countValuesCases;
+            var testCaseTransferResults = (0, false);
+            int countValuesCases;
             Dictionary<string, string> valuesCases;
             //MessageBox.Show("Выберите файл в формете .json. Потом написать инструкцию");
 
@@ -417,7 +418,7 @@ namespace TLTCImport
                         MessagejsonRecognize();
 
                         //Запись значений из json в словарь
-                        valuesCases = jsonToXml.GetDataJson(nameFile, ref jsonFileCorrect, projectId);
+                        valuesCases = jsonToXml.GetDataJson(nameFile, ref jsonFileCorrect, projectId, projectName);
 
                         //Пока не используется, т.к. не работает
                         //Если файл корректен, то перенос результатов в xml файл
@@ -437,13 +438,17 @@ namespace TLTCImport
                         OpenLoadForm.Show();
 
                         //Импорт xml файла в Тестлинк               
-                        countSubmittedЕestСases = TestLinkResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases, projectName);
+                        testCaseTransferResults = TestLinkResult.ImportsRunInfoInTestLink(pathFile, testPlanId, valuesCases, projectName);                        
 
                         //Закрытие окна закрузки
                         OpenLoadForm.Close();
-                        OpenAllElementsMainForm();
+                        OpenAllElementsMainForm("auto");
 
-                        MessageAddCasesTestlink(valuesCases.Count, countSubmittedЕestСases);
+                        //если прерван перенос тесткейсов
+                        if (testCaseTransferResults.Item2 == true)
+                            MessageAddCasesInterrupted(valuesCases.Count, testCaseTransferResults.Item1);
+                        else
+                            MessageAddCasesTestlink(valuesCases.Count, testCaseTransferResults.Item1);
                     }
                     else
                         MessagejsonInvalid();
@@ -459,7 +464,7 @@ namespace TLTCImport
         private void MessageFileNotAdd()
         {
             lblMessageAddJson.Font = new Font(Label.DefaultFont, FontStyle.Bold);
-            lblMessageAddJson.ForeColor = Color.Red;
+            lblMessageAddJson.ForeColor = Color.DarkRed;
             lblMessageAddJson.Text = "✖ Файл не был добавлен";
 
             lblMessageRecognitionJson.Text = "";
@@ -504,6 +509,14 @@ namespace TLTCImport
             }
         }
 
+        private void MessageAddCasesInterrupted(int countTestCasesJenkins, int countSubmittedЕestСases)
+        {
+            lblAddCasesTestlink.Font = new Font(DefaultFont, FontStyle.Bold);
+            lblAddCasesTestlink.ForeColor = Color.DarkRed;
+            lblAddCasesTestlink.Text = $"✖ Перенос тест кейсов ​​в Testlink прерван!" +
+                $" \r\n Тестов перенесено {countSubmittedЕestСases} из {countTestCasesJenkins}, имеющихся в json файле.";            
+        }
+
         private void MessageAddCasesTestlink(int countTestCasesJenkins, int countSubmittedЕestСases)
         {
             lblAddCasesTestlink.Font = new Font(DefaultFont, FontStyle.Bold);
@@ -526,15 +539,19 @@ namespace TLTCImport
             btnCollapseTree.Enabled = false;
         }
 
-        private void OpenAllElementsMainForm()
+        private void OpenAllElementsMainForm(string testTransferMode)
         {
             MainFormMenu.Enabled = true;
             cbProjectNames.Enabled = true;
             cbTestPlanName.Enabled = true;
             btnAutoMode.Enabled = true;
             btnManualMode.Enabled = true;
-            btnExpandTree.Enabled = true;
-            btnCollapseTree.Enabled = true;
+            
+            if (testTransferMode == "manual")
+            {
+                btnExpandTree.Enabled = true;
+                btnCollapseTree.Enabled = true;
+            }
         }
 
         private void ClearAllMessages()
