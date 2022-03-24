@@ -36,6 +36,9 @@
             this.aboutItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainFormStatus = new System.Windows.Forms.StatusStrip();
             this.leftPanel = new System.Windows.Forms.Panel();
+            this.cbBlocked = new System.Windows.Forms.CheckBox();
+            this.cbFailed = new System.Windows.Forms.CheckBox();
+            this.cbPassed = new System.Windows.Forms.CheckBox();
             this.lblTestRun = new System.Windows.Forms.Label();
             this.pbForlblTestRun = new System.Windows.Forms.PictureBox();
             this.btnManualMode = new System.Windows.Forms.Button();
@@ -106,6 +109,9 @@
             this.leftPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.leftPanel.BackColor = System.Drawing.Color.Silver;
+            this.leftPanel.Controls.Add(this.cbBlocked);
+            this.leftPanel.Controls.Add(this.cbFailed);
+            this.leftPanel.Controls.Add(this.cbPassed);
             this.leftPanel.Controls.Add(this.lblTestRun);
             this.leftPanel.Controls.Add(this.pbForlblTestRun);
             this.leftPanel.Controls.Add(this.btnManualMode);
@@ -114,6 +120,46 @@
             this.leftPanel.Name = "leftPanel";
             this.leftPanel.Size = new System.Drawing.Size(210, 1357);
             this.leftPanel.TabIndex = 2;
+            // 
+            // cbBlocked
+            // 
+            this.cbBlocked.AutoSize = true;
+            this.cbBlocked.Checked = true;
+            this.cbBlocked.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbBlocked.Enabled = false;
+            this.cbBlocked.Location = new System.Drawing.Point(13, 215);
+            this.cbBlocked.Name = "cbBlocked";
+            this.cbBlocked.Size = new System.Drawing.Size(93, 19);
+            this.cbBlocked.TabIndex = 8;
+            this.cbBlocked.Text = "Блокирован";
+            this.cbBlocked.UseVisualStyleBackColor = true;
+            // 
+            // cbFailed
+            // 
+            this.cbFailed.AutoSize = true;
+            this.cbFailed.Checked = true;
+            this.cbFailed.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbFailed.Enabled = false;
+            this.cbFailed.Location = new System.Drawing.Point(101, 189);
+            this.cbFailed.Name = "cbFailed";
+            this.cbFailed.Size = new System.Drawing.Size(81, 19);
+            this.cbFailed.TabIndex = 7;
+            this.cbFailed.Text = "Провален";
+            this.cbFailed.UseVisualStyleBackColor = true;
+            // 
+            // cbPassed
+            // 
+            this.cbPassed.AutoSize = true;
+            this.cbPassed.Checked = true;
+            this.cbPassed.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbPassed.Enabled = false;
+            this.cbPassed.ForeColor = System.Drawing.Color.Transparent;
+            this.cbPassed.Location = new System.Drawing.Point(13, 190);
+            this.cbPassed.Name = "cbPassed";
+            this.cbPassed.Size = new System.Drawing.Size(75, 19);
+            this.cbPassed.TabIndex = 6;
+            this.cbPassed.Text = "Пройден";
+            this.cbPassed.UseVisualStyleBackColor = true;
             // 
             // lblTestRun
             // 
@@ -139,9 +185,8 @@
             // btnManualMode
             // 
             this.btnManualMode.Enabled = false;
-            this.btnManualMode.FlatAppearance.BorderSize = 0;
             this.btnManualMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnManualMode.Location = new System.Drawing.Point(3, 189);
+            this.btnManualMode.Location = new System.Drawing.Point(3, 240);
             this.btnManualMode.Name = "btnManualMode";
             this.btnManualMode.Size = new System.Drawing.Size(204, 30);
             this.btnManualMode.TabIndex = 5;
@@ -152,9 +197,8 @@
             // btnAutoMode
             // 
             this.btnAutoMode.Enabled = false;
-            this.btnAutoMode.FlatAppearance.BorderSize = 0;
             this.btnAutoMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAutoMode.Location = new System.Drawing.Point(4, 153);
+            this.btnAutoMode.Location = new System.Drawing.Point(3, 153);
             this.btnAutoMode.Name = "btnAutoMode";
             this.btnAutoMode.Size = new System.Drawing.Size(203, 30);
             this.btnAutoMode.TabIndex = 4;
@@ -225,7 +269,6 @@
             // btnCollapseTree
             // 
             this.btnCollapseTree.Enabled = false;
-            this.btnCollapseTree.FlatAppearance.BorderSize = 0;
             this.btnCollapseTree.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCollapseTree.Location = new System.Drawing.Point(340, 82);
             this.btnCollapseTree.Name = "btnCollapseTree";
@@ -247,9 +290,8 @@
             // btnExpandTree
             // 
             this.btnExpandTree.Enabled = false;
-            this.btnExpandTree.FlatAppearance.BorderSize = 0;
             this.btnExpandTree.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExpandTree.Location = new System.Drawing.Point(213, 82);
+            this.btnExpandTree.Location = new System.Drawing.Point(216, 82);
             this.btnExpandTree.Name = "btnExpandTree";
             this.btnExpandTree.Size = new System.Drawing.Size(120, 30);
             this.btnExpandTree.TabIndex = 5;
@@ -317,6 +359,9 @@
         private System.Windows.Forms.Label lblCurrentTestPlan;
         private System.Windows.Forms.PictureBox pbForlblCurrentTestPlan;
         private System.Windows.Forms.PictureBox pbForlblSoftware;
+        private System.Windows.Forms.CheckBox cbBlocked;
+        private System.Windows.Forms.CheckBox cbFailed;
+        private System.Windows.Forms.CheckBox cbPassed;
     }
 }
 

@@ -164,7 +164,7 @@ namespace TLTCImport
             this.lblProductVersion.Name = "lblProductVersion";
             this.lblProductVersion.Size = new System.Drawing.Size(43, 17);
             this.lblProductVersion.TabIndex = 7;
-            this.lblProductVersion.Text = "v0.3.1";
+            this.lblProductVersion.Text = "v0.3.3";
             this.lblProductVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // lblhelp

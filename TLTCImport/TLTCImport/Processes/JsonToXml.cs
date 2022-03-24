@@ -17,7 +17,8 @@ namespace TLTCImport
         private string pathFile = "../../../Files/";      
 
         //Работает с файлом duration.json в папке widgets
-        public Dictionary<string, string> GetDataJson(string nameFile, ref bool jsonFileCorrect, int projectId, string projectName)
+        public Dictionary<string, string> GetDataJson(string nameFile, ref bool jsonFileCorrect, int projectId, string projectName,
+            bool cbPassed, bool cbFailed, bool cbBlocked)
         {
             var valuesCases = new Dictionary<string, string>();
 
@@ -25,17 +26,15 @@ namespace TLTCImport
 
             if (jsonFileCorrect)
             {
-                string name = "", status = "";
-
                 for (int i = 0; i < nameAndStatusTestCases.Count; i++)
-                {  
+                {
                     //Обрезаем название кейса
-                    name = nameAndStatusTestCases[i].name.Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
-                    status = nameAndStatusTestCases[i].status;
+                    string name = nameAndStatusTestCases[i].name.Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    string status = nameAndStatusTestCases[i].status;
 
-                        if (status == "passed")
+                    if (status == "passed")
                         status = "p";
-                    else if (status == "failed")
+                    else if (status == "failed" )
                         status = "f";
                     else if (status == "skipped")
                         status = "b";
@@ -43,6 +42,20 @@ namespace TLTCImport
                     valuesCases.Add(name, status);
                 }
             }
+
+            if (!(cbPassed == true && cbFailed == true && cbBlocked == true))
+            {
+                foreach (var value in valuesCases)
+                {
+                    if (cbPassed == false && value.Value == "p")
+                        valuesCases.Remove(value.Key);
+                    if (cbFailed == false && value.Value == "f")
+                        valuesCases.Remove(value.Key);
+                    if (cbBlocked == false && value.Value == "b")
+                        valuesCases.Remove(value.Key);
+                }
+            }
+
             return valuesCases;
         }
 

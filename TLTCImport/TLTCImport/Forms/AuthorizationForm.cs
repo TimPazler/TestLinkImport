@@ -21,9 +21,7 @@ namespace TLTCImport
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string apiDevKey = "bf9a98dc1791a5c7115b9e4322b4f3bc";
-
-            //apiDevKey = tbApiDevKey.Text;
+            string apiDevKey = tbApiDevKey.Text;
             lblLoginResult.Visible = false;
             Thread.Sleep(500);
             pbLoading.Visible = true;

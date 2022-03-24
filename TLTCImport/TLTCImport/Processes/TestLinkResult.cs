@@ -148,44 +148,53 @@ namespace TLTCImport
         }
 
         /// <summary>
-        /// Импортирует иформацию о прогоне в тестлинк. Если объём импортируемых данных превышает 400 КБ, они отправляются частями. 
+        /// Импортирует иформацию о прогоне в тестлинк.Если объём импортируемых данных превышает 400 КБ, они отправляются частями. Работа с xml.
         /// </summary>
-        /// <param name="importData">Импортируемые тесткейсы</param>
-        /// <param name="projectName">Название тестируемого продукта</param>
+        /// <param name = "importData" > Импортируемые тесткейсы</param>
+        /// <param name = "projectName" > Название тестируемого продукта</param>
         /// <returns></returns>
-        public static (int, bool) ImportsRunInfoInTestLink(string pathToImport, int testPlanId, Dictionary<string, string> valuesCases, string projectName)
+        //public static (int, bool) ImportsRunInfoInTestLink(string pathToImport, int testPlanId, Dictionary<string, string> valuesCases, string projectName)
+        //{
+        //    var testCaseTransferResults = (0, false);
+        //    var buildId = GetIdBuildByTestPlanId(testPlanId);
+
+        //    string testcases = File.ReadAllText(pathToImport + "TestsResults.xml");
+        //    List<string> chunks = new List<string>();
+        //    if (File.ReadAllBytes(pathToImport + "TestsResults.xml").Length >= 409600)
+        //    {
+        //        var dataDoc = XDocument.Parse(testcases);
+        //        var xmls = dataDoc.Root.Elements().ToArray();
+
+        //        for (int i = 0; i < xmls.Length; i++)
+        //        {
+        //            using (var file = File.CreateText(string.Format("Content\\xml{0}.xml", i + 1)))
+        //            {
+        //                file.Write(xmls[i].ToString());
+        //                file.Close();
+        //                testcases = File.ReadAllText($"Content\\xml{i + 1}.xml");
+        //                chunks.Add(testcases);
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        chunks.Add(testcases);
+        //    }
+        //    foreach (string chunk in chunks)
+        //    {
+        //        С крупными файлами пока не работает, но реализовано
+        //        testCaseTransferResults = ResultImport_Send(buildId, testPlanId, valuesCases, projectName);
+        //    }
+        //    return testCaseTransferResults;
+        //}
+
+        /// <summary>
+        /// Импортирует иформацию о прогоне в тестлинк поштучно.
+        /// </summary>        
+        public static (int, bool) ImportsRunInfoInTestLink(int testPlanId, Dictionary<string, string> valuesCases, string projectName)
         {
-            var testCaseTransferResults = (0, false);
-            var buildId = GetIdBuildByTestPlanId(testPlanId);
-
-            string testcases = File.ReadAllText(pathToImport + "TestsResults.xml");
-            List<string> chunks = new List<string>();
-            if (File.ReadAllBytes(pathToImport + "TestsResults.xml").Length >= 409600)
-            {
-                var dataDoc = XDocument.Parse(testcases);
-                var xmls = dataDoc.Root.Elements().ToArray();
-
-                for (int i = 0; i < xmls.Length; i++)
-                {
-                    using (var file = File.CreateText(string.Format("Content\\xml{0}.xml", i + 1))) 
-                    {
-                        file.Write(xmls[i].ToString());
-                        file.Close();
-                        testcases = File.ReadAllText($"Content\\xml{i + 1}.xml");
-                        chunks.Add(testcases);
-                    }
-                }
-            }
-            else 
-            {
-                chunks.Add(testcases);
-            }
-            foreach (string chunk in chunks) 
-            {
-                //С крупными файлами пока не работает, но реализовано                               
-                testCaseTransferResults = ResultImport_Send(buildId, testPlanId, valuesCases, projectName);                               
-            }
-            return testCaseTransferResults;
+            var buildId = GetIdBuildByTestPlanId(testPlanId);            
+            return ResultImport_Send(buildId, testPlanId, valuesCases, projectName);
         }
 
         /// <summary>
