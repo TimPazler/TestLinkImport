@@ -31,7 +31,30 @@
             this.components = new System.ComponentModel.Container();
             this.foldersIcons = new System.Windows.Forms.ImageList(this.components);
             this.MainFormMenu = new System.Windows.Forms.MenuStrip();
+            this.fileItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.referenceItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainFormStatus = new System.Windows.Forms.StatusStrip();
+            this.leftPanel = new System.Windows.Forms.Panel();
+            this.lblTestRun = new System.Windows.Forms.Label();
+            this.pbForlblTestRun = new System.Windows.Forms.PictureBox();
+            this.btnManualMode = new System.Windows.Forms.Button();
+            this.btnAutoMode = new System.Windows.Forms.Button();
+            this.lblSoftware = new System.Windows.Forms.Label();
+            this.cbProjectNames = new System.Windows.Forms.ComboBox();
+            this.cbTestPlanName = new System.Windows.Forms.ComboBox();
+            this.topPanel = new System.Windows.Forms.Panel();
+            this.lblCurrentTestPlan = new System.Windows.Forms.Label();
+            this.btnCollapseTree = new System.Windows.Forms.Button();
+            this.pbForlblCurrentTestPlan = new System.Windows.Forms.PictureBox();
+            this.btnExpandTree = new System.Windows.Forms.Button();
+            this.pbForlblSoftware = new System.Windows.Forms.PictureBox();
+            this.MainFormMenu.SuspendLayout();
+            this.leftPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbForlblTestRun)).BeginInit();
+            this.topPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbForlblCurrentTestPlan)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbForlblSoftware)).BeginInit();
             this.SuspendLayout();
             // 
             // foldersIcons
@@ -42,32 +65,231 @@
             // 
             // MainFormMenu
             // 
+            this.MainFormMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileItem,
+            this.referenceItem,
+            this.aboutItem});
             this.MainFormMenu.Location = new System.Drawing.Point(0, 0);
             this.MainFormMenu.Name = "MainFormMenu";
-            this.MainFormMenu.Size = new System.Drawing.Size(1075, 24);
+            this.MainFormMenu.Size = new System.Drawing.Size(1148, 24);
             this.MainFormMenu.TabIndex = 0;
             this.MainFormMenu.Text = "menuStrip1";
             // 
+            // fileItem
+            // 
+            this.fileItem.Name = "fileItem";
+            this.fileItem.Size = new System.Drawing.Size(130, 20);
+            this.fileItem.Text = "Загрузить json файл";
+            // 
+            // referenceItem
+            // 
+            this.referenceItem.Name = "referenceItem";
+            this.referenceItem.Size = new System.Drawing.Size(65, 20);
+            this.referenceItem.Text = "Справка";
+            // 
+            // aboutItem
+            // 
+            this.aboutItem.Name = "aboutItem";
+            this.aboutItem.Size = new System.Drawing.Size(94, 20);
+            this.aboutItem.Text = "О программе";
+            // 
             // MainFormStatus
             // 
-            this.MainFormStatus.Location = new System.Drawing.Point(0, 608);
+            this.MainFormStatus.Location = new System.Drawing.Point(0, 640);
             this.MainFormStatus.Name = "MainFormStatus";
-            this.MainFormStatus.Size = new System.Drawing.Size(1075, 22);
+            this.MainFormStatus.Size = new System.Drawing.Size(1148, 22);
             this.MainFormStatus.TabIndex = 1;
             this.MainFormStatus.Text = "statusStrip1";
+            // 
+            // leftPanel
+            // 
+            this.leftPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.leftPanel.BackColor = System.Drawing.Color.Silver;
+            this.leftPanel.Controls.Add(this.lblTestRun);
+            this.leftPanel.Controls.Add(this.pbForlblTestRun);
+            this.leftPanel.Controls.Add(this.btnManualMode);
+            this.leftPanel.Controls.Add(this.btnAutoMode);
+            this.leftPanel.Location = new System.Drawing.Point(0, 24);
+            this.leftPanel.Name = "leftPanel";
+            this.leftPanel.Size = new System.Drawing.Size(210, 1357);
+            this.leftPanel.TabIndex = 2;
+            // 
+            // lblTestRun
+            // 
+            this.lblTestRun.AutoSize = true;
+            this.lblTestRun.BackColor = System.Drawing.Color.Gray;
+            this.lblTestRun.ForeColor = System.Drawing.Color.White;
+            this.lblTestRun.Location = new System.Drawing.Point(5, 123);
+            this.lblTestRun.Name = "lblTestRun";
+            this.lblTestRun.Size = new System.Drawing.Size(90, 15);
+            this.lblTestRun.TabIndex = 0;
+            this.lblTestRun.Text = "Прогон тестов:";
+            this.lblTestRun.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pbForlblTestRun
+            // 
+            this.pbForlblTestRun.BackColor = System.Drawing.Color.Gray;
+            this.pbForlblTestRun.Location = new System.Drawing.Point(3, 117);
+            this.pbForlblTestRun.Name = "pbForlblTestRun";
+            this.pbForlblTestRun.Size = new System.Drawing.Size(204, 30);
+            this.pbForlblTestRun.TabIndex = 4;
+            this.pbForlblTestRun.TabStop = false;
+            // 
+            // btnManualMode
+            // 
+            this.btnManualMode.Enabled = false;
+            this.btnManualMode.FlatAppearance.BorderSize = 0;
+            this.btnManualMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnManualMode.Location = new System.Drawing.Point(3, 189);
+            this.btnManualMode.Name = "btnManualMode";
+            this.btnManualMode.Size = new System.Drawing.Size(204, 30);
+            this.btnManualMode.TabIndex = 5;
+            this.btnManualMode.Text = "Ручной режим";
+            this.btnManualMode.UseVisualStyleBackColor = true;
+            this.btnManualMode.Click += new System.EventHandler(this.btnManualMode_Click);
+            // 
+            // btnAutoMode
+            // 
+            this.btnAutoMode.Enabled = false;
+            this.btnAutoMode.FlatAppearance.BorderSize = 0;
+            this.btnAutoMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAutoMode.Location = new System.Drawing.Point(4, 153);
+            this.btnAutoMode.Name = "btnAutoMode";
+            this.btnAutoMode.Size = new System.Drawing.Size(203, 30);
+            this.btnAutoMode.TabIndex = 4;
+            this.btnAutoMode.Text = "Авто режим";
+            this.btnAutoMode.UseVisualStyleBackColor = true;
+            this.btnAutoMode.Click += new System.EventHandler(this.btnAutoMode_Click);
+            // 
+            // lblSoftware
+            // 
+            this.lblSoftware.AutoSize = true;
+            this.lblSoftware.BackColor = System.Drawing.Color.Gray;
+            this.lblSoftware.ForeColor = System.Drawing.Color.White;
+            this.lblSoftware.Location = new System.Drawing.Point(5, 10);
+            this.lblSoftware.Name = "lblSoftware";
+            this.lblSoftware.Size = new System.Drawing.Size(139, 15);
+            this.lblSoftware.TabIndex = 0;
+            this.lblSoftware.Text = "Программный продукт:";
+            this.lblSoftware.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cbProjectNames
+            // 
+            this.cbProjectNames.FormattingEnabled = true;
+            this.cbProjectNames.Location = new System.Drawing.Point(3, 34);
+            this.cbProjectNames.Name = "cbProjectNames";
+            this.cbProjectNames.Size = new System.Drawing.Size(204, 23);
+            this.cbProjectNames.TabIndex = 2;
+            this.cbProjectNames.SelectedIndexChanged += new System.EventHandler(this.cbProjectNames_SelectedIndexChanged);
+            // 
+            // cbTestPlanName
+            // 
+            this.cbTestPlanName.Enabled = false;
+            this.cbTestPlanName.FormattingEnabled = true;
+            this.cbTestPlanName.Location = new System.Drawing.Point(3, 89);
+            this.cbTestPlanName.Name = "cbTestPlanName";
+            this.cbTestPlanName.Size = new System.Drawing.Size(204, 23);
+            this.cbTestPlanName.TabIndex = 3;
+            this.cbTestPlanName.SelectedIndexChanged += new System.EventHandler(this.cbTestPlanName_SelectedIndexChanged);
+            // 
+            // topPanel
+            // 
+            this.topPanel.BackColor = System.Drawing.Color.Silver;
+            this.topPanel.Controls.Add(this.lblSoftware);
+            this.topPanel.Controls.Add(this.lblCurrentTestPlan);
+            this.topPanel.Controls.Add(this.btnCollapseTree);
+            this.topPanel.Controls.Add(this.pbForlblCurrentTestPlan);
+            this.topPanel.Controls.Add(this.btnExpandTree);
+            this.topPanel.Controls.Add(this.pbForlblSoftware);
+            this.topPanel.Controls.Add(this.cbTestPlanName);
+            this.topPanel.Controls.Add(this.cbProjectNames);
+            this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.topPanel.Location = new System.Drawing.Point(0, 24);
+            this.topPanel.Name = "topPanel";
+            this.topPanel.Size = new System.Drawing.Size(1148, 115);
+            this.topPanel.TabIndex = 3;
+            // 
+            // lblCurrentTestPlan
+            // 
+            this.lblCurrentTestPlan.AutoSize = true;
+            this.lblCurrentTestPlan.BackColor = System.Drawing.Color.Gray;
+            this.lblCurrentTestPlan.ForeColor = System.Drawing.Color.White;
+            this.lblCurrentTestPlan.Location = new System.Drawing.Point(5, 65);
+            this.lblCurrentTestPlan.Name = "lblCurrentTestPlan";
+            this.lblCurrentTestPlan.Size = new System.Drawing.Size(117, 15);
+            this.lblCurrentTestPlan.TabIndex = 0;
+            this.lblCurrentTestPlan.Text = "Текущий тест-план:";
+            this.lblCurrentTestPlan.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnCollapseTree
+            // 
+            this.btnCollapseTree.Enabled = false;
+            this.btnCollapseTree.FlatAppearance.BorderSize = 0;
+            this.btnCollapseTree.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCollapseTree.Location = new System.Drawing.Point(340, 82);
+            this.btnCollapseTree.Name = "btnCollapseTree";
+            this.btnCollapseTree.Size = new System.Drawing.Size(120, 30);
+            this.btnCollapseTree.TabIndex = 6;
+            this.btnCollapseTree.Text = "Закрыть дерево";
+            this.btnCollapseTree.UseVisualStyleBackColor = true;
+            this.btnCollapseTree.Click += new System.EventHandler(this.btnCollapseTree_Click);
+            // 
+            // pbForlblCurrentTestPlan
+            // 
+            this.pbForlblCurrentTestPlan.BackColor = System.Drawing.Color.Gray;
+            this.pbForlblCurrentTestPlan.Location = new System.Drawing.Point(3, 58);
+            this.pbForlblCurrentTestPlan.Name = "pbForlblCurrentTestPlan";
+            this.pbForlblCurrentTestPlan.Size = new System.Drawing.Size(204, 30);
+            this.pbForlblCurrentTestPlan.TabIndex = 5;
+            this.pbForlblCurrentTestPlan.TabStop = false;
+            // 
+            // btnExpandTree
+            // 
+            this.btnExpandTree.Enabled = false;
+            this.btnExpandTree.FlatAppearance.BorderSize = 0;
+            this.btnExpandTree.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExpandTree.Location = new System.Drawing.Point(213, 82);
+            this.btnExpandTree.Name = "btnExpandTree";
+            this.btnExpandTree.Size = new System.Drawing.Size(120, 30);
+            this.btnExpandTree.TabIndex = 5;
+            this.btnExpandTree.Text = "Раскрыть дерево";
+            this.btnExpandTree.UseVisualStyleBackColor = true;
+            this.btnExpandTree.Click += new System.EventHandler(this.btnExpandTree_Click);
+            // 
+            // pbForlblSoftware
+            // 
+            this.pbForlblSoftware.BackColor = System.Drawing.Color.Gray;
+            this.pbForlblSoftware.Location = new System.Drawing.Point(3, 3);
+            this.pbForlblSoftware.Name = "pbForlblSoftware";
+            this.pbForlblSoftware.Size = new System.Drawing.Size(204, 30);
+            this.pbForlblSoftware.TabIndex = 6;
+            this.pbForlblSoftware.TabStop = false;
             // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1075, 630);
+            this.ClientSize = new System.Drawing.Size(1148, 662);
+            this.Controls.Add(this.topPanel);
             this.Controls.Add(this.MainFormStatus);
             this.Controls.Add(this.MainFormMenu);
+            this.Controls.Add(this.leftPanel);
             this.ForeColor = System.Drawing.Color.White;
             this.MainMenuStrip = this.MainFormMenu;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = " ";
+            this.Tag = "";
+            this.Text = "Перенос результатов прогона в TestLink";
+            this.MainFormMenu.ResumeLayout(false);
+            this.MainFormMenu.PerformLayout();
+            this.leftPanel.ResumeLayout(false);
+            this.leftPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbForlblTestRun)).EndInit();
+            this.topPanel.ResumeLayout(false);
+            this.topPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbForlblCurrentTestPlan)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbForlblSoftware)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -78,6 +300,23 @@
         private System.Windows.Forms.ImageList foldersIcons;
         private System.Windows.Forms.MenuStrip MainFormMenu;
         private System.Windows.Forms.StatusStrip MainFormStatus;
+        private System.Windows.Forms.Panel leftPanel;
+        private System.Windows.Forms.Label lblSoftware;
+        private System.Windows.Forms.ComboBox cbProjectNames;
+        private System.Windows.Forms.ComboBox cbTestPlanName;
+        private System.Windows.Forms.Panel topPanel;
+        private System.Windows.Forms.Button btnManualMode;
+        private System.Windows.Forms.Button btnAutoMode;
+        private System.Windows.Forms.Button btnCollapseTree;
+        private System.Windows.Forms.Button btnExpandTree;
+        private System.Windows.Forms.ToolStripMenuItem fileItem;
+        private System.Windows.Forms.ToolStripMenuItem referenceItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutItem;
+        private System.Windows.Forms.Label lblTestRun;
+        private System.Windows.Forms.PictureBox pbForlblTestRun;
+        private System.Windows.Forms.Label lblCurrentTestPlan;
+        private System.Windows.Forms.PictureBox pbForlblCurrentTestPlan;
+        private System.Windows.Forms.PictureBox pbForlblSoftware;
     }
 }
 

@@ -21,23 +21,14 @@ using TLTCImport.FolderStorageTestLink;
 namespace TLTCImport
 {
     public partial class MainForm : Form
-    {
-        private Panel leftPanel;
-        private Panel topPanel;
-
-        private Label lblSoftware, lblCurrentTestPlan, lblTestRun;
-        public Label lblMessageAddJson, lblMessageRecognitionJson;
+    {      
         public Label lblMessageDataTransferXmlFile, lblAddCasesTestlink;
         public Label lblNotAllTestCasesRecognized;
+        public Label lblMessageAddJson, lblMessageRecognitionJson;
 
         public UcTreeView treeView;
         public ImageList imageList;
         public TreeNode tNSubfolder, tNTestCase;
-
-        private Button btnExpandTree, btnCollapseTree;
-        private Button btnAutoMode, btnManualMode;
-
-        private ComboBox cbProjectNames, cbTestPlanName;
 
         private int projectId, testPlanId;
         private string projectName, testPlanName;
@@ -55,134 +46,24 @@ namespace TLTCImport
 
             this.Closing += MainForm_Closing;
 
-            var font = new Font("Century Gothic", 12);
-
-            //Панель слева
-            leftPanel = new Panel();
-            leftPanel.Dock = DockStyle.Left;
-            leftPanel.Size = new Size(210, leftPanel.Size.Height);
-            leftPanel.BackColor = Color.DarkGray;
-
-            //Панель справа сверху
-            topPanel = new Panel();
-            topPanel.Dock = DockStyle.Top;
-            topPanel.BackColor = Color.DarkGray;
-
-            //Текст Программный продукт
-            lblSoftware = new Label();
-            lblSoftware.BackColor = Color.Gray;
-            lblSoftware.Name = "lblSoftware";
-            lblSoftware.Text = "Программный продукт:";
-            lblSoftware.Size = new Size(200, 30);
-            lblSoftware.Location = new Point(5, 30);
-            lblSoftware.TextAlign = ContentAlignment.MiddleLeft;
-            Controls.Add(lblSoftware);
-
             //Комбобокс для выбора программного продукта
-            cbProjectNames = new ComboBox();
-            cbProjectNames.Size = new Size(200, 30);
-            cbProjectNames.Location = new Point(5, 60);
-            cbProjectNames.DropDownStyle = ComboBoxStyle.DropDown;
-            cbProjectNames.SelectedIndexChanged += cbProjectNames_SelectedIndexChanged;
             SetProjectNames(cbProjectNames);
-            Controls.Add(cbProjectNames);
-
-            //Текст Текущий тест-план:
-            lblCurrentTestPlan = new Label();
-            lblCurrentTestPlan.BackColor = Color.Gray;
-            lblCurrentTestPlan.Name = "lblCurrentTestPlan";
-            lblCurrentTestPlan.Text = "Текущий тест-план: ";
-            lblCurrentTestPlan.Size = new Size(200, 30);
-            lblCurrentTestPlan.Location = new Point(5, 85);
-            lblCurrentTestPlan.TextAlign = ContentAlignment.MiddleLeft;
-            Controls.Add(lblCurrentTestPlan);
-
-            //Комбобокс для выбора Текущего тестового-плана:
-            cbTestPlanName = new ComboBox();
-            cbTestPlanName.Size = new Size(200, 30);
-            cbTestPlanName.Location = new Point(5, 115);
-            cbTestPlanName.DropDownStyle = ComboBoxStyle.DropDown;
-            cbTestPlanName.SelectedIndexChanged += cbTestPlanName_SelectedIndexChanged;
-            cbTestPlanName.Enabled = false;
-            Controls.Add(cbTestPlanName);
-
-            //Текст Прогон тестов:
-            lblTestRun = new Label();
-            lblTestRun.BackColor = Color.Gray;
-            lblTestRun.Name = "lblTestRun";
-            lblTestRun.Text = "Прогон тестов:";
-            lblTestRun.Size = new Size(200, 30);
-            lblTestRun.Location = new Point(5, 145);
-            lblTestRun.TextAlign = ContentAlignment.MiddleLeft;
-            Controls.Add(lblTestRun);
-
-            //Кнопка Автоматизированный режим
-            btnAutoMode = new Button();
-            btnAutoMode.FlatStyle = FlatStyle.Flat;
-            btnAutoMode.BackColor = Color.DarkGray;
-            btnAutoMode.FlatAppearance.BorderSize = 0;
-            btnAutoMode.Name = "AutoMode";
-            btnAutoMode.Size = new Size(200, 30);
-            btnAutoMode.Location = new Point(5, 175);
-            btnAutoMode.Text = "Авто режим";
-            btnAutoMode.Click += new EventHandler(btnAutoMode_Click);
-            btnAutoMode.Enabled = false;
-            Controls.Add(btnAutoMode);
-
-            //Кнопка Ручной режим
-            btnManualMode = new Button();
-            btnManualMode.FlatStyle = FlatStyle.Flat;
-            btnManualMode.BackColor = Color.DarkGray;
-            btnManualMode.FlatAppearance.BorderSize = 0;
-            btnManualMode.Name = "ManualMode";
-            btnManualMode.Size = new Size(200, 30);
-            btnManualMode.Location = new Point(5, 205);
-            btnManualMode.Text = "Ручной режим";
-            btnManualMode.Click += new EventHandler(btnManualMode_Click);
-            btnManualMode.Enabled = false;
-            Controls.Add(btnManualMode);
-
-            //Кнопка Раскрыть дерево
-            btnExpandTree = new Button();
-            btnExpandTree.FlatStyle = FlatStyle.Flat;
-            btnExpandTree.BackColor = Color.DarkGray;
-            btnExpandTree.FlatAppearance.BorderSize = 0;
-            btnExpandTree.Name = "UncoverTree";
-            btnExpandTree.Size = new Size(120, 30);
-            btnExpandTree.Location = new Point(210, 85);
-            btnExpandTree.Text = "Раскрыть дерево";
-            btnExpandTree.Click += new EventHandler(btnExpandTree_Click);
-            btnExpandTree.Enabled = false;
-            Controls.Add(btnExpandTree);
-
-            //Кнопка Закрыть дерево
-            btnCollapseTree = new Button();
-            btnCollapseTree.FlatStyle = FlatStyle.Flat;
-            btnCollapseTree.BackColor = Color.DarkGray;
-            btnCollapseTree.FlatAppearance.BorderSize = 0;
-            btnCollapseTree.Name = "UncoverTree";
-            btnCollapseTree.Size = new Size(120, 30);
-            btnCollapseTree.Location = new Point(330, 85);
-            btnCollapseTree.Text = "Закрыть дерево";
-            btnCollapseTree.Click += new EventHandler(btnCollapseTree_Click);
-            btnCollapseTree.Enabled = false;
-            Controls.Add(btnCollapseTree);
 
             //Текст отображающий сообщение о добавлении файла
             lblMessageAddJson = new Label();
-            lblMessageAddJson.BackColor = Color.DarkGray;
+            lblMessageAddJson.BackColor = Color.Silver;
             lblMessageAddJson.Size = new Size(200, 50);
-            lblMessageAddJson.Location = new Point(5, 245);
+            lblMessageAddJson.Location = new Point(5, 225);
             lblMessageAddJson.TextAlign = ContentAlignment.MiddleCenter;
-            Controls.Add(lblMessageAddJson);
+            leftPanel.Controls.Add(lblMessageAddJson);
 
             //Текст отображающий сообщение о распознании файла Json
             lblMessageRecognitionJson = new Label();
-            lblMessageRecognitionJson.BackColor = Color.DarkGray;
+            lblMessageRecognitionJson.BackColor = Color.Silver;
             lblMessageRecognitionJson.Size = new Size(200, 50);
-            lblMessageRecognitionJson.Location = new Point(5, 285);
+            lblMessageRecognitionJson.Location = new Point(5, 265);
             lblMessageRecognitionJson.TextAlign = ContentAlignment.MiddleCenter;
-            Controls.Add(lblMessageRecognitionJson);
+            leftPanel.Controls.Add(lblMessageRecognitionJson);
 
             //пока не используется (для вывода сообщения на экран )
             ////Текст отображающий сообщение что Данные перенесены в xml файл
@@ -195,21 +76,21 @@ namespace TLTCImport
 
             //Текст отображающий сообщение что Результаты прогона перенесены в TestLink
             lblAddCasesTestlink = new Label();
-            lblAddCasesTestlink.BackColor = Color.DarkGray;
+            lblAddCasesTestlink.BackColor = Color.Silver;
             lblAddCasesTestlink.Size = new Size(200, 100);
-            lblAddCasesTestlink.Location = new Point(5, 325);
+            lblAddCasesTestlink.Location = new Point(5, 305);
             lblAddCasesTestlink.TextAlign = ContentAlignment.MiddleCenter;
-            Controls.Add(lblAddCasesTestlink);
+            leftPanel.Controls.Add(lblAddCasesTestlink);
 
             //Текст отображающий сообщение о том почему не все кейсы были распознаны
             lblNotAllTestCasesRecognized = new Label();
-            lblNotAllTestCasesRecognized.BackColor = Color.DarkGray;
+            lblNotAllTestCasesRecognized.BackColor = Color.Silver;
             lblNotAllTestCasesRecognized.Font = new Font(Label.DefaultFont, FontStyle.Bold);
             lblNotAllTestCasesRecognized.ForeColor = Color.IndianRed;
             lblNotAllTestCasesRecognized.Size = new Size(200, 200);
-            lblNotAllTestCasesRecognized.Location = new Point(5, 375);
+            lblNotAllTestCasesRecognized.Location = new Point(5, 355);
             lblNotAllTestCasesRecognized.TextAlign = ContentAlignment.MiddleCenter;
-            Controls.Add(lblNotAllTestCasesRecognized);
+            leftPanel.Controls.Add(lblNotAllTestCasesRecognized);
 
             //Дерево, содеражащее в себе все папки и тест кейсы            
             treeView = new UcTreeView();
@@ -219,29 +100,13 @@ namespace TLTCImport
             treeView.ImageList = imageList;
             treeView.ImageIndex = IconFoldersAndSubfolders;
             treeView.BorderStyle = BorderStyle.None;
-            treeView.Location = new Point(220, 135);
+            treeView.Location = new Point(220, 145);
             treeView.Size = new Size(850, 470);
 
             //Создание пустой папки дерева
             tNSubfolder = new TreeNode("Пусто");
             treeView.Nodes.Add(tNSubfolder);
-            Controls.Add(treeView);
-
-            //Добавление панелей на экран
-            Controls.Add(leftPanel);
-            Controls.Add(topPanel);
-
-            //Меню
-            ToolStripMenuItem fileItem = new ToolStripMenuItem("Загрузить json файл");
-            MainFormMenu.Items.Add(fileItem);
-
-            ToolStripMenuItem aboutItem1 = new ToolStripMenuItem("Справка");
-            MainFormMenu.Items.Add(aboutItem1);
-
-            ToolStripMenuItem aboutItem = new ToolStripMenuItem("О программе");
-            aboutItem.Click += aboutItem_Click;
-            MainFormMenu.Items.Add(aboutItem);
-            Controls.Add(MainFormMenu);
+            Controls.Add(treeView);                    
         }
 
         private void TreeCreate(Folder[] folders)
@@ -353,13 +218,17 @@ namespace TLTCImport
         private void btnManualMode_Click(object sender, EventArgs e)
         {   
             //Перед ручным режимом блокируем все элементы
-            BlockAllElementsMainForm();
+            BlockAllElementsMainForm();            
 
             //Окно загрузки
             LoadingScreen OpenLoadForm = new LoadingScreen("Получение информации о папках..");
             OpenLoadForm.Location = Location;
             OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
+            //OpenLoadForm.Size = this.Size;
             OpenLoadForm.FormClosing += delegate { Show(); };
+            //OpenLoadForm.FormBorderStyle = FormBorderStyle.None;
+            //OpenLoadForm.BackColor = Color.Black;//цвет фона
+            //OpenLoadForm.Opacity = 0.4;
             OpenLoadForm.Show();
 
             //Постройка дерева
@@ -379,7 +248,6 @@ namespace TLTCImport
         {
             treeView.CollapseAll();
         }
-
 
         private void btnAutoMode_Click(object sender, EventArgs e)
         {
@@ -485,7 +353,7 @@ namespace TLTCImport
             lblMessageAddJson.ForeColor = Color.Green;
             lblMessageAddJson.Text = "✔ Файл \"" + nameFile + ".json" + "\" успешно добавлен!";
         }
-
+     
         private void MessagejsonRecognize()
         {
             lblMessageRecognitionJson.Font = new Font(DefaultFont, FontStyle.Bold);
@@ -524,10 +392,10 @@ namespace TLTCImport
             lblAddCasesTestlink.Text = $"✔ Информация о прогоне успешно добавлена ​​в Testlink!" +
                 $" \r\n Тестов перенесено {countSubmittedЕestСases} из {countTestCasesJenkins}, имеющихся в json файле.";
             if (countSubmittedЕestСases < countTestCasesJenkins)
-                lblNotAllTestCasesRecognized.Text = "Причина по которой не все тест кейсы были отправлены, возможно, связана с тем, что " +
-                     "названия тестов в Jenkins отличаются от названий кейсов в TestLink!";
+                lblNotAllTestCasesRecognized.Text = "Не все тест кейсы были отправлены? \r\n" +
+                     "Возможно, названия кейсов в Jenkins отличаются от названий в TestLink!";
         }
-
+        
         private void BlockAllElementsMainForm()
         {
             MainFormMenu.Enabled = false;
