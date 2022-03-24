@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.foldersIcons = new System.Windows.Forms.ImageList(this.components);
             this.MainFormMenu = new System.Windows.Forms.MenuStrip();
-            this.fileItem = new System.Windows.Forms.ToolStripMenuItem();
             this.referenceItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainFormStatus = new System.Windows.Forms.StatusStrip();
@@ -69,7 +68,6 @@
             // MainFormMenu
             // 
             this.MainFormMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileItem,
             this.referenceItem,
             this.aboutItem});
             this.MainFormMenu.Location = new System.Drawing.Point(0, 0);
@@ -77,12 +75,6 @@
             this.MainFormMenu.Size = new System.Drawing.Size(1148, 24);
             this.MainFormMenu.TabIndex = 0;
             this.MainFormMenu.Text = "menuStrip1";
-            // 
-            // fileItem
-            // 
-            this.fileItem.Name = "fileItem";
-            this.fileItem.Size = new System.Drawing.Size(130, 20);
-            this.fileItem.Text = "Загрузить json файл";
             // 
             // referenceItem
             // 
@@ -351,7 +343,6 @@
         private System.Windows.Forms.Button btnAutoMode;
         private System.Windows.Forms.Button btnCollapseTree;
         private System.Windows.Forms.Button btnExpandTree;
-        private System.Windows.Forms.ToolStripMenuItem fileItem;
         private System.Windows.Forms.ToolStripMenuItem referenceItem;
         private System.Windows.Forms.ToolStripMenuItem aboutItem;
         private System.Windows.Forms.Label lblTestRun;

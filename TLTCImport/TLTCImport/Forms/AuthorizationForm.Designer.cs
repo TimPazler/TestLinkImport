@@ -34,7 +34,7 @@ namespace TLTCImport
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AuthorizationForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.fileItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.instruction = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,7 +58,7 @@ namespace TLTCImport
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileItem,
+            this.instruction,
             this.aboutItem,
             this.toolStripMenuItem1,
             this.toolStripMenuItem2});
@@ -68,11 +68,12 @@ namespace TLTCImport
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // fileItem
+            // instruction
             // 
-            this.fileItem.Name = "fileItem";
-            this.fileItem.Size = new System.Drawing.Size(116, 20);
-            this.fileItem.Text = "Где взять Api Key?";
+            this.instruction.Name = "instruction";
+            this.instruction.Size = new System.Drawing.Size(116, 20);
+            this.instruction.Text = "Где взять Api Key?";
+            this.instruction.Click += new System.EventHandler(this.instruction_Click);
             // 
             // aboutItem
             // 
@@ -283,7 +284,7 @@ namespace TLTCImport
         private System.Windows.Forms.Label lblhelp;
         private System.Windows.Forms.Label lblProductVersion;
         private System.Windows.Forms.LinkLabel llHelp;
-        private System.Windows.Forms.ToolStripMenuItem fileItem;
+        private System.Windows.Forms.ToolStripMenuItem instruction;
         private System.Windows.Forms.ToolStripMenuItem aboutItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;

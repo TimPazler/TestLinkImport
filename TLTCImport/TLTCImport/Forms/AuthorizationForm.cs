@@ -3,14 +3,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using TLTCImport.Forms;
 
 namespace TLTCImport
 {
     public partial class AuthorizationForm : Form
     {
-        public static string UrlTestLink = "";
-
-        //Добавить поле для указания url тестлинка
         public AuthorizationForm()
         {
             InitializeComponent();                                                                        
@@ -23,7 +21,6 @@ namespace TLTCImport
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            //string urlTestLink = "http://93.170.52.203:80";
             string apiDevKey = tbApiDevKey.Text;
             string urlTestLink = tbUrlTestLink.Text;
 
@@ -48,6 +45,12 @@ namespace TLTCImport
                 pbLoading.Visible = false;
                 lblLoginResult.Visible = true;
             }            
-        }       
+        }
+
+        private void instruction_Click(object sender, EventArgs e)
+        {
+            var frm = new Instruction();
+            frm.ShowDialog();
+        }
     }
 }
