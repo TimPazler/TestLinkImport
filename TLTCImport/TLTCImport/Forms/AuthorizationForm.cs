@@ -7,7 +7,9 @@ using System.Windows.Forms;
 namespace TLTCImport
 {
     public partial class AuthorizationForm : Form
-    {       
+    {
+        public static string UrlTestLink = "";
+
         //Добавить поле для указания url тестлинка
         public AuthorizationForm()
         {
@@ -21,11 +23,14 @@ namespace TLTCImport
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            //string urlTestLink = "http://93.170.52.203:80";
             string apiDevKey = tbApiDevKey.Text;
+            string urlTestLink = tbUrlTestLink.Text;
+
             lblLoginResult.Visible = false;
             Thread.Sleep(500);
             pbLoading.Visible = true;
-            if (TestLinkResult.Authorization(apiDevKey))
+            if (TestLinkResult.Authorization(urlTestLink, apiDevKey))
             {
                 pbLoading.Visible = false;
                 lblLoginResult.Visible = false;

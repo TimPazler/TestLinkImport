@@ -16,17 +16,15 @@ namespace TLTCImport
 
     public static class TestLinkResult
     {
-        private static string baseUrl = "http://93.170.52.203:80";
-
         private static string CSRFName = "";
         private static string CSRFToken = "";
-        
+
         //Просто рандомный набор символов, можно указать что угодно
         private static string WebKitFormBoundary = "WebKitFormBoundarywnCYxHgmP97d3sQW";
 
         public static TestLink testLinkApi;
 
-        private static RestClient ClientTl = new RestClient(baseUrl)
+        private static RestClient ClientTl = new RestClient()
         {
             FollowRedirects = true,
             CookieContainer = new CookieContainer()
@@ -38,10 +36,10 @@ namespace TLTCImport
             public string resultRun;
         }
 
-        public static bool Authorization(string apiDevKey)
+        public static bool Authorization(string urlTestLink, string apiDevKey)
         {
             //Получение нужных данных для входа в TestLink
-            var request = new RestRequest("/login.php", Method.GET);
+            var request = new RestRequest(urlTestLink + "login.php", Method.GET);
             var response = ClientTl.Execute(request);
             Console.WriteLine(response.ErrorException + " " + response.ErrorMessage);
 
@@ -72,7 +70,7 @@ namespace TLTCImport
             if (string.IsNullOrEmpty(apiDevKey))
                 return false;
             else
-                testLinkApi = new TestLink(apiDevKey, baseUrl + "/lib/api/xmlrpc/v1/xmlrpc.php");
+                testLinkApi = new TestLink(apiDevKey, urlTestLink + "/lib/api/xmlrpc/v1/xmlrpc.php");
 
             try
             {

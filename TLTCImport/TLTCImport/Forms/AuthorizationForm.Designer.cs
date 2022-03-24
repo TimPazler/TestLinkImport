@@ -37,6 +37,7 @@ namespace TLTCImport
             this.fileItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.btnLogin = new System.Windows.Forms.Button();
             this.lbApiKey = new System.Windows.Forms.Label();
             this.tbApiDevKey = new System.Windows.Forms.TextBox();
@@ -46,6 +47,9 @@ namespace TLTCImport
             this.lblProductVersion = new System.Windows.Forms.Label();
             this.lblhelp = new System.Windows.Forms.Label();
             this.llHelp = new System.Windows.Forms.LinkLabel();
+            this.tbUrlTestLink = new System.Windows.Forms.TextBox();
+            this.lbUrlTestLink = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
@@ -56,10 +60,11 @@ namespace TLTCImport
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileItem,
             this.aboutItem,
-            this.toolStripMenuItem1});
+            this.toolStripMenuItem1,
+            this.toolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(305, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(284, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -80,14 +85,19 @@ namespace TLTCImport
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(12, 20);
             // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(12, 20);
+            // 
             // btnLogin
             // 
-            this.btnLogin.BackColor = System.Drawing.Color.Gray;
+            this.btnLogin.BackColor = System.Drawing.Color.Silver;
             this.btnLogin.FlatAppearance.BorderSize = 0;
             this.btnLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLogin.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btnLogin.ForeColor = System.Drawing.Color.Black;
-            this.btnLogin.Location = new System.Drawing.Point(100, 168);
+            this.btnLogin.Location = new System.Drawing.Point(87, 271);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(105, 30);
             this.btnLogin.TabIndex = 1;
@@ -101,7 +111,7 @@ namespace TLTCImport
             this.lbApiKey.BackColor = System.Drawing.Color.Transparent;
             this.lbApiKey.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lbApiKey.ForeColor = System.Drawing.Color.Black;
-            this.lbApiKey.Location = new System.Drawing.Point(88, 109);
+            this.lbApiKey.Location = new System.Drawing.Point(11, 205);
             this.lbApiKey.Name = "lbApiKey";
             this.lbApiKey.Size = new System.Drawing.Size(142, 21);
             this.lbApiKey.TabIndex = 2;
@@ -112,17 +122,17 @@ namespace TLTCImport
             // 
             this.tbApiDevKey.BackColor = System.Drawing.Color.WhiteSmoke;
             this.tbApiDevKey.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.tbApiDevKey.Location = new System.Drawing.Point(80, 133);
+            this.tbApiDevKey.Location = new System.Drawing.Point(11, 229);
             this.tbApiDevKey.Name = "tbApiDevKey";
             this.tbApiDevKey.PasswordChar = '*';
-            this.tbApiDevKey.Size = new System.Drawing.Size(150, 29);
+            this.tbApiDevKey.Size = new System.Drawing.Size(261, 29);
             this.tbApiDevKey.TabIndex = 3;
             this.tbApiDevKey.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // pictureBox
             // 
             this.pictureBox.Image = global::TLTCImport.Properties.Resources.TestlinkMini;
-            this.pictureBox.Location = new System.Drawing.Point(58, 41);
+            this.pictureBox.Location = new System.Drawing.Point(41, 38);
             this.pictureBox.Name = "pictureBox";
             this.pictureBox.Size = new System.Drawing.Size(200, 65);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -132,7 +142,7 @@ namespace TLTCImport
             // pbLoading
             // 
             this.pbLoading.Image = ((System.Drawing.Image)(resources.GetObject("pbLoading.Image")));
-            this.pbLoading.Location = new System.Drawing.Point(139, 204);
+            this.pbLoading.Location = new System.Drawing.Point(128, 307);
             this.pbLoading.Name = "pbLoading";
             this.pbLoading.Size = new System.Drawing.Size(25, 25);
             this.pbLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -146,7 +156,7 @@ namespace TLTCImport
             this.lblLoginResult.BackColor = System.Drawing.Color.Transparent;
             this.lblLoginResult.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblLoginResult.ForeColor = System.Drawing.Color.Black;
-            this.lblLoginResult.Location = new System.Drawing.Point(58, 208);
+            this.lblLoginResult.Location = new System.Drawing.Point(41, 311);
             this.lblLoginResult.Name = "lblLoginResult";
             this.lblLoginResult.Size = new System.Drawing.Size(200, 21);
             this.lblLoginResult.TabIndex = 6;
@@ -160,11 +170,11 @@ namespace TLTCImport
             this.lblProductVersion.BackColor = System.Drawing.Color.Transparent;
             this.lblProductVersion.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblProductVersion.ForeColor = System.Drawing.Color.Gray;
-            this.lblProductVersion.Location = new System.Drawing.Point(262, 249);
+            this.lblProductVersion.Location = new System.Drawing.Point(229, 345);
             this.lblProductVersion.Name = "lblProductVersion";
             this.lblProductVersion.Size = new System.Drawing.Size(43, 17);
             this.lblProductVersion.TabIndex = 7;
-            this.lblProductVersion.Text = "v0.3.3";
+            this.lblProductVersion.Text = "v0.3.4";
             this.lblProductVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // lblhelp
@@ -173,7 +183,7 @@ namespace TLTCImport
             this.lblhelp.BackColor = System.Drawing.Color.Transparent;
             this.lblhelp.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblhelp.ForeColor = System.Drawing.Color.Black;
-            this.lblhelp.Location = new System.Drawing.Point(12, 249);
+            this.lblhelp.Location = new System.Drawing.Point(11, 345);
             this.lblhelp.Name = "lblhelp";
             this.lblhelp.Size = new System.Drawing.Size(80, 17);
             this.lblhelp.TabIndex = 8;
@@ -184,7 +194,7 @@ namespace TLTCImport
             // 
             this.llHelp.AutoSize = true;
             this.llHelp.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.llHelp.Location = new System.Drawing.Point(88, 249);
+            this.llHelp.Location = new System.Drawing.Point(87, 345);
             this.llHelp.Name = "llHelp";
             this.llHelp.Size = new System.Drawing.Size(95, 17);
             this.llHelp.TabIndex = 9;
@@ -192,11 +202,50 @@ namespace TLTCImport
             this.llHelp.Text = "Пиши, решим!";
             this.llHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llHelp_LinkClicked);
             // 
+            // tbUrlTestLink
+            // 
+            this.tbUrlTestLink.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tbUrlTestLink.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.tbUrlTestLink.Location = new System.Drawing.Point(11, 143);
+            this.tbUrlTestLink.Name = "tbUrlTestLink";
+            this.tbUrlTestLink.Size = new System.Drawing.Size(261, 29);
+            this.tbUrlTestLink.TabIndex = 11;
+            this.tbUrlTestLink.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // lbUrlTestLink
+            // 
+            this.lbUrlTestLink.AutoSize = true;
+            this.lbUrlTestLink.BackColor = System.Drawing.Color.Transparent;
+            this.lbUrlTestLink.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lbUrlTestLink.ForeColor = System.Drawing.Color.Black;
+            this.lbUrlTestLink.Location = new System.Drawing.Point(11, 119);
+            this.lbUrlTestLink.Name = "lbUrlTestLink";
+            this.lbUrlTestLink.Size = new System.Drawing.Size(230, 21);
+            this.lbUrlTestLink.TabIndex = 10;
+            this.lbUrlTestLink.Text = "Укажите URL адрес TestLink:";
+            this.lbUrlTestLink.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label1.ForeColor = System.Drawing.Color.DarkGray;
+            this.label1.Location = new System.Drawing.Point(12, 175);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(212, 17);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Например: http://testms.name.ru/";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // AuthorizationForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(305, 273);
+            this.ClientSize = new System.Drawing.Size(284, 364);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.tbUrlTestLink);
+            this.Controls.Add(this.lbUrlTestLink);
             this.Controls.Add(this.llHelp);
             this.Controls.Add(this.lblhelp);
             this.Controls.Add(this.lblProductVersion);
@@ -237,5 +286,9 @@ namespace TLTCImport
         private System.Windows.Forms.ToolStripMenuItem fileItem;
         private System.Windows.Forms.ToolStripMenuItem aboutItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.TextBox tbUrlTestLink;
+        private System.Windows.Forms.Label lbUrlTestLink;
+        private System.Windows.Forms.Label label1;
     }
 }

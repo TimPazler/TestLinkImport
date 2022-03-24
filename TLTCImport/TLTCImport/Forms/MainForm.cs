@@ -250,7 +250,6 @@ namespace TLTCImport
             var testCaseTransferResults = (0, false);
             int countValuesCases;
             Dictionary<string, string> valuesCases = new Dictionary<string, string>();
-            //MessageBox.Show("Выберите файл в формете .json. Потом написать инструкцию");
 
             ClearAllMessages();
 
