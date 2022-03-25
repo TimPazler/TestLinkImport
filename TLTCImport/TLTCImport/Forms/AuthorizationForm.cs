@@ -24,27 +24,31 @@ namespace TLTCImport
             string apiDevKey = tbApiDevKey.Text;
             string urlTestLink = tbUrlTestLink.Text;
 
-            lblLoginResult.Visible = false;
-            Thread.Sleep(500);
-            pbLoading.Visible = true;
-            if (TestLinkResult.Authorization(urlTestLink, apiDevKey))
+            if (urlTestLink != "" && apiDevKey != "")
             {
-                pbLoading.Visible = false;
                 lblLoginResult.Visible = false;
+                Thread.Sleep(500);
+                if (TestLinkResult.Authorization(urlTestLink, apiDevKey))
+                {
+                    pbLoading.Visible = true;
+                    lblLoginResult.Visible = false;
 
-                //Открытие нового окна
-                var frm = new MainForm();
-                frm.Location = Location;
-                frm.StartPosition = FormStartPosition.CenterScreen;
-                frm.FormClosing += delegate { Show(); };
-                frm.Show();
-                Hide();
+                    //Открытие нового окна
+                    var frm = new MainForm();
+                    frm.Location = Location;
+                    frm.StartPosition = FormStartPosition.CenterScreen;
+                    frm.FormClosing += delegate { Show(); };
+                    frm.Show();
+                    Hide();
+                }
+                else
+                {
+                    pbLoading.Visible = false;
+                    lblLoginResult.Visible = true;
+                }
             }
             else
-            {
-                pbLoading.Visible = false;
-                lblLoginResult.Visible = true;
-            }            
+                MessageBox.Show("Поля не были заполнены!", "Ошибка!");
         }
 
         private void instruction_Click(object sender, EventArgs e)

@@ -38,51 +38,56 @@ namespace TLTCImport
 
         public static bool Authorization(string urlTestLink, string apiDevKey)
         {
-            //Получение нужных данных для входа в TestLink
+            //Получение нужных данных для входа в TestLink            
             var request = new RestRequest(urlTestLink + "login.php", Method.GET);
             var response = ClientTl.Execute(request);
-            Console.WriteLine(response.ErrorException + " " + response.ErrorMessage);
 
-            Document doc = Dcsoup.Parse(response.Content);
-            CSRFName = doc.GetElementById("CSRFName").Val;
-            CSRFToken = doc.GetElementById("CSRFToken").Val;
-            CSRFName = doc.GetElementById("CSRFName").Val;
+            if (response.ErrorException == null)
+            {
+                Document doc = Dcsoup.Parse(response.Content);
+                CSRFName = doc.GetElementById("CSRFName").Val;
+                CSRFToken = doc.GetElementById("CSRFToken").Val;
+                CSRFName = doc.GetElementById("CSRFName").Val;
 
-            //// Вход в TestLink
-            //request = new RestRequest("/login.php", Method.POST);
+                //// Вход в TestLink
+                //request = new RestRequest("/login.php", Method.POST);
 
-            //request.AddHeader("content-type", "application/x-www-form-urlencoded");
-            //request.AddParameter("application/x-www-form-urlendcoded",
-            //    $"CSRFName={CSRFName}&" +
-            //    $"CSRFToken={CSRFToken}&" +
-            //    $"reqURI=&" +
-            //    $"destination=&" +
-            //    $"tl_login={username}&" +
-            //    $"tl_password={password}&" +
-            //    $"login_submit=Войти", ParameterType.RequestBody);
+                //request.AddHeader("content-type", "application/x-www-form-urlencoded");
+                //request.AddParameter("application/x-www-form-urlendcoded",
+                //    $"CSRFName={CSRFName}&" +
+                //    $"CSRFToken={CSRFToken}&" +
+                //    $"reqURI=&" +
+                //    $"destination=&" +
+                //    $"tl_login={username}&" +
+                //    $"tl_password={password}&" +
+                //    $"login_submit=Войти", ParameterType.RequestBody);
 
-            //response = ClientTl.Execute(request);
+                //response = ClientTl.Execute(request);
 
-            //if (response.Content.Contains("Try again! Wrong login name or password!") ||
-            //    response.Content.Contains("Попробуйте снова! Вы ввели неверное имя или пароль!"))
-            //    return false;
+                //if (response.Content.Contains("Try again! Wrong login name or password!") ||
+                //    response.Content.Contains("Попробуйте снова! Вы ввели неверное имя или пароль!"))
+                //    return false;
 
-            if (string.IsNullOrEmpty(apiDevKey))
-                return false;
+                if (string.IsNullOrEmpty(apiDevKey))
+                    return false;
+                else
+                    testLinkApi = new TestLink(apiDevKey, urlTestLink + "/lib/api/xmlrpc/v1/xmlrpc.php");
+
+                try
+                {
+                    if (testLinkApi.GetProjects().Count > 0)
+                        return true;
+                }
+                catch (TestLinkException)
+                {
+                    return false;
+                }
+            }
             else
-                testLinkApi = new TestLink(apiDevKey, urlTestLink + "/lib/api/xmlrpc/v1/xmlrpc.php");
+                MessageBox.Show("Url адрес указан не правильно! \r\nАдрес должен иметь вид: http://www.testlink.com/", "Ошибка!");
 
-            try
-            {
-                if(testLinkApi.GetProjects().Count > 0)                 
-                    return true;                
-            }
-            catch (TestLinkException)
-            {
-                return false;
-            }
-            return true;
-        }
+            return false;
+        }                                
 
         /// <summary>
         /// Получить сборку по id тест плана
