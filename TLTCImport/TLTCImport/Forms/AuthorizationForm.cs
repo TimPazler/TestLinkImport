@@ -11,8 +11,10 @@ namespace TLTCImport
     {
         public AuthorizationForm()
         {
-            InitializeComponent();                                                                        
-        }       
+            InitializeComponent();
+
+            tbUrlTestLink.Text = "http://testms.bars-open.ru/";
+        }
 
         private void llHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
