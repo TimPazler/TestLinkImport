@@ -95,18 +95,44 @@ namespace TLTCImport
             if (e == null) return;
 
             if (n != null)
-            {                        
-                if (cbx(n.Bounds, 0).Contains(e.Location)) n.Check1 = !n.Check1;
-                else if (cbx(n.Bounds, 1).Contains(e.Location)) n.Check2 = !n.Check2;
-                else if (cbx(n.Bounds, 2).Contains(e.Location)) n.Check3 = !n.Check3;
-                else
+            {
+                if (n.Check1 == true || n.Check2 == true || n.Check3 == true)
                 {
-                    if (SelectedNode == n && Control.ModifierKeys == Keys.Control)
-                        SelectedNode = SelectedNode != null ? null : n;
-                    else SelectedNode = n;
-                }
+                    if (cbx(n.Bounds, 0).Contains(e.Location) && (n.Check2 == true || n.Check3 == true))
+                    {
+                        n.Check2 = false;
+                        n.Check3 = false;
+                        n.Check1 = !n.Check1;
+                    }
+                    else if (cbx(n.Bounds, 1).Contains(e.Location) && (n.Check1 == true || n.Check3 == true))
+                    {
+                        n.Check1 = false;
+                        n.Check3 = false; 
+                        n.Check2 = !n.Check2;
+                    }
+                    else if (cbx(n.Bounds, 2).Contains(e.Location) && (n.Check1 == true || n.Check2 == true))
+                    {
+                        n.Check1 = false;
+                        n.Check2 = false; 
+                        n.Check3 = !n.Check3;
+                    }                    
 
-                Invalidate();
+                    Invalidate();
+                }
+                else if (n.Check1 == false && n.Check2 == false && n.Check3 == false)
+                {
+                    if (cbx(n.Bounds, 0).Contains(e.Location)) n.Check1 = !n.Check1;
+                    else if (cbx(n.Bounds, 1).Contains(e.Location)) n.Check2 = !n.Check2;
+                    else if (cbx(n.Bounds, 2).Contains(e.Location)) n.Check3 = !n.Check3;
+                    else
+                    {
+                        if (SelectedNode == n && Control.ModifierKeys == Keys.Control)
+                            SelectedNode = SelectedNode != null ? null : n;
+                        else SelectedNode = n;
+                    }
+
+                    Invalidate();
+                }
             }
         }
 
