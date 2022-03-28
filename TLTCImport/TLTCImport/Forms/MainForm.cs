@@ -35,7 +35,10 @@ namespace TLTCImport
         private string pathFile = "../../../Files/";
         private string pathContent = "../../../Content/";
         private int IconFoldersAndfolders = 0, IconTestCases = 1;
+
         public static Folder[] folders;
+        private Dictionary<string, string> ManuallySelectedTests = new Dictionary<string, string>();
+
 
         void aboutItem_Click(object sender, EventArgs e)
         {
@@ -95,7 +98,6 @@ namespace TLTCImport
             leftPanel.Controls.Add(lblNotAllTestCasesRecognized);
 
             //Дерево, содеражащее в себе все папки и тест кейсы            
-            //treeView = new UcTreeView();
             imageList = new ImageList();
             imageList.Images.Add(Image.FromFile(pathContent + "folder.gif"));
             imageList.Images.Add(Image.FromFile(pathContent + "leaf.gif"));
@@ -106,7 +108,7 @@ namespace TLTCImport
             //Создание пустой папки дерева
             tNSubfolder = new TreeNode("Пусто");
             treeView.Nodes.Add(tNSubfolder);
-            Controls.Add(treeView);                    
+            Controls.Add(treeView);
         }
 
         private Folder[] TreeCreate(Folder[] folders)
@@ -217,15 +219,59 @@ namespace TLTCImport
             // Добавляем тесткейсы к подпапкам
             foreach (var testCase in testCases)
                 tNTestCase.Nodes.Add(new TreeNodeVirtual(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
-        }        
+        }       
 
-        private void btCaseTransfer_Click(object sender, EventArgs e)
+        private bool CheckCaseExistsInTestPlan(Dictionary<string, int> allTestCasesTestPlan, Dictionary<string, string> selectedTestsCases)
         {
-            var testCaseExternalIDAndTestCaseId = TestLinkResult.GetTestCasesToTestPlan(testPlanId, projectName);
-            //SelectedTestСases selectedTestСases = new SelectedTestСases();
-            //var a = selectedTestСases.selectedTestСases;
-            //TestLinkResult.ImportsRunInfoInTestLink(testPlanId, projectId);
-            var a = folders;
+            //Проверка существования кейса в тест плане
+            foreach (var testCaseTestPlan in allTestCasesTestPlan)
+            {
+                foreach (var testCase in selectedTestsCases)
+                {
+                    if (testCaseTestPlan.Key == testCase.Key)                    
+                        return true;                                      
+                }                
+            }
+            return false;
+        }
+
+        //Рекурсия
+        private Dictionary<string, string> GetTestCaseIdAndResultFromManuallySelectedTests(Folder[] folders)
+        {
+            //Проходим папки первого уровня
+            foreach (var folder in folders)
+            {
+                //если в папке есть тесткейсы
+                if (folder.testCases != null)
+                {
+                    foreach (var testCase in folder.testCases)
+                    {
+                        if (testCase.nameTestCase != "" || testCase.nameTestCase != null)
+                        {
+                            if (testCase.typeResult != "null")
+                            {
+                                var fullExternalId = testCase.project.prefixName + "-" + testCase.externalIdTestCase;
+                                
+                                //Проверяем, что такой кейс не был добавлен в словарь, иначе пересоздаем                                
+                                if (!ManuallySelectedTests.ContainsKey(fullExternalId))
+                                {
+                                    ManuallySelectedTests.Add(fullExternalId, testCase.typeResult);
+                                }
+                                else
+                                {
+                                    ManuallySelectedTests.Remove(fullExternalId);
+                                    ManuallySelectedTests.Add(fullExternalId, testCase.typeResult);
+                                }
+                            }
+                        }
+                    }
+                }
+                //иначе смотрим подпапки
+                else
+                    //Просмотр подпапок
+                    GetTestCaseIdAndResultFromManuallySelectedTests(folder.folders);
+            }
+            return ManuallySelectedTests;
         }
 
         private void SetProjectNames(ComboBox comboBox)
@@ -281,6 +327,28 @@ namespace TLTCImport
             }
         }
 
+        private void btCaseTransfer_Click(object sender, EventArgs e)
+        {
+            //Добавить проверку на то что чекбоксы не пустые
+            var allTestCasesTestPlan = TestLinkResult.GetTestCasesToTestPlan(testPlanId, projectName);
+            var selectedTestsCases = GetTestCaseIdAndResultFromManuallySelectedTests(folders);
+
+            if (selectedTestsCases.Count != 0)
+            {
+                //Проверка существования кейса в тест плане
+                if (CheckCaseExistsInTestPlan(allTestCasesTestPlan, selectedTestsCases))
+                {
+                    //Перенос тестов в TestLink
+                    var testCaseTransferResults = TestLinkResult.ImportsRunInfoInTestLink(testPlanId, selectedTestsCases, projectName);
+                }
+                else
+                    MessageBox.Show("Тест кейса не существует в тест плане!");
+            }
+            else
+                MessageBox.Show("Ни один тест кейс не был выбран!");
+
+        }
+
         private void btnManualMode_Click(object sender, EventArgs e)
         {   
             //Перед ручным режимом блокируем все элементы
@@ -304,7 +372,7 @@ namespace TLTCImport
             //Закрытие окна закрузки и отображение кнопок
             OpenLoadForm.Close();
             OpenAllElementsMainForm("manual");
-        }      
+        }
 
         private void btnAutoMode_Click(object sender, EventArgs e)
         {
