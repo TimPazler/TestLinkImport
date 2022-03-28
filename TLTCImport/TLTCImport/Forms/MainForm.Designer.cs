@@ -54,8 +54,6 @@
             this.treeView = new TLTCImport.UcTreeView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btCaseTransfer = new System.Windows.Forms.Button();
-            this.lbTotalSelected = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.MainFormMenu.SuspendLayout();
             this.leftPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbForlblTestRun)).BeginInit();
@@ -323,9 +321,7 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.Silver;
-            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.btCaseTransfer);
-            this.panel1.Controls.Add(this.lbTotalSelected);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 577);
             this.panel1.Name = "panel1";
@@ -335,33 +331,13 @@
             // btCaseTransfer
             // 
             this.btCaseTransfer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btCaseTransfer.Location = new System.Drawing.Point(367, 17);
+            this.btCaseTransfer.Location = new System.Drawing.Point(216, 18);
             this.btCaseTransfer.Name = "btCaseTransfer";
             this.btCaseTransfer.Size = new System.Drawing.Size(120, 30);
             this.btCaseTransfer.TabIndex = 7;
             this.btCaseTransfer.Text = "Перенести кейсы";
             this.btCaseTransfer.UseVisualStyleBackColor = true;
             this.btCaseTransfer.Click += new System.EventHandler(this.btCaseTransfer_Click);
-            // 
-            // lbTotalSelected
-            // 
-            this.lbTotalSelected.AutoSize = true;
-            this.lbTotalSelected.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lbTotalSelected.Location = new System.Drawing.Point(216, 23);
-            this.lbTotalSelected.Name = "lbTotalSelected";
-            this.lbTotalSelected.Size = new System.Drawing.Size(106, 19);
-            this.lbTotalSelected.TabIndex = 0;
-            this.lbTotalSelected.Text = "Всего выбрано:";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(328, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(19, 21);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "0";
             // 
             // MainForm
             // 
@@ -390,7 +366,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbForlblCurrentTestPlan)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbForlblSoftware)).EndInit();
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -423,8 +398,6 @@
         private UcTreeView treeView;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btCaseTransfer;
-        private System.Windows.Forms.Label lbTotalSelected;
-        private System.Windows.Forms.Label label1;
     }
 }
 
