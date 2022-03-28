@@ -64,7 +64,7 @@ namespace TLTCImport
             this.toolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(252, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(255, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -241,7 +241,7 @@ namespace TLTCImport
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(252, 364);
+            this.ClientSize = new System.Drawing.Size(255, 364);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbUrlTestLink);
             this.Controls.Add(this.lbUrlTestLink);
