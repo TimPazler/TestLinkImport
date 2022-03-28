@@ -9,9 +9,9 @@ namespace TLTCImport
     public class TreeNodeVirtual : TreeNode
     {
         public string Label { get; set; }
-        public bool Check1 { get; set; }
-        public bool Check2 { get; set; }
-        public bool Check3 { get; set; }
+        public bool CheckFailed { get; set; }
+        public bool CheckPassed { get; set; }
+        public bool CheckBlocked { get; set; }
 
         public new string Text
         {
@@ -23,10 +23,10 @@ namespace TLTCImport
 
         public TreeNodeVirtual(string text) { Label = text; }
 
-        public TreeNodeVirtual(string text, bool check1, bool check2, bool check3)
+        public TreeNodeVirtual(string text, bool checkFailed, bool checkPassed, bool checkBlocked)
         {
             Label = text;
-            Check1 = check1; Check2 = check2; Check3 = check3;
+            CheckFailed = checkFailed; CheckPassed = checkPassed; CheckBlocked = checkBlocked;
         }
 
         public TreeNodeVirtual(string text, TreeNodeVirtual[] children)
