@@ -9,6 +9,7 @@ namespace TLTCImport.FolderStorageTestLink
     {
         public string name { get; set; }
         public string status { get; set; }
+
         public JenkinsResults(string nameTestCase, string statusTestCase)
         {
             this.name = nameTestCase;

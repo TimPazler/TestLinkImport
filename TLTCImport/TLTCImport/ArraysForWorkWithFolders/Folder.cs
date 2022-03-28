@@ -6,13 +6,13 @@ using TLTCImport.FolderStorageTestLink;
 namespace TLTCImport
 {
     //Класс, содержащий id и имя папки
-    //А также ссылку на другой массив с данными о подпапки
+    //А также ссылкы на другые массивы с данными о папке и тесткейсах
     public class Folder
     {
         public int idFolder { get; set; } 
         public string nameFolder { get; set; }
 
-        public Folder[] subfolders;
+        public Folder[] folders;
 
         public InfoTestCase[] testCases;
 
