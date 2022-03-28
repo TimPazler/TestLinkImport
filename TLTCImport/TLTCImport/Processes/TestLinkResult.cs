@@ -251,15 +251,15 @@ namespace TLTCImport
         }
 
         //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
-        public static Dictionary<string, string> GetTestCasesToTestPlan(int testPlanId, string projectName)
+        public static Dictionary<string, int> GetTestCasesToTestPlan(int testPlanId, string projectName)
         {
             var testCases = testLinkApi.GetTestCasesForTestPlan(testPlanId);
             var prefixName = GetPrefixProjectByName(projectName);
 
-            var testCaseExternalIDAndName = new Dictionary<string, string>();
+            var testCaseExternalIDAndName = new Dictionary<string, int>();
             for (int i = 0; i < testCases.Count; i++)
             {
-                testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].tc_id.ToString());
+                testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].tc_id);
             }
             return testCaseExternalIDAndName;
         }

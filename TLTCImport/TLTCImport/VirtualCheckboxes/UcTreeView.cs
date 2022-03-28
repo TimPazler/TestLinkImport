@@ -21,8 +21,7 @@ namespace TLTCImport
          Description("Left padding of text.")]
         public int LeftPadding { get; set; }
 
-        public Dictionary<string, string> SelectedResultsForManualMode = null;
-
+        public Dictionary<string, string> SelectedResultsForManualMode = null;       
 
         public UcTreeView()
         {
@@ -88,7 +87,6 @@ namespace TLTCImport
             CheckBoxRenderer.DrawCheckBox(e.Graphics, cbx(e.Bounds, 0).Location, bs1);
             CheckBoxRenderer.DrawCheckBox(e.Graphics, cbx(e.Bounds, 1).Location, bs2);
             CheckBoxRenderer.DrawCheckBox(e.Graphics, cbx(e.Bounds, 2).Location, bs3);
-
         }      
         
         protected override void OnNodeMouseClick(TreeNodeMouseClickEventArgs e)
@@ -147,9 +145,9 @@ namespace TLTCImport
         //Рекурсия
         //Добавление в массив папок выбранные рез-ат из чекбокса (пройдено, провалено или заблокировано)
         public void AddProjectInfoForArrFolders(Folder[] folders, string receivedNameTestCase, bool CheckPassed, bool CheckFailed, bool CheckBlocked)
-        {
+        {            
             receivedNameTestCase = receivedNameTestCase.Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
-            
+
             //Проходим папки первого уровня
             foreach (var folder in folders)
             {
@@ -166,19 +164,22 @@ namespace TLTCImport
                             var externalIdTestCase = prefixName + "-" + externalId;
                             if (externalIdTestCase.Contains(receivedNameTestCase))
                             {
+                                //f-Failed 
                                 if (CheckFailed == true)
                                 {
-                                    testCase.typeResult = "Failed";
+                                    testCase.typeResult = "f";
                                     break;
                                 }
+                                //p-Passed 
                                 else if (CheckPassed == true)
                                 {
-                                    testCase.typeResult = "Passed";
+                                    testCase.typeResult = "p";
                                     break;
                                 }
+                                //b-Blocked 
                                 else if (CheckBlocked == true)
                                 {
-                                    testCase.typeResult = "Blocked";
+                                    testCase.typeResult = "b";
                                     break;
                                 }
                                 else
