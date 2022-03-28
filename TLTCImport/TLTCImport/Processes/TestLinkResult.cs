@@ -192,7 +192,7 @@ namespace TLTCImport
         //}
 
         /// <summary>
-        /// Импортирует иформацию о прогоне в тестлинк поштучно.
+        /// Импортирует иформацию о прогоне в тестлинк списком.
         /// </summary>        
         public static (int, bool) ImportsRunInfoInTestLink(int testPlanId, Dictionary<string, string> valuesCases, string projectName)
         {
@@ -251,10 +251,24 @@ namespace TLTCImport
         }
 
         //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
+        public static Dictionary<string, string> GetTestCasesToTestPlan(int testPlanId, string projectName)
+        {
+            var testCases = testLinkApi.GetTestCasesForTestPlan(testPlanId);
+            var prefixName = GetPrefixProjectByName(projectName);
+
+            var testCaseExternalIDAndName = new Dictionary<string, string>();
+            for (int i = 0; i < testCases.Count; i++)
+            {
+                testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].tc_id.ToString());
+            }
+            return testCaseExternalIDAndName;
+        }
+
+        //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
         private static Dictionary<string, string> GetExternalIDAndTestCaseIdAllSuitesByTestPlanId(int testPlanId, string projectName)
         {
             var suitesId = testLinkApi.GetTestSuitesForTestPlan(testPlanId);
-            var prefixName = GetPrefixProjectByName(projectName); 
+            var prefixName = GetPrefixProjectByName(projectName);
 
             var testCaseExternalIDAndName = new Dictionary<string, string>();
             foreach (var item in suitesId)
@@ -267,14 +281,14 @@ namespace TLTCImport
                         testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].id.ToString());
                     }
                 }
-                catch(CookComputing.XmlRpc.XmlRpcIllFormedXmlException)
+                catch (CookComputing.XmlRpc.XmlRpcIllFormedXmlException)
                 {
                     var testCases = testLinkApi.GetTestCasesForTestSuite(item.id, false);
                     for (int i = 0; i < testCases.Count; i++)
                     {
                         testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].id.ToString());
                     }
-                }                
+                }
             }
 
             return testCaseExternalIDAndName;
