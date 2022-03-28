@@ -12,15 +12,18 @@ namespace TLTCImport
     {
         private TestLink testLinkApi = TestLinkResult.testLinkApi;
 
-        public Folder[] NamesFoldersAndSubfolders(int projectId)
+        public Folder[] NamesFoldersAndfolders(int projectId)
         {           
             var Folder = GetFolder(projectId);
             var Subfolder = GetSubfolder(Folder);
-            //var newArrFoldersAndSubfolders = RemoveEmptyArrayElements(Subfolder);
+
+            //var newArrFoldersAndfolders = RemoveEmptyArrayElements(Subfolder);
+
             //Исключить лишние
             //var testCasesForFolders = GetTestCasesForFolders(Folder);
-            var testCasesForSubfolders = GetTestCasesForSubfolders(Subfolder);
-            return testCasesForSubfolders;
+
+            var testCasesForfolders = GetTestCasesForfolders(Subfolder);
+            return testCasesForfolders;
         }
 
         //Удаление лишних элементов массива
@@ -30,7 +33,7 @@ namespace TLTCImport
 
             for (int i = 0; i < arrFolders.Length; i++)
             {
-                if (arrFolders[i].subfolders.Length != 0)
+                if (arrFolders[i].folders.Length != 0)
                     count++;
             }
 
@@ -53,7 +56,7 @@ namespace TLTCImport
                 List<TestCaseFromTestSuite> testCaseAllInfo;
                 foreach (var folder in folders)
                 {
-                    for (int i = 0; i < folder.subfolders.Length; i++)
+                    for (int i = 0; i < folder.folders.Length; i++)
                     {
                         var nameSubfolder = folder.nameFolder;
                         var idSubfolder = folder.idFolder;
@@ -80,19 +83,19 @@ namespace TLTCImport
         }
 
         //тест кейсы
-        private Folder[] GetTestCasesForSubfolders(Folder[] subfolders)
+        private Folder[] GetTestCasesForfolders(Folder[] folders)
         {
             try
             {
                 InfoTestCase[] testCase;
 
                 List<TestCaseFromTestSuite> testCaseAllInfo;
-                foreach (var subfolder in subfolders)
+                foreach (var subfolder in folders)
                 {
-                    for (int i = 0; i < subfolder.subfolders.Length; i++)
+                    for (int i = 0; i < subfolder.folders.Length; i++)
                     {
-                        var nameSubfolder = subfolder.subfolders[i].nameFolder;
-                        var idSubfolder = subfolder.subfolders[i].idFolder;
+                        var nameSubfolder = subfolder.folders[i].nameFolder;
+                        var idSubfolder = subfolder.folders[i].idFolder;
 
                         testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
                         testCase = new InfoTestCase[testCaseAllInfo.Count];
@@ -102,16 +105,16 @@ namespace TLTCImport
                             testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
                             j++;
                         }
-                        subfolder.subfolders[i].testCases = testCase;
+                        subfolder.folders[i].testCases = testCase;
                     }
                 }
-                return subfolders;
+                return folders;
             }
             catch (System.Net.WebException) 
             {
                //Повтор того что в try
             }
-            return subfolders;
+            return folders;
         }       
     
         //Получить имена папок первого уровня и их id
@@ -127,7 +130,7 @@ namespace TLTCImport
                 i++;
             }
             return folders;
-        }
+        }        
 
         //Получить имена папок второго уровня и их id
         private Folder[] GetSubfolder(Folder[] folders)
@@ -138,12 +141,12 @@ namespace TLTCImport
             {              
                 suites = testLinkApi.GetTestSuitesForTestSuite(folders[k].idFolder);
 
-                folders[folderNumber].subfolders = new Folder[suites.Count];
+                folders[folderNumber].folders = new Folder[suites.Count];
 
                 int j = 0;
                 foreach (var suite in suites)
                 {
-                    folders[folderNumber].subfolders[j] = new Folder(suite.id, suite.name);
+                    folders[folderNumber].folders[j] = new Folder(suite.id, suite.name);
                     j++;
                 }
                 folderNumber++;
