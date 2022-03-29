@@ -327,8 +327,12 @@ namespace TLTCImport
             }
         }
 
+        //Кнопка Перенос тестов
         private void btCaseTransfer_Click(object sender, EventArgs e)
         {
+            //Окно загрузки
+            var openLoadForm = OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
+
             //Добавить проверку на то что чекбоксы не пустые
             var allTestCasesTestPlan = TestLinkResult.GetTestCasesToTestPlan(testPlanId, projectName);
             var selectedTestsCases = GetTestCaseIdAndResultFromManuallySelectedTests(folders);
@@ -347,33 +351,35 @@ namespace TLTCImport
             else
                 MessageBox.Show("Ни один тест кейс не был выбран!");
 
+            //Закрытие окна закрузки и отображение кнопок
+            openLoadForm.Close();
+            OpenAllElementsMainForm("manual");
         }
 
+        //Кнопка Ручной режим
         private void btnManualMode_Click(object sender, EventArgs e)
         {   
             //Перед ручным режимом блокируем все элементы
-            BlockAllElementsMainForm();            
+            BlockAllElementsMainForm();
 
             //Окно загрузки
-            LoadingScreen OpenLoadForm = new LoadingScreen("Получение информации о папках..");
-            OpenLoadForm.Location = Location;
-            OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
+            var openLoadForm = OpenFormLoadingScreen("Получение информации о папках..");
+
             //OpenLoadForm.Size = this.Size;
-            OpenLoadForm.FormClosing += delegate { Show(); };
             //OpenLoadForm.FormBorderStyle = FormBorderStyle.None;
             //OpenLoadForm.BackColor = Color.Black;//цвет фона
             //OpenLoadForm.Opacity = 0.4;
-            OpenLoadForm.Show();
 
             //Постройка дерева
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
             folders = TreeCreate(treeWithTestCases.NamesFoldersAndfolders(projectId));
-            
+
             //Закрытие окна закрузки и отображение кнопок
-            OpenLoadForm.Close();
+            openLoadForm.Close();
             OpenAllElementsMainForm("manual");
         }
 
+        //Кнопка Автоматический режим
         private void btnAutoMode_Click(object sender, EventArgs e)
         {
             bool FileExistence;
@@ -427,17 +433,13 @@ namespace TLTCImport
                             BlockAllElementsMainForm();
 
                             //Окно загрузки
-                            LoadingScreen OpenLoadForm = new LoadingScreen();
-                            OpenLoadForm.Location = Location;
-                            OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
-                            OpenLoadForm.FormClosing += delegate { Show(); };
-                            OpenLoadForm.Show();
+                            var openLoadForm = OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
 
                             //Импорт тестов в Тестлинк               
                             testCaseTransferResults = TestLinkResult.ImportsRunInfoInTestLink(testPlanId, valuesCases, projectName);
 
                             //Закрытие окна закрузки
-                            OpenLoadForm.Close();
+                            openLoadForm.Close();
                             OpenAllElementsMainForm("auto");
 
                             //если прерван перенос тесткейсов
@@ -457,6 +459,17 @@ namespace TLTCImport
             }
             else
                 MessageBox.Show("Хотя бы один чекбокс должен быть отмечен!");
+        }
+
+        private LoadingScreen OpenFormLoadingScreen(string message)
+        {
+            LoadingScreen OpenLoadForm = new LoadingScreen(message);
+            OpenLoadForm.Location = Location;
+            OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
+            OpenLoadForm.FormClosing += delegate { Show(); };
+            OpenLoadForm.Show();
+
+            return OpenLoadForm;
         }
 
         private void btnExpandTree_Click(object sender, EventArgs e)
@@ -545,6 +558,7 @@ namespace TLTCImport
             btnManualMode.Enabled = false;
             btnExpandTree.Enabled = false;
             btnCollapseTree.Enabled = false;
+            btnCaseTransfer.Enabled = false;
 
             //Чекбоксы
             cbPassed.Enabled = false;
@@ -564,6 +578,7 @@ namespace TLTCImport
             {
                 btnExpandTree.Enabled = true;
                 btnCollapseTree.Enabled = true;
+                btnCaseTransfer.Enabled = true;
             }
 
             //Чекбоксы

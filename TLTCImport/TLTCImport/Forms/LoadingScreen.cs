@@ -10,7 +10,7 @@ namespace TLTCImport
         public Label lblLoading;
 
         //Форма для отображения загрузки, во переноса рез-ов в TestLink
-        public LoadingScreen(string message = "Выполняется перенос результатов в TestLink...")
+        public LoadingScreen(string message)
         {
             this.FormBorderStyle = FormBorderStyle.None;
             this.Size = new Size(350, 100);

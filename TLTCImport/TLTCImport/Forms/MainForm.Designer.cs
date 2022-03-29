@@ -53,7 +53,7 @@
             this.pbForlblSoftware = new System.Windows.Forms.PictureBox();
             this.treeView = new TLTCImport.UcTreeView();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btCaseTransfer = new System.Windows.Forms.Button();
+            this.btnCaseTransfer = new System.Windows.Forms.Button();
             this.MainFormMenu.SuspendLayout();
             this.leftPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbForlblTestRun)).BeginInit();
@@ -321,23 +321,23 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.Silver;
-            this.panel1.Controls.Add(this.btCaseTransfer);
+            this.panel1.Controls.Add(this.btnCaseTransfer);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 577);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1148, 63);
             this.panel1.TabIndex = 6;
             // 
-            // btCaseTransfer
+            // btnCaseTransfer
             // 
-            this.btCaseTransfer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btCaseTransfer.Location = new System.Drawing.Point(216, 18);
-            this.btCaseTransfer.Name = "btCaseTransfer";
-            this.btCaseTransfer.Size = new System.Drawing.Size(120, 30);
-            this.btCaseTransfer.TabIndex = 7;
-            this.btCaseTransfer.Text = "Перенести кейсы";
-            this.btCaseTransfer.UseVisualStyleBackColor = true;
-            this.btCaseTransfer.Click += new System.EventHandler(this.btCaseTransfer_Click);
+            this.btnCaseTransfer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCaseTransfer.Location = new System.Drawing.Point(216, 18);
+            this.btnCaseTransfer.Name = "btnCaseTransfer";
+            this.btnCaseTransfer.Size = new System.Drawing.Size(120, 30);
+            this.btnCaseTransfer.TabIndex = 7;
+            this.btnCaseTransfer.Text = "Перенести кейсы";
+            this.btnCaseTransfer.UseVisualStyleBackColor = true;
+            this.btnCaseTransfer.Click += new System.EventHandler(this.btCaseTransfer_Click);            
             // 
             // MainForm
             // 
@@ -397,7 +397,7 @@
         private System.Windows.Forms.CheckBox cbPassed;
         private UcTreeView treeView;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btCaseTransfer;
+        private System.Windows.Forms.Button btnCaseTransfer;
     }
 }
 
