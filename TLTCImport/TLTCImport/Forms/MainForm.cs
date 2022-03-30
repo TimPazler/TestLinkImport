@@ -37,8 +37,7 @@ namespace TLTCImport
         private int IconFoldersAndfolders = 0, IconTestCases = 1;
 
         public static Folder[] folders;
-        private Dictionary<string, string> ManuallySelectedTests = new Dictionary<string, string>();
-
+        private Dictionary<string, string> manuallySelectedTests = new Dictionary<string, string>();
 
         void aboutItem_Click(object sender, EventArgs e)
         {
@@ -237,7 +236,7 @@ namespace TLTCImport
 
         //Рекурсия
         private Dictionary<string, string> GetTestCaseIdAndResultFromManuallySelectedTests(Folder[] folders)
-        {
+        {           
             //Проходим папки первого уровня
             foreach (var folder in folders)
             {
@@ -250,18 +249,8 @@ namespace TLTCImport
                         {
                             if (testCase.typeResult != "null")
                             {
-                                var fullExternalId = testCase.project.prefixName + "-" + testCase.externalIdTestCase;
-                                
-                                //Проверяем, что такой кейс не был добавлен в словарь, иначе пересоздаем                                
-                                if (!ManuallySelectedTests.ContainsKey(fullExternalId))
-                                {
-                                    ManuallySelectedTests.Add(fullExternalId, testCase.typeResult);
-                                }
-                                else
-                                {
-                                    ManuallySelectedTests.Remove(fullExternalId);
-                                    ManuallySelectedTests.Add(fullExternalId, testCase.typeResult);
-                                }
+                                var fullExternalId = testCase.project.prefixName + "-" + testCase.externalIdTestCase;                                
+                                manuallySelectedTests.Add(fullExternalId, testCase.typeResult);                                                               
                             }
                         }
                     }
@@ -270,8 +259,8 @@ namespace TLTCImport
                 else
                     //Просмотр подпапок
                     GetTestCaseIdAndResultFromManuallySelectedTests(folder.folders);
-            }
-            return ManuallySelectedTests;
+            }           
+            return manuallySelectedTests;
         }
 
         private void SetProjectNames(ComboBox comboBox)
@@ -343,17 +332,29 @@ namespace TLTCImport
                 if (CheckCaseExistsInTestPlan(allTestCasesTestPlan, selectedTestsCases))
                 {
                     //Перенос тестов в TestLink
-                    var testCaseTransferResults = TestLinkResult.ImportsRunInfoInTestLink(testPlanId, selectedTestsCases, projectName);
+                    TestLinkResult.ImportsRunInfoInTestLink(testPlanId, selectedTestsCases, projectName);
                 }
                 else
                     MessageBox.Show("Тест кейса не существует в тест плане!");
+
+                //Закрытие окна закрузки и отображение кнопок
+                openLoadForm.Close();
+                OpenAllElementsMainForm("manual");
+
+                //Очистка словаря
+                manuallySelectedTests.Clear();
             }
             else
-                MessageBox.Show("Ни один тест кейс не был выбран!");
+            {
+                //Закрытие окна закрузки и отображение кнопок
+                openLoadForm.Close();
+                OpenAllElementsMainForm("manual");
 
-            //Закрытие окна закрузки и отображение кнопок
-            openLoadForm.Close();
-            OpenAllElementsMainForm("manual");
+                //Очистка словаря
+                manuallySelectedTests.Clear();
+                
+                MessageBox.Show("Ни один тест кейс не был выбран!");
+            }                      
         }
 
         //Кнопка Ручной режим
