@@ -183,50 +183,7 @@ namespace TLTCImport
                 }
             }
 
-        }
-
-      
-        ////Рекурсия
-        ////Добавление во все тест кейсы информацию о проекте (имя и id проекта, префикс)
-        //public void AddAllFolders(Folder[] folders)
-        //{
-        //    foreach (var folder in folders)
-        //    {                
-        //        if (countInternalFolders == 0)
-        //        {
-        //            //Добавление папок
-        //            tNFolder = new TreeNode(folder.nameFolder);
-        //            treeView.Nodes.Add(tNFolder);
-        //        }
-        //        else if(countInternalFolders == 1)
-        //        {
-        //            //Добавление подпапок
-        //            tNSubfolder = new TreeNode(folder.nameFolder);
-        //            treeView.Nodes[0].Nodes.Add(tNSubfolder);
-        //        }
-
-        //        else if (countInternalFolders == 2)
-        //        {
-        //            //Добавление подпапок
-        //            tNSubfolder = new TreeNode(folder.nameFolder);
-        //            treeView.Nodes[0].Nodes[0].Nodes.Add(tNSubfolder);
-        //        }
-
-        //        //если на втором уровне есть подпапки то просматрием
-        //        if (folder.folders != null)
-        //        {
-        //            if (folder.folders.Length != 0)
-        //            {
-        //                countInternalFolders++;
-        //                ///Просмотр подпапок
-        //                AddAllFolders(folder.folders);
-        //            }
-        //        }
-        //    }
-        //    var nameFolder = new TreeNode();
-
-        //    //treeView.Nodes.Add(tNSubfolder);            
-        //}
+        }           
         
         //Рекурсия
         //Добавление во все тест кейсы информацию о проекте (имя и id проекта, префикс)
