@@ -21,14 +21,14 @@ using TLTCImport.FolderStorageTestLink;
 namespace TLTCImport
 {
     public partial class MainForm : Form
-    {      
+    {
         public Label lblMessageDataTransferXmlFile, lblAddCasesTestlink;
         public Label lblNotAllTestCasesRecognized;
         public Label lblMessageAddJson, lblMessageRecognitionJson;
 
         //public UcTreeView treeView;
         public ImageList imageList;
-        public TreeNode tNSubfolder, tNTestCase;
+        public TreeNode tNFolder, tNSubfolder, tNTestCase;
 
         private int projectId, testPlanId;
         private string projectName, testPlanName;
@@ -115,13 +115,8 @@ namespace TLTCImport
             //Удаление пустой папки или старых
             treeView.Nodes.Clear();
 
-            int j = 0;
-
-            foreach (var subfolder in folders)
-            {
-                //Добавление папок
-                tNSubfolder = new TreeNode(subfolder.nameFolder);
-                treeView.Nodes.Add(tNSubfolder);
+            //Отображаем все папки на экране
+            AddAllFolders(folders);
 
                 ////Добавление тесткейсов в папки
                 //for (int i = 0; i < subfolder.folders.Length; i++)
@@ -130,15 +125,14 @@ namespace TLTCImport
                 //}
                 //treeView.Nodes.Add(tNSubfolder);
 
-                //Добавление тесткейсов в подпапки
-                for (int i = 0; i < subfolder.folders.Length; i++)
-                {
-                    tNTestCase = new TreeNode(subfolder.folders[i].nameFolder);
-                    AddTestCases(subfolder.folders[i].testCases, tNTestCase);
-                    treeView.Nodes[j].Nodes.Add(tNTestCase);
-                }
-                j++;
-            }
+            //Добавление тесткейсов в подпапки
+            //for (int i = 0; i < subfolder.folders.Length; i++)
+            //{
+            //    tNTestCase = new TreeNode(subfolder.folders[i].nameFolder);
+            //    AddTestCases(subfolder.folders[i].testCases, tNTestCase);
+            //    treeView.Nodes[j].Nodes.Add(tNTestCase);
+            //}
+
 
             //Для лечения бага прорисовки тесткейсов
             treeView.Visible = false;
@@ -154,34 +148,92 @@ namespace TLTCImport
             return folders;
         }
 
+        //Добавление всех папок в дерево
+        private void AddAllFolders(Folder[] folders)
+        {
+            foreach (var folder in folders)
+            {
+                tNFolder = new TreeNode(folder.nameFolder);
+                treeView.Nodes.Add(tNFolder);
 
-        //string a = "null";
+                AddSubfolders(folder, tNFolder);
+            }
+        }
+
+        //Рекурсия
+        //Добавление всех подпапок в дерево
+        private void AddSubfolders(Folder folder, TreeNode treeNode)
+        {
+            var folders = folder.folders;
+            foreach (var newFolder in folders)
+            {
+                tNSubfolder = new TreeNode(newFolder.nameFolder);
+                treeNode.Nodes.Add(tNSubfolder);
+
+                if (newFolder.folders != null)
+                {
+                    if (newFolder.folders.Length != 0)
+                    {
+                        foreach (TreeNode newTreeNode in treeNode.Nodes)
+                        {
+                            if(newTreeNode.Text == newFolder.nameFolder)
+                                AddSubfolders(newFolder, newTreeNode);
+                        }
+                    }
+                }
+            }
+
+        }
+
+      
         ////Рекурсия
-        //public void Foo(Folder[] folders)
+        ////Добавление во все тест кейсы информацию о проекте (имя и id проекта, префикс)
+        //public void AddAllFolders(Folder[] folders)
         //{
-        //    foreach(var folder in folders)
-        //    {
-        //        if (a != "End")
+        //    foreach (var folder in folders)
+        //    {                
+        //        if (countInternalFolders == 0)
         //        {
-        //            if (folder.nameFolder == "Электрическая часть")
+        //            //Добавление папок
+        //            tNFolder = new TreeNode(folder.nameFolder);
+        //            treeView.Nodes.Add(tNFolder);
+        //        }
+        //        else if(countInternalFolders == 1)
+        //        {
+        //            //Добавление подпапок
+        //            tNSubfolder = new TreeNode(folder.nameFolder);
+        //            treeView.Nodes[0].Nodes.Add(tNSubfolder);
+        //        }
+
+        //        else if (countInternalFolders == 2)
+        //        {
+        //            //Добавление подпапок
+        //            tNSubfolder = new TreeNode(folder.nameFolder);
+        //            treeView.Nodes[0].Nodes[0].Nodes.Add(tNSubfolder);
+        //        }
+
+        //        //если на втором уровне есть подпапки то просматрием
+        //        if (folder.folders != null)
+        //        {
+        //            if (folder.folders.Length != 0)
         //            {
-        //                a = "End";
-        //                break;
-        //            }
-        //            else if (folder.folders.Length != 0)
-        //            {
-        //                Foo(folder.folders);
+        //                countInternalFolders++;
+        //                ///Просмотр подпапок
+        //                AddAllFolders(folder.folders);
         //            }
         //        }
-        //        else 
-        //            break;
-        //    }                       
-        //}
+        //    }
+        //    var nameFolder = new TreeNode();
 
+        //    //treeView.Nodes.Add(tNSubfolder);            
+        //}
+        
         //Рекурсия
         //Добавление во все тест кейсы информацию о проекте (имя и id проекта, префикс)
         public void AddProjectInfoForArrFolders(Folder[] folders)
         {
+            string prefixName = TestLinkResult.GetPrefixProjectByName(projectName);
+
             //Проходим папки первого уровня
             foreach (var folder in folders)
             {
@@ -191,7 +243,7 @@ namespace TLTCImport
                     foreach (var testCase in folder.testCases)
                     {
                         if (testCase.nameTestCase != "" || testCase.nameTestCase != null)
-                            testCase.project = new Project(projectId, projectName, TestLinkResult.GetPrefixProjectByName(projectName));
+                            testCase.project = new Project(projectId, projectName, prefixName);
                     }
                 }
                 //иначе смотрим подпапки
@@ -199,7 +251,7 @@ namespace TLTCImport
                     ///Просмотр подпапок
                     AddProjectInfoForArrFolders(folder.folders);
             }
-        }       
+        }    
 
         private string CreateTestCaseFullName(InfoTestCase testCaseFullName)
         {

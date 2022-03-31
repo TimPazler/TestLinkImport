@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CookComputing.XmlRpc;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -14,15 +15,14 @@ namespace TLTCImport
 
         public Folder[] NamesFoldersAndfolders(int projectId)
         {           
-            var Folder = GetFolder(projectId);
-            var Subfolder = GetSubfolder(Folder);
+            var Folder = GetArrayAllFolders(projectId);
 
             //var newArrFoldersAndfolders = RemoveEmptyArrayElements(Subfolder);
 
             //Исключить лишние
             //var testCasesForFolders = GetTestCasesForFolders(Folder);
 
-            var testCasesForfolders = GetTestCasesForfolders(Subfolder);
+            var testCasesForfolders = GetTestCasesForfolders(Folder);
             return testCasesForfolders;
         }
 
@@ -87,39 +87,50 @@ namespace TLTCImport
         {
             try
             {
-                InfoTestCase[] testCase;
-
-                List<TestCaseFromTestSuite> testCaseAllInfo;
-                foreach (var subfolder in folders)
-                {
-                    for (int i = 0; i < subfolder.folders.Length; i++)
-                    {
-                        var nameSubfolder = subfolder.folders[i].nameFolder;
-                        var idSubfolder = subfolder.folders[i].idFolder;
-
-                        //бывает падает ошибка CookComputing.XmlRpc.XmlRpcIllFormedXmlException: "Response from server does not contain valid XML."
-                        testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
-                        testCase = new InfoTestCase[testCaseAllInfo.Count];
-                        int j = 0;
-                        foreach (var testCaseInfo in testCaseAllInfo)
-                        {
-                            testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
-                            j++;
-                        }
-                        subfolder.folders[i].testCases = testCase;
-                    }
-                }
-                return folders;
+                return GetTestCases(folders);
             }
-            catch (System.Net.WebException) 
+            catch (System.Net.WebException)
             {
-               //Повтор того что в try
+                return GetTestCases(folders);
+            }
+            catch (XmlRpcIllFormedXmlException)
+            {
+                return GetTestCases(folders);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Непредвиденная ошибка! Попробуйте перезапустить программу! \r\nИли обратитесь к разработчику! \r\n Ошибка: {e.Message}");
             }
             return folders;
-        }       
-    
-        //Получить имена папок первого уровня и их id
-        private Folder[] GetFolder(int projectId)
+        }
+        private Folder[] GetTestCases(Folder[] folders)
+        {
+            InfoTestCase[] testCase;
+
+            List<TestCaseFromTestSuite> testCaseAllInfo;
+            foreach (var subfolder in folders)
+            {
+                for (int i = 0; i < subfolder.folders.Length; i++)
+                {
+                    var nameSubfolder = subfolder.folders[i].nameFolder;
+                    var idSubfolder = subfolder.folders[i].idFolder;
+
+                    testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
+                    testCase = new InfoTestCase[testCaseAllInfo.Count];
+                    int j = 0;
+                    foreach (var testCaseInfo in testCaseAllInfo)
+                    {
+                        testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                        j++;
+                    }
+                    subfolder.folders[i].testCases = testCase;
+                }
+            }
+            return folders;
+        }
+
+        //Получить массив всех папок
+        private Folder[] GetArrayAllFolders(int projectId)
         {
             List<TestSuite> suites = testLinkApi.GetFirstLevelTestSuitesForTestProject(projectId);
             Folder[] folders = new Folder[suites.Count];
@@ -130,29 +141,29 @@ namespace TLTCImport
                 folders[i] = new Folder(suite.id, suite.name);
                 i++;
             }
+
+            FillArraySubfolders(folders);
+
             return folders;
-        }        
+        }
 
-        //Получить имена папок второго уровня и их id
-        private Folder[] GetSubfolder(Folder[] folders)
+        //Рекурсия
+        //Заполнить массив подпапками
+        private void FillArraySubfolders(Folder[] folders)
         {
-            List<TestSuite> suites = null;
-            int folderNumber = 0;
-            for (int k = 0; k < folders.Length; k++)
-            {              
-                suites = testLinkApi.GetTestSuitesForTestSuite(folders[k].idFolder);
-
-                folders[folderNumber].folders = new Folder[suites.Count];
+            foreach (var folder in folders)
+            {
+                var suites = testLinkApi.GetTestSuitesForTestSuite(folder.idFolder);
+                folder.folders = new Folder[suites.Count];
 
                 int j = 0;
                 foreach (var suite in suites)
                 {
-                    folders[folderNumber].folders[j] = new Folder(suite.id, suite.name);
+                    folder.folders[j] = new Folder(suite.id, suite.name);
                     j++;
                 }
-                folderNumber++;
+                FillArraySubfolders(folder.folders);
             }
-            return folders;
-        }
+        }       
     }
 }
