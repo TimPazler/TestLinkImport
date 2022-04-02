@@ -18,7 +18,6 @@ namespace TLTCImport
             get { return Label; }
             set { Label = value; base.Text = ""; }
         }
-
         public TreeNodeVirtual() { }
 
         public TreeNodeVirtual(string text) { Label = text; }

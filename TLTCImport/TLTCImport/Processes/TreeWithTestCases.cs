@@ -13,122 +13,86 @@ namespace TLTCImport
     {
         private TestLink testLinkApi = TestLinkResult.testLinkApi;
 
-        public Folder[] NamesFoldersAndfolders(int projectId)
+        public Folder[] FillArrayWithData(int projectId)
         {           
             var Folder = GetArrayAllFolders(projectId);
-
-            //var newArrFoldersAndfolders = RemoveEmptyArrayElements(Subfolder);
-
-            //Исключить лишние
-            //var testCasesForFolders = GetTestCasesForFolders(Folder);
-
+         
             var testCasesForfolders = GetTestCasesForfolders(Folder);
             return testCasesForfolders;
-        }
-
-        //Удаление лишних элементов массива
-        private Folder[] RemoveEmptyArrayElements(Folder[] arrFolders)
-        {
-            int count = 0;
-
-            for (int i = 0; i < arrFolders.Length; i++)
-            {
-                if (arrFolders[i].folders.Length != 0)
-                    count++;
-            }
-
-            Folder[] newArr = new Folder[count];
-
-            for (int i = 0; i < newArr.Length; i++)
-            {
-                if (arrFolders[i] != null)
-                    newArr[i] = arrFolders[i];
-            }
-            return newArr;
-        }
-
-        private Folder[] GetTestCasesForFolders(Folder[] folders)
-        {
-            try
-            {
-                InfoTestCase[] testCase;
-
-                List<TestCaseFromTestSuite> testCaseAllInfo;
-                foreach (var folder in folders)
-                {
-                    for (int i = 0; i < folder.folders.Length; i++)
-                    {
-                        var nameSubfolder = folder.nameFolder;
-                        var idSubfolder = folder.idFolder;
-
-                        testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
-                        testCase = new InfoTestCase[testCaseAllInfo.Count];
-                        int j = 0;
-                        foreach (var testCaseInfo in testCaseAllInfo)
-                        {
-                            testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
-                            j++;
-                        }
-                        folder.testCases = testCase;
-                    }
-                }
-                return folders;
-            }
-            catch (System.Net.WebException)
-            {
-                //Повтор того что в try
-            }
-           
-            return folders;
-        }
+        }      
 
         //тест кейсы
         private Folder[] GetTestCasesForfolders(Folder[] folders)
         {
             try
             {
-                return GetTestCases(folders);
+                return GetArrayAllTestCasesInFolders(folders);
             }
             catch (System.Net.WebException)
             {
-                return GetTestCases(folders);
+                return GetArrayAllTestCasesInFolders(folders);
             }
             catch (XmlRpcIllFormedXmlException)
             {
-                return GetTestCases(folders);
+                return GetArrayAllTestCasesInFolders(folders);
             }
             catch (Exception e)
             {
                 MessageBox.Show($"Непредвиденная ошибка! Попробуйте перезапустить программу! \r\nИли обратитесь к разработчику! \r\n Ошибка: {e.Message}");
             }
             return folders;
-        }
-        private Folder[] GetTestCases(Folder[] folders)
+        }      
+
+        //Получить массив всех тесткейсов в папках
+        private Folder[] GetArrayAllTestCasesInFolders(Folder[] folders)
         {
-            InfoTestCase[] testCase;
+           InfoTestCase[] testCase;
 
-            List<TestCaseFromTestSuite> testCaseAllInfo;
-            foreach (var subfolder in folders)
+           List<TestCaseFromTestSuite> testCaseAllInfo;
+
+            foreach (var folder in folders)
             {
-                for (int i = 0; i < subfolder.folders.Length; i++)
-                {
-                    var nameSubfolder = subfolder.folders[i].nameFolder;
-                    var idSubfolder = subfolder.folders[i].idFolder;
+                var nameFolder = folder.nameFolder;
+                var idFolder = folder.idFolder;
 
-                    testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idSubfolder, true);
-                    testCase = new InfoTestCase[testCaseAllInfo.Count];
-                    int j = 0;
-                    foreach (var testCaseInfo in testCaseAllInfo)
-                    {
-                        testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
-                        j++;
-                    }
-                    subfolder.folders[i].testCases = testCase;
+                testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idFolder, true);
+                testCase = new InfoTestCase[testCaseAllInfo.Count];
+                int j = 0;
+                foreach (var testCaseInfo in testCaseAllInfo)
+                {
+                    testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                    j++;
                 }
+                folder.testCases = testCase;
             }
+
+            FillArrayAllTestCasesInSubfolders(folders);
+
             return folders;
         }
 
+        //Рекурсия
+        //Заполнить массив тесткейсов в подпапки
+        private void FillArrayAllTestCasesInSubfolders(Folder[] folders)
+        {
+            foreach (var folder in folders)
+            {
+                var nameFolder = folder.nameFolder;
+                var idFolder = folder.idFolder;
+
+                var testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idFolder, true);
+                folder.testCases = new InfoTestCase[testCaseAllInfo.Count];
+
+                int j = 0;
+                foreach (var testCaseInfo in testCaseAllInfo)
+                {
+                    folder.testCases[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                    j++;
+                }
+                FillArrayAllTestCasesInSubfolders(folder.folders);
+            }
+        }
+       
         //Получить массив всех папок
         private Folder[] GetArrayAllFolders(int projectId)
         {
@@ -145,7 +109,7 @@ namespace TLTCImport
             FillArraySubfolders(folders);
 
             return folders;
-        }
+        }       
 
         //Рекурсия
         //Заполнить массив подпапками

@@ -117,23 +117,7 @@ namespace TLTCImport
 
             //Отображаем все папки на экране
             AddAllFolders(folders);
-
-                ////Добавление тесткейсов в папки
-                //for (int i = 0; i < subfolder.folders.Length; i++)
-                //{
-                //    AddTestCases(subfolder.testCases, tNSubfolder);
-                //}
-                //treeView.Nodes.Add(tNSubfolder);
-
-            //Добавление тесткейсов в подпапки
-            //for (int i = 0; i < subfolder.folders.Length; i++)
-            //{
-            //    tNTestCase = new TreeNode(subfolder.folders[i].nameFolder);
-            //    AddTestCases(subfolder.folders[i].testCases, tNTestCase);
-            //    treeView.Nodes[j].Nodes.Add(tNTestCase);
-            //}
-
-
+          
             //Для лечения бага прорисовки тесткейсов
             treeView.Visible = false;
 
@@ -148,15 +132,57 @@ namespace TLTCImport
             return folders;
         }
 
+        //Добавление всех тесткейсов в папки дерева
+        private void AddTestCasesInFolders(Folder[] folders, TreeNode tNTestCase)
+        {
+            foreach (var folder in folders)
+            {
+                if (tNTestCase.Text.Contains(folder.nameFolder))
+                {
+                    foreach (var testCase in folder.testCases)
+                    {
+                        tNTestCase.Nodes.Add(new TreeNodeVirtual(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
+                    }
+                }
+            }
+        }
+
+        //Рекурсия
+        //Добавление всех тесткейсов в подпапки дерева
+        //private void AddAllTestCasesInSubfolders(Folder folder, TreeNode treeNode)
+        //{
+        //    var folders = folder.folders;
+        //    foreach (var newFolder in folders)
+        //    {
+        //        tNSubfolder = new TreeNode(newFolder.nameFolder);
+        //        treeNode.Nodes.Add(tNSubfolder);
+
+        //        if (newFolder.folders != null)
+        //        {
+        //            if (newFolder.folders.Length != 0)
+        //            {
+        //                foreach (TreeNode newTreeNode in treeNode.Nodes)
+        //                {
+        //                    if (newTreeNode.Text == newFolder.nameFolder)
+        //                        AddAllTestCasesInSubfolders(newFolder, newTreeNode);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+
         //Добавление всех папок в дерево
         private void AddAllFolders(Folder[] folders)
         {
             foreach (var folder in folders)
             {
-                tNFolder = new TreeNode(folder.nameFolder);
+                tNFolder = new TreeNode(folder.nameFolder + $"({folder.testCases.Length})");
                 treeView.Nodes.Add(tNFolder);
 
                 AddSubfolders(folder, tNFolder);
+
+                AddTestCasesInFolders(folders, tNFolder);
             }
         }
 
@@ -167,7 +193,7 @@ namespace TLTCImport
             var folders = folder.folders;
             foreach (var newFolder in folders)
             {
-                tNSubfolder = new TreeNode(newFolder.nameFolder);
+                tNSubfolder = new TreeNode(newFolder.nameFolder + $" ({newFolder.testCases.Length})");
                 treeNode.Nodes.Add(tNSubfolder);
 
                 if (newFolder.folders != null)
@@ -176,11 +202,13 @@ namespace TLTCImport
                     {
                         foreach (TreeNode newTreeNode in treeNode.Nodes)
                         {
-                            if(newTreeNode.Text == newFolder.nameFolder)
+                            if(newTreeNode.Text.Contains(newFolder.nameFolder))
                                 AddSubfolders(newFolder, newTreeNode);
                         }
                     }
                 }
+
+                AddTestCasesInFolders(folders, tNSubfolder);
             }
 
         }           
@@ -214,20 +242,7 @@ namespace TLTCImport
         {
             var prefixName = TestLinkResult.GetPrefixProjectByName(projectName);      
             return prefixName + "-" + testCaseFullName.externalIdTestCase + ":" + testCaseFullName.nameTestCase;
-        }        
-        private void Addfolders(Folder[] folderNames, TreeNode tNSubfolder)
-        {
-            // Добавляем подпапки к папкам
-            foreach (var folderName in folderNames)
-                tNSubfolder.Nodes.Add(new TreeNode(folderName.nameFolder));            
-        }
-
-        private void AddTestCases(InfoTestCase[] testCases, TreeNode tNTestCase)
-        {
-            // Добавляем тесткейсы к подпапкам
-            foreach (var testCase in testCases)
-                tNTestCase.Nodes.Add(new TreeNodeVirtual(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
-        }       
+        }                       
 
         private bool CheckCaseExistsInTestPlan(Dictionary<string, int> allTestCasesTestPlan, Dictionary<string, string> selectedTestsCases)
         {
@@ -382,7 +397,7 @@ namespace TLTCImport
 
             //Постройка дерева
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
-            folders = TreeCreate(treeWithTestCases.NamesFoldersAndfolders(projectId));
+            folders = TreeCreate(treeWithTestCases.FillArrayWithData(projectId));
 
             //Закрытие окна закрузки и отображение кнопок
             openLoadForm.Close();
