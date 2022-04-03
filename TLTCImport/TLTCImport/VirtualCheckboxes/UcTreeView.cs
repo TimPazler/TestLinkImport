@@ -153,39 +153,41 @@ namespace TLTCImport
             {
                 //если в папке есть тесткейсы
                 if (folder.testCases != null)
-                {
+                {                    
                     foreach (var testCase in folder.testCases)
                     {
-                        if (testCase.nameTestCase != "" || testCase.nameTestCase != null)
-                        {
-                            var prefixName = testCase.project.prefixName;
-                            var externalId = testCase.externalIdTestCase;
-
-                            var externalIdTestCase = prefixName + "-" + externalId;
-                            if (externalIdTestCase.Contains(receivedNameTestCase))
+                        if(testCase != null) {
+                            if (testCase.nameTestCase != "" || testCase.nameTestCase != null)
                             {
-                                //f-Failed 
-                                if (CheckFailed == true)
+                                var prefixName = testCase.project.prefixName;
+                                var externalId = testCase.externalIdTestCase;
+
+                                var externalIdTestCase = prefixName + "-" + externalId;
+                                if (externalIdTestCase.Contains(receivedNameTestCase))
                                 {
-                                    testCase.typeResult = "f";
-                                    break;
-                                }
-                                //p-Passed 
-                                else if (CheckPassed == true)
-                                {
-                                    testCase.typeResult = "p";
-                                    break;
-                                }
-                                //b-Blocked 
-                                else if (CheckBlocked == true)
-                                {
-                                    testCase.typeResult = "b";
-                                    break;
-                                }
-                                else
-                                {
-                                    testCase.typeResult = "null";
-                                    break;
+                                    //f-Failed 
+                                    if (CheckFailed == true)
+                                    {
+                                        testCase.typeResult = "f";
+                                        break;
+                                    }
+                                    //p-Passed 
+                                    else if (CheckPassed == true)
+                                    {
+                                        testCase.typeResult = "p";
+                                        break;
+                                    }
+                                    //b-Blocked 
+                                    else if (CheckBlocked == true)
+                                    {
+                                        testCase.typeResult = "b";
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        testCase.typeResult = "null";
+                                        break;
+                                    }
                                 }
                             }
                         }

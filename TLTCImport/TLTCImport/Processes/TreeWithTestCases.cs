@@ -72,10 +72,29 @@ namespace TLTCImport
                         j++;
                     }
                 }
+
+                //Проверка массива на пустоту
+                testCase = CheckArrayThatEmpty(testCase);
+
                 folder.testCases = testCase;
             }
 
             return folders;
+        }
+
+        //Проверка массива на пустоту
+        private InfoTestCase[] CheckArrayThatEmpty(InfoTestCase[] testCase)
+        {
+            int countCases = 0;
+            foreach (var tCase in testCase)
+            {
+                if (tCase == null)
+                    countCases++;
+            }
+
+            if (countCases == testCase.Length)
+                testCase = null;
+            return testCase;
         }
 
         //Рекурсия

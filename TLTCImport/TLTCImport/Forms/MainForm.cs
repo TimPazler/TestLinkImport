@@ -142,12 +142,15 @@ namespace TLTCImport
             {
                 if (tNTestCase.Text.Contains(folder.nameFolder))
                 {
-                    foreach (var testCase in folder.testCases)
+                    if (folder.testCases != null)
                     {
-                        if (testCase != null)
+                        foreach (var testCase in folder.testCases)
                         {
-                            tNTestCase.Nodes.Add(new TreeNodeVirtual(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
-                            count++;
+                            if (testCase != null)
+                            {
+                                tNTestCase.Nodes.Add(new TreeNodeVirtual(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
+                                count++;
+                            }
                         }
                     }
                 }
@@ -160,14 +163,16 @@ namespace TLTCImport
         //Добавление всех папок в дерево
         private void AddAllFolders(Folder[] folders)
         {
+            int valueCountTestCases = 0;
+
             foreach (var folder in folders)
             {
-                tNFolder = new TreeNode(folder.nameFolder + $" ({folder.testCases.Length})");
+                tNFolder = new TreeNode(folder.nameFolder + $" ({CountingCasesInSubfolders(folder)})");
                 treeView.Nodes.Add(tNFolder);
 
                 AddSubfolders(folder, tNFolder);
                
-                var countTestCasesInFolder = AddTestCasesInFolders(folders, tNFolder, folder.nameFolder);
+                AddTestCasesInFolders(folders, tNFolder, folder.nameFolder);
 
                 ////Проверка, что кол-во кейсов в папке соотвествует тому сколько их в массиве
                 //foreach (var testCases in countTestCasesInFolder)
@@ -183,6 +188,31 @@ namespace TLTCImport
                 //    }
                 //}
             }
+        }
+
+        private int CountingCasesInSubfolders(Folder folder)
+        {
+            int countTestCasesInSubfolder = 0;
+            if (folder.testCases != null)
+            {
+                countTestCasesInSubfolder = folder.testCases.Length;
+            }
+            else
+            {
+                for (int i = 0; i < folder.folders.Length; i++)
+                {
+                    countTestCasesInSubfolder += folder.folders[i].testCases.Length;
+                }
+
+                var countTestCasesInFolder = 0;
+                if (folder.testCases != null)
+                {
+                    countTestCasesInFolder = folder.testCases.Length;
+                }
+                countTestCasesInSubfolder = countTestCasesInSubfolder + countTestCasesInFolder;                
+            }
+
+            return countTestCasesInSubfolder;
         }
 
         //Рекурсия
@@ -271,12 +301,15 @@ namespace TLTCImport
                 {
                     foreach (var testCase in folder.testCases)
                     {
-                        if (testCase.nameTestCase != "" || testCase.nameTestCase != null)
+                        if (testCase != null)
                         {
-                            if (testCase.typeResult != "null")
+                            if (testCase.nameTestCase != "" || testCase.nameTestCase != null)
                             {
-                                var fullExternalId = testCase.project.prefixName + "-" + testCase.externalIdTestCase;                                
-                                manuallySelectedTests.Add(fullExternalId, testCase.typeResult);                                                               
+                                if (testCase.typeResult != "null")
+                                {
+                                    var fullExternalId = testCase.project.prefixName + "-" + testCase.externalIdTestCase;
+                                    manuallySelectedTests.Add(fullExternalId, testCase.typeResult);
+                                }
                             }
                         }
                     }
