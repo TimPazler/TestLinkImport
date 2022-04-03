@@ -13,15 +13,15 @@ namespace TLTCImport
     {
         private TestLink testLinkApi = TestLinkResult.testLinkApi;
 
+        //Заполнение массива папками и тесткейсами
         public Folder[] FillArrayWithData(int projectId)
         {           
-            var Folder = GetArrayAllFolders(projectId);
-         
-            var testCasesForfolders = GetTestCasesForfolders(Folder);
+            var folder = GetArrayAllFolders(projectId);         
+            var testCasesForfolders = GetTestCasesForfolders(folder);
             return testCasesForfolders;
         }      
 
-        //тест кейсы
+        //Получение всех тест кейсов (заполнение массива только тест кейсами)
         private Folder[] GetTestCasesForfolders(Folder[] folders)
         {
             try
@@ -50,25 +50,54 @@ namespace TLTCImport
 
            List<TestCaseFromTestSuite> testCaseAllInfo;
 
+            //Сначала заполняем подпапки
+            FillArrayAllTestCasesInSubfolders(folders);
+
+            //Потом папки
             foreach (var folder in folders)
             {
                 var nameFolder = folder.nameFolder;
                 var idFolder = folder.idFolder;
 
                 testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idFolder, true);
+
                 testCase = new InfoTestCase[testCaseAllInfo.Count];
                 int j = 0;
                 foreach (var testCaseInfo in testCaseAllInfo)
                 {
-                    testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
-                    j++;
+                    //Проверка, что в подпапках такого кейса нет                   
+                    if (TestCaseExistsInSubfolder(folder.folders, testCaseInfo.name))
+                    {
+                        testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                        j++;
+                    }
                 }
                 folder.testCases = testCase;
             }
 
-            FillArrayAllTestCasesInSubfolders(folders);
-
             return folders;
+        }
+
+        //Рекурсия
+        //Проверка, что в подпапках нет кейса, который есть в папке
+        //иначе кейс не добавляем в папку
+        private bool TestCaseExistsInSubfolder(Folder[] folders, string nameTestCase)
+        {
+            foreach (var folder in folders)
+            {
+                foreach (var testCase in folder.testCases)
+                {
+                    if (testCase != null)
+                    {
+                        if (nameTestCase == testCase.nameTestCase)
+                        {
+                            return false;
+                        }
+                    }
+                }
+                TestCaseExistsInSubfolder(folder.folders, nameTestCase);
+            }
+            return true;
         }
 
         //Рекурсия
