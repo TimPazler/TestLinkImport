@@ -26,7 +26,6 @@ namespace TLTCImport
         public Label lblNotAllTestCasesRecognized;
         public Label lblMessageAddJson, lblMessageRecognitionJson;
 
-        //public UcTreeView treeView;
         public ImageList imageList;
         public TreeNode tNFolder, tNSubfolder, tNTestCase;
 
@@ -120,10 +119,8 @@ namespace TLTCImport
           
             //Для лечения бага прорисовки тесткейсов
             treeView.Visible = false;
-
             treeView.ExpandAll();
             treeView.CollapseAll();
-
             treeView.Visible = true;
 
             //Добавляем информацию по проекту в массив           
@@ -163,39 +160,33 @@ namespace TLTCImport
         //Добавление всех папок в дерево
         private void AddAllFolders(Folder[] folders)
         {
-            int valueCountTestCases = 0;
-
             foreach (var folder in folders)
             {
                 tNFolder = new TreeNode(folder.nameFolder + $" ({CountingCasesInSubfolders(folder)})");
-                treeView.Nodes.Add(tNFolder);
 
-                AddSubfolders(folder, tNFolder);
-               
-                AddTestCasesInFolders(folders, tNFolder, folder.nameFolder);
+                if (CountingCasesInSubfolders(folder) != 0)
+                {
+                    treeView.Nodes.Add(tNFolder);
 
-                ////Проверка, что кол-во кейсов в папке соотвествует тому сколько их в массиве
-                //foreach (var testCases in countTestCasesInFolder)
-                //{
-                //    if (folder.nameFolder == testCases.Key) 
-                //    {
-                //        if(folder.testCases.Length != testCases.Value) 
-                //        {
-                //            tNFolder.Text = folder.nameFolder + $" ({testCases.Value}) ";
-                //            MessageBox.Show($"Ошибка! В папке {folder.nameFolder} не хватает тест кейсов! Всего должно быть: {folder.testCases.Length}." +
-                //                $"\r\n Попробуйте перезагрузить программу! Или свяжитесь с разработчиком!");
-                //        }
-                //    }
-                //}
+                    AddSubfolders(folder, tNFolder);
+
+                    AddTestCasesInFolders(folders, tNFolder, folder.nameFolder);
+                }                
             }
         }
-
+      
+        //Количество тесткейсов для папки первого уровня
         private int CountingCasesInSubfolders(Folder folder)
         {
             int countTestCasesInSubfolder = 0;
             if (folder.testCases != null)
             {
                 countTestCasesInSubfolder = folder.testCases.Length;
+
+                for (int i = 0; i < folder.folders.Length; i++)
+                {
+                    countTestCasesInSubfolder += folder.folders[i].testCases.Length;
+                }
             }
             else
             {
@@ -224,20 +215,24 @@ namespace TLTCImport
             {
                 //Добавление к имени папки количества тесткейсов, взятых из массива
                 tNSubfolder = new TreeNode(newFolder.nameFolder + $" ({newFolder.testCases.Length})");
-                treeNode.Nodes.Add(tNSubfolder);
 
-                if (newFolder.folders != null)
+                if (newFolder.testCases.Length != 0)
                 {
-                    if (newFolder.folders.Length != 0)
+                    treeNode.Nodes.Add(tNSubfolder);
+
+                    if (newFolder.folders != null)
                     {
-                        foreach (TreeNode newTreeNode in treeNode.Nodes)
+                        if (newFolder.folders.Length != 0)
                         {
-                            if(newTreeNode.Text.Contains(newFolder.nameFolder))
-                                AddSubfolders(newFolder, newTreeNode);
+                            foreach (TreeNode newTreeNode in treeNode.Nodes)
+                            {
+                                if (newTreeNode.Text.Contains(newFolder.nameFolder))
+                                    AddSubfolders(newFolder, newTreeNode);
+                            }
                         }
                     }
+                    AddTestCasesInFolders(folders, tNSubfolder, newFolder.nameFolder);
                 }
-                AddTestCasesInFolders(folders, tNSubfolder, newFolder.nameFolder);
             }
 
         }           
@@ -432,7 +427,7 @@ namespace TLTCImport
 
             //Постройка дерева
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
-            folders = TreeCreate(treeWithTestCases.FillArrayWithData(projectId));
+            folders = TreeCreate(treeWithTestCases.FillArrayWithData(projectId, testPlanId, projectName));
 
             //Закрытие окна закрузки и отображение кнопок
             openLoadForm.Close();

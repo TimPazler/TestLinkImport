@@ -357,6 +357,11 @@ namespace TLTCImport
                 $"\r\n\r\n{value}\r\n";
         }
 
+        public static List<TestCaseFromTestPlan> GetAllTestCasesByTestPlan(int testPlanId)
+        {
+            return testLinkApi.GetTestCasesForTestPlan(testPlanId);
+        }
+
         public static List<TestProject> GetAllProjects()
         {
             return testLinkApi.GetProjects();
