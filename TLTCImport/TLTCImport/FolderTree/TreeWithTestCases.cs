@@ -13,22 +13,32 @@ namespace TLTCImport
     {
         private TestLink testLinkApi = TestLinkResult.testLinkApi;
 
-        //Заполнение массива папками и тесткейсами
-        public Folder[] FillArrayWithData(int projectId, int testPlanId, string projectName)
+        //Заполнение массива папками и тесткейсами по проекту
+        //Можно выбрать тольео те кейсы которые есть в тест плане
+        //displayCasesAccordingTestPlan = true отвечает за выбор кейсов в тест плане
+        public Folder[] FillArrayWithData(int projectId, int testPlanId, string projectName, bool displayCasesAccordingTestPlan = true)
         {
             string prefixName = TestLinkResult.GetPrefixProjectByName(projectName);
-            var allTestCasesTestPlan = TestLinkResult.GetTestCasesToTestPlan(testPlanId, projectName);
+            Dictionary<string, int> allTestCasesTestPlan = new Dictionary<string, int>();
+            
+            //Получение кейсов по тест плану
+            if (displayCasesAccordingTestPlan == true)            
+                allTestCasesTestPlan = TestLinkResult.GetTestCasesToTestPlan(testPlanId, projectName);            
 
+            //Сначала массив заполняем только папками продукта
             var folder = GetArrayAllFolders(projectId);
-            var folders = GetTestCasesForfolders(folder);
+            //Потом вставляем все кейсы продукта
+            var folders = GetTestCasesForFolders(folder);
 
-            ArrayTestsCasesByTestPlan(folders, allTestCasesTestPlan, prefixName);
-
+            //Для переработки массива и отображения только тех кейсов, которые есть в тест плане
+            if (displayCasesAccordingTestPlan == true)            
+                ArrayTestsCasesByTestPlan(folders, allTestCasesTestPlan, prefixName);
+            
             return folders;
         }        
 
         //Получение всех тест кейсов (заполнение массива только тест кейсами)
-        private Folder[] GetTestCasesForfolders(Folder[] folders)
+        private Folder[] GetTestCasesForFolders(Folder[] folders)
         {
             try
             {
@@ -186,7 +196,6 @@ namespace TLTCImport
 
                 folder.testCases = testCase;
             }
-
             return folders;
         }
 

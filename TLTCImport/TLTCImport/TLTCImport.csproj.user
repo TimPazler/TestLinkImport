@@ -14,7 +14,7 @@
     <Compile Update="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="VirtualCheckboxes\UcTreeView.cs">
+    <Compile Update="FolderTree\UcTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
