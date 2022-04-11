@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -109,13 +110,13 @@ namespace TLTCImport
             Controls.Add(treeView);
         }
 
-        private Folder[] TreeCreate(Folder[] folders)
+        private Folder[] TreeCreate(Folder[] folders, bool displayCheckboxes = true)
         {
             //Удаление пустой папки или старых
             treeView.Nodes.Clear();
 
             //Отображаем все папки на экране
-            AddAllFolders(folders);
+            AddAllFolders(folders, displayCheckboxes);
           
             //Для лечения бага прорисовки тесткейсов
             treeView.Visible = false;
@@ -130,7 +131,7 @@ namespace TLTCImport
         }
 
         //Добавление всех тесткейсов в папки дерева
-        private Dictionary<string, int> AddTestCasesInFolders(Folder[] folders, TreeNode tNTestCase, string nameFolder)
+        private Dictionary<string, int> AddTestCasesInFolders(Folder[] folders, TreeNode tNTestCase, string nameFolder, bool displayCheckboxes = true)
         {
             Dictionary<string, int> countTestCasesInFolder = new Dictionary<string, int>();
 
@@ -145,7 +146,10 @@ namespace TLTCImport
                         {
                             if (testCase != null)
                             {
-                                tNTestCase.Nodes.Add(new TreeNodeVirtual(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
+                                if (displayCheckboxes == true)
+                                    tNTestCase.Nodes.Add(new TreeNodeVirtual(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
+                                else                                
+                                    tNTestCase.Nodes.Add(new TreeNode(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));                                
                                 count++;
                             }
                         }
@@ -157,8 +161,16 @@ namespace TLTCImport
             return countTestCasesInFolder;
         }
 
+        private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                Process.Start(new ProcessStartInfo("cmd", $"/c start https://t.me/TimPazler"));
+            }
+        }
+
         //Добавление всех папок в дерево
-        private void AddAllFolders(Folder[] folders)
+        private void AddAllFolders(Folder[] folders, bool displayCheckboxes = true)
         {
             foreach (var folder in folders)
             {
@@ -168,9 +180,9 @@ namespace TLTCImport
                 {
                     treeView.Nodes.Add(tNFolder);
 
-                    AddSubfolders(folder, tNFolder);
+                    AddSubfolders(folder, tNFolder, displayCheckboxes);
 
-                    AddTestCasesInFolders(folders, tNFolder, folder.nameFolder);
+                    AddTestCasesInFolders(folders, tNFolder, folder.nameFolder, displayCheckboxes);
                 }                
             }
         }
@@ -208,7 +220,7 @@ namespace TLTCImport
 
         //Рекурсия
         //Добавление всех подпапок в дерево
-        private void AddSubfolders(Folder folder, TreeNode treeNode)
+        private void AddSubfolders(Folder folder, TreeNode treeNode, bool displayCheckboxes = true)
         {
             var folders = folder.folders;
             foreach (var newFolder in folders)
@@ -227,11 +239,11 @@ namespace TLTCImport
                             foreach (TreeNode newTreeNode in treeNode.Nodes)
                             {
                                 if (newTreeNode.Text.Contains(newFolder.nameFolder))
-                                    AddSubfolders(newFolder, newTreeNode);
+                                    AddSubfolders(newFolder, newTreeNode, displayCheckboxes);
                             }
                         }
                     }
-                    AddTestCasesInFolders(folders, tNSubfolder, newFolder.nameFolder);
+                    AddTestCasesInFolders(folders, tNSubfolder, newFolder.nameFolder, displayCheckboxes);
                 }
             }
 
@@ -331,7 +343,23 @@ namespace TLTCImport
             }
 
             Thread.Sleep(250);
-            cbTestPlanName.Enabled = true;
+
+            if (comboBox.Items.Count == 0)
+            {
+                cbTestPlanName.Text = "Тест планы отсутствуют!";
+                cbTestPlanName.ForeColor = Color.Gray;
+
+                DisplayElementsTestRunBlock(false);
+
+                cbTestPlanName.Enabled = false;
+                btnShowAllTests.Enabled = true;
+            }
+            else
+            {
+                cbTestPlanName.Enabled = true;
+                cbTestPlanName.ForeColor = Color.Black;
+            }
+
         }
 
         private void cbProjectNames_SelectedIndexChanged(object sender, EventArgs e)
@@ -345,7 +373,8 @@ namespace TLTCImport
             else if (projectId != 0)
             {
                 cbTestPlanName.Items.Clear();
-                cbTestPlanName.Text = "";
+                cbTestPlanName.ForeColor = Color.Gray;
+                cbTestPlanName.Text = "Выбирите тест план";
 
                 projectId = TestLinkResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
                 projectName = cbProjectNames.SelectedItem.ToString();
@@ -360,13 +389,7 @@ namespace TLTCImport
 
             if (testPlanId != 0)
             {
-                btnAutoMode.Enabled = true;
-                btnManualMode.Enabled = true;
-
-                //Чекбоксы
-                cbPassed.Enabled = true;
-                cbBlocked.Enabled = true;
-                cbFailed.Enabled = true;
+                DisplayElementsTestRunBlock(true);
             }
         }
 
@@ -602,44 +625,96 @@ namespace TLTCImport
             if (countSubmittedЕestСases < countTestCasesJenkins)
                 lblNotAllTestCasesRecognized.Text = "Не все тест кейсы были отправлены? \r\n" +
                      "Возможно, названия кейсов в Jenkins отличаются от названий в TestLink!";
-        }      
+        }
+
+        //Кнопка Отображение всех тестов продукта
+        private void btnShowAllTests_Click(object sender, EventArgs e)
+        {
+            //Перед отображение всех тестов продукта блокируем все элементы
+            BlockAllElementsMainForm();
+
+            //Окно загрузки
+            var openLoadForm = OpenFormLoadingScreen("Получение информации о папках..");
+           
+            //Постройка дерева
+            TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
+            folders = TreeCreate(treeWithTestCases.FillArrayWithData(projectId, testPlanId, projectName, false), false);
+
+            //Закрытие окна закрузки и отображение кнопок
+            openLoadForm.Close();
+            OpenAllElementsMainForm("showAllTests");
+        }
+     
+        private void treeView_NodeMouseClick_1(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                Process.Start(new ProcessStartInfo("cmd", $"/c start https://t.me/TimPazler"));
+            }
+        }
 
         private void BlockAllElementsMainForm()
         {
-            MainFormMenu.Enabled = false;
-            cbProjectNames.Enabled = false;
-            cbTestPlanName.Enabled = false;
-            btnAutoMode.Enabled = false;
-            btnManualMode.Enabled = false;
-            btnExpandTree.Enabled = false;
-            btnCollapseTree.Enabled = false;
-            btnCaseTransfer.Enabled = false;
-
-            //Чекбоксы
-            cbPassed.Enabled = false;
-            cbBlocked.Enabled = false;
-            cbFailed.Enabled = false;
+            DisplayElementsMainMenuBlock(false);
+            DisplayElementsTestRunBlock(false);
+            DisplayElementsDescriptionTestsBlock(false);
+            DisplayElementsTreeViewsBlock(false);
         }
 
         private void OpenAllElementsMainForm(string testTransferMode)
         {
-            MainFormMenu.Enabled = true;
-            cbProjectNames.Enabled = true;
-            cbTestPlanName.Enabled = true;
-            btnAutoMode.Enabled = true;
-            btnManualMode.Enabled = true;
-            
+            DisplayElementsMainMenuBlock(true);
+            DisplayElementsTestRunBlock(true);
+
             if (testTransferMode == "manual")
             {
-                btnExpandTree.Enabled = true;
-                btnCollapseTree.Enabled = true;
-                btnCaseTransfer.Enabled = true;
+                DisplayElementsTreeViewsBlock(true);
+                btnShowAllTests.Enabled = true;
             }
+            else if (testTransferMode == "showAllTests")
+            {
+                DisplayElementsTreeViewsBlock(true);
+                DisplayElementsDescriptionTestsBlock(true);
+                DisplayElementsTestRunBlock(false);
+                btnCaseTransfer.Enabled = false;
+            }
+        }
+
+
+        //Блок Прогон тестов с кнопками и чекбоксами
+        private void DisplayElementsTestRunBlock(bool enabled)
+        {
+            //Кнопки
+            btnAutoMode.Enabled = enabled;
+            btnManualMode.Enabled = enabled;
 
             //Чекбоксы
-            cbPassed.Enabled = true;
-            cbBlocked.Enabled = true;
-            cbFailed.Enabled = true;
+            cbPassed.Enabled = enabled;
+            cbBlocked.Enabled = enabled;
+            cbFailed.Enabled = enabled;
+            cbFailed.Enabled = enabled;
+        }
+
+        //Блок Описание тестов с кнопкой
+        private void DisplayElementsDescriptionTestsBlock(bool enabled)
+        {
+            //Кнопки
+            btnShowAllTests.Enabled = enabled;            
+        }
+
+        //Блок для работы с деревом (кнопки)
+        private void DisplayElementsTreeViewsBlock(bool enabled)
+        {
+            //Кнопки
+            btnCollapseTree.Enabled = enabled;
+            btnExpandTree.Enabled = enabled;
+            btnCaseTransfer.Enabled = enabled;
+        }
+
+        private void DisplayElementsMainMenuBlock(bool enabled)
+        {
+            //Меню
+            MainFormMenu.Enabled = enabled;
         }
 
         private void ClearAllMessages()
