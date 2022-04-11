@@ -359,7 +359,7 @@
             this.treeView.Size = new System.Drawing.Size(936, 427);
             this.treeView.Spacing = 4;
             this.treeView.TabIndex = 5;
-            this.treeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_NodeMouseClick_1);
+            this.treeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_NodeMouseClick);
             // 
             // panel1
             // 

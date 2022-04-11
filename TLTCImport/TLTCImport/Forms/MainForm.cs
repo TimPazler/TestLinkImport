@@ -39,11 +39,6 @@ namespace TLTCImport
         public static Folder[] folders;
         private Dictionary<string, string> manuallySelectedTests = new Dictionary<string, string>();
 
-        void aboutItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("О программе");
-        }
-
         public MainForm()
         {
             InitializeComponent();
@@ -110,6 +105,7 @@ namespace TLTCImport
             Controls.Add(treeView);
         }
 
+        #region Создание дерева
         private Folder[] TreeCreate(Folder[] folders, bool displayCheckboxes = true)
         {
             //Удаление пустой папки или старых
@@ -130,6 +126,55 @@ namespace TLTCImport
             return folders;
         }
 
+        //Добавление всех папок в дерево
+        private void AddAllFolders(Folder[] folders, bool displayCheckboxes = true)
+        {
+            foreach (var folder in folders)
+            {
+                tNFolder = new TreeNode(folder.nameFolder + $" ({CountingCasesInSubfolders(folder)})");
+
+                if (CountingCasesInSubfolders(folder) != 0)
+                {
+                    treeView.Nodes.Add(tNFolder);
+
+                    AddSubfolders(folder, tNFolder, displayCheckboxes);
+
+                    AddTestCasesInFolders(folders, tNFolder, folder.nameFolder, displayCheckboxes);
+                }
+            }
+        }
+
+        //Рекурсия
+        //Добавление всех подпапок в дерево
+        private void AddSubfolders(Folder folder, TreeNode treeNode, bool displayCheckboxes = true)
+        {
+            var folders = folder.folders;
+            foreach (var newFolder in folders)
+            {
+                //Добавление к имени папки количества тесткейсов, взятых из массива
+                tNSubfolder = new TreeNode(newFolder.nameFolder + $" ({newFolder.testCases.Length})");
+
+                if (newFolder.testCases.Length != 0)
+                {
+                    treeNode.Nodes.Add(tNSubfolder);
+
+                    if (newFolder.folders != null)
+                    {
+                        if (newFolder.folders.Length != 0)
+                        {
+                            foreach (TreeNode newTreeNode in treeNode.Nodes)
+                            {
+                                if (newTreeNode.Text.Contains(newFolder.nameFolder))
+                                    AddSubfolders(newFolder, newTreeNode, displayCheckboxes);
+                            }
+                        }
+                    }
+                    AddTestCasesInFolders(folders, tNSubfolder, newFolder.nameFolder, displayCheckboxes);
+                }
+            }
+
+        }
+
         //Добавление всех тесткейсов в папки дерева
         private Dictionary<string, int> AddTestCasesInFolders(Folder[] folders, TreeNode tNTestCase, string nameFolder, bool displayCheckboxes = true)
         {
@@ -148,8 +193,8 @@ namespace TLTCImport
                             {
                                 if (displayCheckboxes == true)
                                     tNTestCase.Nodes.Add(new TreeNodeVirtual(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
-                                else                                
-                                    tNTestCase.Nodes.Add(new TreeNode(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));                                
+                                else
+                                    tNTestCase.Nodes.Add(new TreeNode(CreateTestCaseFullName(testCase), IconTestCases, IconTestCases));
                                 count++;
                             }
                         }
@@ -169,24 +214,10 @@ namespace TLTCImport
             }
         }
 
-        //Добавление всех папок в дерево
-        private void AddAllFolders(Folder[] folders, bool displayCheckboxes = true)
-        {
-            foreach (var folder in folders)
-            {
-                tNFolder = new TreeNode(folder.nameFolder + $" ({CountingCasesInSubfolders(folder)})");
+        #endregion
 
-                if (CountingCasesInSubfolders(folder) != 0)
-                {
-                    treeView.Nodes.Add(tNFolder);
+        #region Работа с массивом папок       
 
-                    AddSubfolders(folder, tNFolder, displayCheckboxes);
-
-                    AddTestCasesInFolders(folders, tNFolder, folder.nameFolder, displayCheckboxes);
-                }                
-            }
-        }
-      
         //Количество тесткейсов для папки первого уровня
         private int CountingCasesInSubfolders(Folder folder)
         {
@@ -219,37 +250,6 @@ namespace TLTCImport
         }
 
         //Рекурсия
-        //Добавление всех подпапок в дерево
-        private void AddSubfolders(Folder folder, TreeNode treeNode, bool displayCheckboxes = true)
-        {
-            var folders = folder.folders;
-            foreach (var newFolder in folders)
-            {
-                //Добавление к имени папки количества тесткейсов, взятых из массива
-                tNSubfolder = new TreeNode(newFolder.nameFolder + $" ({newFolder.testCases.Length})");
-
-                if (newFolder.testCases.Length != 0)
-                {
-                    treeNode.Nodes.Add(tNSubfolder);
-
-                    if (newFolder.folders != null)
-                    {
-                        if (newFolder.folders.Length != 0)
-                        {
-                            foreach (TreeNode newTreeNode in treeNode.Nodes)
-                            {
-                                if (newTreeNode.Text.Contains(newFolder.nameFolder))
-                                    AddSubfolders(newFolder, newTreeNode, displayCheckboxes);
-                            }
-                        }
-                    }
-                    AddTestCasesInFolders(folders, tNSubfolder, newFolder.nameFolder, displayCheckboxes);
-                }
-            }
-
-        }           
-        
-        //Рекурсия
         //Добавление во все тест кейсы информацию о проекте (имя и id проекта, префикс)
         public void AddProjectInfoForArrFolders(Folder[] folders)
         {
@@ -275,31 +275,19 @@ namespace TLTCImport
                     ///Просмотр подпапок
                     AddProjectInfoForArrFolders(folder.folders);
             }
-        }    
+        }
 
         private string CreateTestCaseFullName(InfoTestCase testCaseFullName)
         {
-            var prefixName = TestLinkResult.GetPrefixProjectByName(projectName);      
+            var prefixName = TestLinkResult.GetPrefixProjectByName(projectName);
             return prefixName + "-" + testCaseFullName.externalIdTestCase + ":" + testCaseFullName.nameTestCase;
-        }                       
-
-        private bool CheckCaseExistsInTestPlan(Dictionary<string, int> allTestCasesTestPlan, Dictionary<string, string> selectedTestsCases)
-        {
-            //Проверка существования кейса в тест плане
-            foreach (var testCaseTestPlan in allTestCasesTestPlan)
-            {
-                foreach (var testCase in selectedTestsCases)
-                {
-                    if (testCaseTestPlan.Key == testCase.Key)                    
-                        return true;                                      
-                }                
-            }
-            return false;
         }
 
         //Рекурсия
+        //Заполнение массива 
+        //Получение TestCaseId и результатов при ручном режиме
         private Dictionary<string, string> GetTestCaseIdAndResultFromManuallySelectedTests(Folder[] folders)
-        {           
+        {
             //Проходим папки первого уровня
             foreach (var folder in folders)
             {
@@ -325,42 +313,13 @@ namespace TLTCImport
                 else
                     //Просмотр подпапок
                     GetTestCaseIdAndResultFromManuallySelectedTests(folder.folders);
-            }           
+            }
             return manuallySelectedTests;
         }
 
-        private void SetProjectNames(ComboBox comboBox)
-        {
-            foreach (var item in TestLinkResult.GetAllProjects())            
-                comboBox.Items.Add(item.name);            
-        }
+        #endregion
 
-        private void SetTestPlanName(ComboBox comboBox, int projectId)
-        {
-            foreach (var item in TestLinkResult.GetAllProjectTestPlans(projectId))
-            {
-                comboBox.Items.Add(item.name);               
-            }
-
-            Thread.Sleep(250);
-
-            if (comboBox.Items.Count == 0)
-            {
-                cbTestPlanName.Text = "Тест планы отсутствуют!";
-                cbTestPlanName.ForeColor = Color.Gray;
-
-                DisplayElementsTestRunBlock(false);
-
-                cbTestPlanName.Enabled = false;
-                btnShowAllTests.Enabled = true;
-            }
-            else
-            {
-                cbTestPlanName.Enabled = true;
-                cbTestPlanName.ForeColor = Color.Black;
-            }
-
-        }
+        #region Комбобоксы
 
         private void cbProjectNames_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -392,6 +351,45 @@ namespace TLTCImport
                 DisplayElementsTestRunBlock(true);
             }
         }
+        #endregion
+
+        #region Заполнение комбобоксов
+
+        private void SetProjectNames(ComboBox comboBox)
+        {
+            foreach (var item in TestLinkResult.GetAllProjects())
+                comboBox.Items.Add(item.name);
+        }
+
+        private void SetTestPlanName(ComboBox comboBox, int projectId)
+        {
+            foreach (var item in TestLinkResult.GetAllProjectTestPlans(projectId))
+            {
+                comboBox.Items.Add(item.name);
+            }
+
+            Thread.Sleep(250);
+
+            if (comboBox.Items.Count == 0)
+            {
+                cbTestPlanName.Text = "Тест планы отсутствуют!";
+                cbTestPlanName.ForeColor = Color.Gray;
+
+                DisplayElementsTestRunBlock(false);
+
+                cbTestPlanName.Enabled = false;
+                btnShowAllTests.Enabled = true;
+            }
+            else
+            {
+                cbTestPlanName.Enabled = true;
+                cbTestPlanName.ForeColor = Color.Black;
+            }
+
+        }
+        #endregion
+
+        #region Кнопки
 
         //Кнопка Перенос тестов
         private void btCaseTransfer_Click(object sender, EventArgs e)
@@ -432,6 +430,21 @@ namespace TLTCImport
                 
                 MessageBox.Show("Ни один тест кейс не был выбран!");
             }                      
+        }
+
+        //Проверка существования кейса в тест плане
+        private bool CheckCaseExistsInTestPlan(Dictionary<string, int> allTestCasesTestPlan, Dictionary<string, string> selectedTestsCases)
+        {
+            //Проверка существования кейса в тест плане
+            foreach (var testCaseTestPlan in allTestCasesTestPlan)
+            {
+                foreach (var testCase in selectedTestsCases)
+                {
+                    if (testCaseTestPlan.Key == testCase.Key)
+                        return true;
+                }
+            }
+            return false;
         }
 
         //Кнопка Ручной режим
@@ -539,15 +552,22 @@ namespace TLTCImport
                 MessageBox.Show("Хотя бы один чекбокс должен быть отмечен!");
         }
 
-        private LoadingScreen OpenFormLoadingScreen(string message)
+        //Кнопка Отображение всех тестов продукта
+        private void btnShowAllTests_Click(object sender, EventArgs e)
         {
-            LoadingScreen OpenLoadForm = new LoadingScreen(message);
-            OpenLoadForm.Location = Location;
-            OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
-            OpenLoadForm.FormClosing += delegate { Show(); };
-            OpenLoadForm.Show();
+            //Перед отображение всех тестов продукта блокируем все элементы
+            BlockAllElementsMainForm();
 
-            return OpenLoadForm;
+            //Окно загрузки
+            var openLoadForm = OpenFormLoadingScreen("Получение информации о папках..");
+
+            //Постройка дерева
+            TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
+            folders = TreeCreate(treeWithTestCases.FillArrayWithData(projectId, testPlanId, projectName, false), false);
+
+            //Закрытие окна закрузки и отображение кнопок
+            openLoadForm.Close();
+            OpenAllElementsMainForm("showAllTests");
         }
 
         private void btnExpandTree_Click(object sender, EventArgs e)
@@ -559,6 +579,27 @@ namespace TLTCImport
         {
             treeView.CollapseAll();
         }
+
+        void aboutItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("О программе");
+        }
+        #endregion
+
+        #region Окно загрузки
+        private LoadingScreen OpenFormLoadingScreen(string message)
+        {
+            LoadingScreen OpenLoadForm = new LoadingScreen(message);
+            OpenLoadForm.Location = Location;
+            OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
+            OpenLoadForm.FormClosing += delegate { Show(); };
+            OpenLoadForm.Show();
+
+            return OpenLoadForm;
+        }
+        #endregion
+
+        #region Вывод сообщений на экран
 
         private void MessageFileNotAdd()
         {
@@ -627,31 +668,16 @@ namespace TLTCImport
                      "Возможно, названия кейсов в Jenkins отличаются от названий в TestLink!";
         }
 
-        //Кнопка Отображение всех тестов продукта
-        private void btnShowAllTests_Click(object sender, EventArgs e)
+        private void ClearAllMessages()
         {
-            //Перед отображение всех тестов продукта блокируем все элементы
-            BlockAllElementsMainForm();
-
-            //Окно загрузки
-            var openLoadForm = OpenFormLoadingScreen("Получение информации о папках..");
-           
-            //Постройка дерева
-            TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
-            folders = TreeCreate(treeWithTestCases.FillArrayWithData(projectId, testPlanId, projectName, false), false);
-
-            //Закрытие окна закрузки и отображение кнопок
-            openLoadForm.Close();
-            OpenAllElementsMainForm("showAllTests");
+            lblMessageAddJson.Text = "";
+            lblMessageRecognitionJson.Text = "";
+            lblAddCasesTestlink.Text = "";
+            lblNotAllTestCasesRecognized.Text = "";
         }
-     
-        private void treeView_NodeMouseClick_1(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                Process.Start(new ProcessStartInfo("cmd", $"/c start https://t.me/TimPazler"));
-            }
-        }
+        #endregion              
+
+        #region Доступность элементов окна
 
         private void BlockAllElementsMainForm()
         {
@@ -679,8 +705,9 @@ namespace TLTCImport
                 btnCaseTransfer.Enabled = false;
             }
         }
+        #endregion
 
-
+        #region Блоки (с кнопками, чекбоксами..)
         //Блок Прогон тестов с кнопками и чекбоксами
         private void DisplayElementsTestRunBlock(bool enabled)
         {
@@ -711,19 +738,16 @@ namespace TLTCImport
             btnCaseTransfer.Enabled = enabled;
         }
 
+        //Блок главное меню
         private void DisplayElementsMainMenuBlock(bool enabled)
         {
             //Меню
             MainFormMenu.Enabled = enabled;
         }
 
-        private void ClearAllMessages()
-        {
-            lblMessageAddJson.Text = "";
-            lblMessageRecognitionJson.Text = "";
-            lblAddCasesTestlink.Text = "";
-            lblNotAllTestCasesRecognized.Text = "";
-        }
+        #endregion
+
+        #region Работа с файлами
 
         private bool CopyFileInProject(string urlUploadedFile, string nameFile)
         {
@@ -763,5 +787,7 @@ namespace TLTCImport
                 file.Delete();
             }
         }
+
+        #endregion 
     }
 }

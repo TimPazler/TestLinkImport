@@ -170,11 +170,11 @@ namespace TLTCImport
             this.lblProductVersion.BackColor = System.Drawing.Color.Transparent;
             this.lblProductVersion.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblProductVersion.ForeColor = System.Drawing.Color.Gray;
-            this.lblProductVersion.Location = new System.Drawing.Point(222, 345);
+            this.lblProductVersion.Location = new System.Drawing.Point(212, 345);
             this.lblProductVersion.Name = "lblProductVersion";
-            this.lblProductVersion.Size = new System.Drawing.Size(33, 17);
+            this.lblProductVersion.Size = new System.Drawing.Size(43, 17);
             this.lblProductVersion.TabIndex = 7;
-            this.lblProductVersion.Text = "v0.4";
+            this.lblProductVersion.Text = "v0.4.1";
             this.lblProductVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // lblhelp
