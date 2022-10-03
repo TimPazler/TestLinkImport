@@ -245,6 +245,7 @@ namespace TLTCImport
                 var nameFolder = folder.nameFolder;
                 var idFolder = folder.idFolder;
 
+                //баг CookComputing.XmlRpc.XmlRpcIllFormedXmlException: "Response from server does not contain valid XML."
                 var testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idFolder, true);
                 folder.testCases = new InfoTestCase[testCaseAllInfo.Count];
 
