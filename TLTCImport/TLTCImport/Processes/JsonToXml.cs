@@ -39,7 +39,8 @@ namespace TLTCImport
                     else if (status == "skipped")
                         status = "b";
 
-                    valuesCases.Add(name, status);
+                    CheckSameNameTestCase(valuesCases, name, status);
+                    //valuesCases.Add(name, status);
                 }
             }
 
@@ -75,7 +76,44 @@ namespace TLTCImport
             {
                 return false;
             }
-        }       
+        }
+
+        //Проверяет кейсы с одинаковым именем
+        public void CheckSameNameTestCase(Dictionary<string, string> valuesCases, string name, string status)
+        {
+            if (valuesCases.Count > 0)
+            {
+                for (int i = 0; i < valuesCases.Count; i++)
+                {
+                    //если в словаре нет строки с таким ключем и новое значение p
+                    if (!valuesCases.ContainsKey(name) && status == "p")
+                        valuesCases.Add(name, status);
+                    else //если в словаре нет строки с таким ключем и новое значение f
+                    if (!valuesCases.ContainsKey(name) && status == "f")
+                        valuesCases.Add(name, status);
+                    else //если в словаре нет строки с таким ключем и новое значение b
+                    if (!valuesCases.ContainsKey(name) && status == "b")
+                        valuesCases.Add(name, status);
+
+                    //если в словаре есть строка с таким ключем, а новое значение false
+                    else if (valuesCases.ContainsKey(name) && status == "f")
+                    {
+                        valuesCases.Remove(name);
+                        valuesCases.Add(name, status);
+                    }
+                    //если в словаре есть строка с таким  ключем, новое значение skipped
+                    //а старое значение не равно false
+                    else if (valuesCases.ContainsKey(name) && !(valuesCases.ContainsValue("f")) && status == "b")
+                    {
+                        valuesCases.Remove(name);
+                        valuesCases.Add(name, status);
+                    }                   
+                }
+            }
+            else
+                valuesCases.Add(name, status);
+
+        }
 
         //Читаем json файл
         private List<JenkinsResults> ReadJsonFile(string nameFile)
