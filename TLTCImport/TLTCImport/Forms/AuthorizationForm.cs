@@ -12,13 +12,23 @@ namespace TLTCImport
         public AuthorizationForm()
         {
             InitializeComponent();
-
         }
 
+        #region Главное меню
         private void llHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("cmd", $"/c start https://t.me/TimPazler"));
         }
+
+        private void instruction_Click(object sender, EventArgs e)
+        {
+            var frm = new Instruction();
+            frm.ShowDialog();
+        }
+
+        #endregion
+
+        #region Кнопки
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
@@ -51,11 +61,6 @@ namespace TLTCImport
             else
                 MessageBox.Show("Поля не были заполнены!", "Ошибка!");
         }
-
-        private void instruction_Click(object sender, EventArgs e)
-        {
-            var frm = new Instruction();
-            frm.ShowDialog();
-        }
+        #endregion
     }
 }

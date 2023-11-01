@@ -45,9 +45,9 @@ namespace TLTCImport
             if (response.ErrorException == null)
             {
                 Document doc = Dcsoup.Parse(response.Content);
-                CSRFName = doc.GetElementById("CSRFName").Val;
-                CSRFToken = doc.GetElementById("CSRFToken").Val;
-                CSRFName = doc.GetElementById("CSRFName").Val;
+                CSRFName = doc.GetElementsByAttributeValueStarting("Name", "CSRFName").Val;
+                CSRFToken = doc.GetElementsByAttributeValueStarting("Name", "CSRFToken").Val;
+                //CSRFName = doc.GetElementById("CSRFName").Val;
 
                 //// Вход в TestLink
                 //request = new RestRequest("/login.php", Method.POST);
