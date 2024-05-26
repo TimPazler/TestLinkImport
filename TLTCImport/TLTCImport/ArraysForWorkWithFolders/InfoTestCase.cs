@@ -21,6 +21,6 @@ namespace TLTCImport.FolderStorageTestLink
             this.externalIdTestCase = externalIdTestCase;
             this.nameTestCase = nameTestCase;
             this.typeResult = typeResult;
-        }
+        }      
     }
 }

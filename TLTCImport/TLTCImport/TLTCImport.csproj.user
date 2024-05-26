@@ -11,11 +11,17 @@
     <Compile Update="Forms\LoadingScreen.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\LoadingScreenFolders.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="FolderTree\UcTreeView.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Forms\Results_Manual.cs">
+      <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
 </Project>

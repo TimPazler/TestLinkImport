@@ -1,7 +1,6 @@
-﻿
-namespace TLTCImport
+﻿namespace TLTCImport.Forms
 {
-    partial class LoadingScreen
+    partial class Results_Manual
     {
         /// <summary>
         /// Required designer variable.
@@ -31,14 +30,13 @@ namespace TLTCImport
         {
             SuspendLayout();
             // 
-            // LoadingScreen
+            // Results_Manual
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            BackColor = System.Drawing.Color.White;
-            ClientSize = new System.Drawing.Size(642, 148);
-            Name = "LoadingScreen";
-            Text = "Загрузка...";
+            ClientSize = new System.Drawing.Size(417, 73);
+            Name = "Results_Manual";
+            Text = "Список перенесенных тест кейсов";
             ResumeLayout(false);
         }
 

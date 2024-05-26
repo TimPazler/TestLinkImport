@@ -2,15 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using TestLinkApi;
 using TLTCImport.FolderStorageTestLink;
+using TLTCImport.Forms;
 
 namespace TLTCImport
 {
     //Класс для работы с деревом, состоящим из папок и тесткейсов
     public class TreeWithTestCases
     {
+        private LoadingScreenFolders loadingScreenFolders { get; set; }       
+
         private TestLink testLinkApi = TestLinkResult.testLinkApi;
 
         //Заполнение массива папками и тесткейсами по проекту
@@ -65,7 +69,7 @@ namespace TLTCImport
         private Folder[] ArrayTestsCasesByTestPlan(Folder[] folders, Dictionary<string, int> allTestCasesTestPlan, string prefixName)
         {
             foreach (var folder in folders)
-            {
+            {               
                 Dictionary<string, int> testCasesField = new Dictionary<string, int>();
 
                 if (folder.testCases != null)
@@ -164,7 +168,7 @@ namespace TLTCImport
         //Получить массив всех тесткейсов в папках
         private Folder[] GetArrayAllTestCasesInFolders(Folder[] folders)
         {
-            InfoTestCase[] testCase;
+            InfoTestCase[] infoTestCase;
 
             List<TestCaseFromTestSuite> testCaseAllInfo;
 
@@ -176,26 +180,61 @@ namespace TLTCImport
             {
                 var nameFolder = folder.nameFolder;
                 var idFolder = folder.idFolder;
+                
+               loadingScreenFolders.OpenFormLoadingScreen("Просматриваем все папки из Тест плана: ", folder.nameFolder, loadingScreenFolders);
 
-                testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idFolder, true);
-
-                testCase = new InfoTestCase[testCaseAllInfo.Count];
-                int j = 0;
-                foreach (var testCaseInfo in testCaseAllInfo)
+                //TestLink не может обрабатывать большие папки, поэтому используем это условие
+                if (testLinkApi.GetTestCaseIdsForTestSuite(idFolder, true).Count > 200)
                 {
-                    //Проверка, что в подпапках такого кейса нет                   
-                    if (TestCaseExistsInSubfolder(folder.folders, testCaseInfo.name))
+                    //получаем все id тест кейсов по папке
+                    var testCaseIds = testLinkApi.GetTestCaseIdsForTestSuite(idFolder, true);
+                    infoTestCase = new InfoTestCase[testCaseIds.Count];
+                    List<TestCase> testCases = new List<TestCase>();
+
+                    //Получаем по штучно данные для каждого тест кейса и помещаем в лист
+                    foreach (var testCaseId in testCaseIds)
                     {
-                        testCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);                        
-                        j++;
+                        testCases.Add(testLinkApi.GetTestCase(testCaseId));
+                    }
+
+                    //Обрабатываем данные в массивы
+                    int j = 0;
+                    foreach (var test_Case in testCases)
+                    {
+                        if (TestCaseExistsInSubfolder(folder.folders, test_Case.name))
+                        {
+                            infoTestCase[j] = new InfoTestCase(test_Case.id, Int32.Parse(test_Case.externalid), test_Case.name);
+                            j++;
+                        }
+                    }
+                }
+                else
+                {
+                    testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idFolder, true);
+                    infoTestCase = new InfoTestCase[testCaseAllInfo.Count];
+                    int j = 0;
+                    foreach (var testCaseInfo in testCaseAllInfo)
+                    {
+                        //Проверка, что в подпапках такого кейса нет                   
+                        if (TestCaseExistsInSubfolder(folder.folders, testCaseInfo.name))
+                        {
+                            infoTestCase[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                            j++;
+                        }
                     }
                 }
 
                 //Проверка массива на пустоту
-                testCase = CheckArrayThatEmpty(testCase);
+                infoTestCase = CheckArrayThatEmpty(infoTestCase);
+                folder.testCases = infoTestCase;
 
-                folder.testCases = testCase;
+                loadingScreenFolders.lblNameFolder.Update();
             }
+
+            //Закрываем окно с сообщением
+            loadingScreenFolders.Hide();
+            loadingScreenFolders = null;
+
             return folders;
         }
 
@@ -242,21 +281,60 @@ namespace TLTCImport
         {
             foreach (var folder in folders)
             {
+                
                 var nameFolder = folder.nameFolder;
                 var idFolder = folder.idFolder;
 
-                //баг CookComputing.XmlRpc.XmlRpcIllFormedXmlException: "Response from server does not contain valid XML."
-                var testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idFolder, true);
-                folder.testCases = new InfoTestCase[testCaseAllInfo.Count];
+                //Закрываем сообщение о папках
+                MainForm.loadingForm.Close();
 
-                int j = 0;
-                foreach (var testCaseInfo in testCaseAllInfo)
+                //Вывод сообщения на экран
+                if (loadingScreenFolders == null)
+                    loadingScreenFolders = new LoadingScreenFolders().OpenFormLoadingScreen("Просматриваем все подпапки из Тест плана: ", folder.nameFolder, loadingScreenFolders);
+                else
+                    loadingScreenFolders.OpenFormLoadingScreen("Просматриваем все подпапки из Тест плана: ", folder.nameFolder, loadingScreenFolders);
+
+                //TestLink не может обрабатывать большие папки, поэтому используем это условие
+                if (testLinkApi.GetTestCaseIdsForTestSuite(idFolder, true).Count > 200)
                 {
-                    folder.testCases[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
-                    j++;
+                    //получаем все id тест кейсов по папке
+                    var testCaseIds = testLinkApi.GetTestCaseIdsForTestSuite(idFolder, true);
+                    folder.testCases = new InfoTestCase[testCaseIds.Count];
+                    List<TestCase> testCases = new List<TestCase>();
+
+                    //Получаем по штучно данные для каждого тест кейса и помещаем в лист
+                    foreach (var testCaseId in testCaseIds)
+                    {
+                        testCases.Add(testLinkApi.GetTestCase(testCaseId));                        
+                    }
+
+                    //Обрабатываем данные в массивы
+                    int j = 0;
+                    foreach (var testCase in testCases)
+                    {
+                        folder.testCases[j] = new InfoTestCase(testCase.id, Int32.Parse(testCase.externalid), testCase.name);
+                        j++;
+                    }
                 }
+                else
+                {
+                    //баг CookComputing.XmlRpc.XmlRpcIllFormedXmlException: "Response from server does not contain valid XML."
+                    //при большом кол-ве тестов в папке
+                    var testCaseAllInfo = testLinkApi.GetTestCasesForTestSuite(idFolder, true);
+                    folder.testCases = new InfoTestCase[testCaseAllInfo.Count];
+
+                    int j = 0;
+                    foreach (var testCaseInfo in testCaseAllInfo)
+                    {
+                        folder.testCases[j] = new InfoTestCase(testCaseInfo.id, Int32.Parse(testCaseInfo.external_id), testCaseInfo.name);
+                        j++;
+                    }
+                }
+
+                loadingScreenFolders.lblNameFolder.Update();
+                
                 FillArrayAllTestCasesInSubfolders(folder.folders);
-            }
+            }            
         }
        
         //Получить массив всех папок

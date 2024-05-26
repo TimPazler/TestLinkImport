@@ -100,7 +100,7 @@ namespace TLTCImport
                 AddProjectInfoForArrFolders(MainForm.folders, n.Label, n.CheckPassed, n.CheckFailed, n.CheckBlocked);
             }
         }
-       
+
         //Обработчик, отвечающий за выбор чекбокса
         //Из трех чекбоксов можно выбрать лишь один, либо снять его
         private void HandlerSelectOneOfCheckboxes(TreeNodeVirtual n, TreeNodeMouseClickEventArgs e)

@@ -18,6 +18,7 @@ using System.Xml;
 using System.Xml.Linq;
 using TestLinkApi;
 using TLTCImport.FolderStorageTestLink;
+using TLTCImport.Forms;
 
 namespace TLTCImport
 {
@@ -38,6 +39,8 @@ namespace TLTCImport
 
         public static Folder[] folders;
         private Dictionary<string, string> manuallySelectedTests = new Dictionary<string, string>();
+
+        public static LoadingScreen loadingForm { get; set; }
 
         public MainForm()
         {
@@ -113,7 +116,7 @@ namespace TLTCImport
 
             //Отображаем все папки на экране
             AddAllFolders(folders, displayCheckboxes);
-          
+
             //Для лечения бага прорисовки тесткейсов
             treeView.Visible = false;
             treeView.ExpandAll();
@@ -129,9 +132,16 @@ namespace TLTCImport
         //Добавление всех папок в дерево
         private void AddAllFolders(Folder[] folders, bool displayCheckboxes = true)
         {
+            LoadingScreenFolders loadingScreenFolders = null;
             foreach (var folder in folders)
             {
                 tNFolder = new TreeNode(folder.nameFolder + $" ({CountingCasesInSubfolders(folder)})");
+
+                if (loadingScreenFolders == null)
+                    loadingScreenFolders = new LoadingScreenFolders().OpenFormLoadingScreen("Переносим папки в дерево: ", folder.nameFolder, loadingScreenFolders);
+                else
+                    loadingScreenFolders.OpenFormLoadingScreen("Переносим папки в дерево: ", folder.nameFolder, loadingScreenFolders);
+
 
                 if (CountingCasesInSubfolders(folder) != 0)
                 {
@@ -142,6 +152,9 @@ namespace TLTCImport
                     AddTestCasesInFolders(folders, tNFolder, folder.nameFolder, displayCheckboxes);
                 }
             }
+
+            loadingScreenFolders.Hide();
+            loadingScreenFolders = null;
         }
 
         //Рекурсия
@@ -243,7 +256,7 @@ namespace TLTCImport
                 {
                     countTestCasesInFolder = folder.testCases.Length;
                 }
-                countTestCasesInSubfolder = countTestCasesInSubfolder + countTestCasesInFolder;                
+                countTestCasesInSubfolder = countTestCasesInSubfolder + countTestCasesInFolder;
             }
 
             return countTestCasesInSubfolder;
@@ -324,7 +337,7 @@ namespace TLTCImport
         private void cbProjectNames_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (projectId == 0)
-            {                
+            {
                 projectId = TestLinkResult.GetProjectIdByName(cbProjectNames.SelectedItem.ToString());
                 projectName = cbProjectNames.SelectedItem.ToString();
                 SetTestPlanName(cbTestPlanName, projectId);
@@ -395,7 +408,7 @@ namespace TLTCImport
         private void btCaseTransfer_Click(object sender, EventArgs e)
         {
             //Окно загрузки
-            var openLoadForm = OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
+            loadingForm = new LoadingScreen().OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
 
             //Добавить проверку на то что чекбоксы не пустые
             var allTestCasesTestPlan = TestLinkResult.GetTestCasesToTestPlan(testPlanId, projectName);
@@ -408,12 +421,16 @@ namespace TLTCImport
                 {
                     //Перенос тестов в TestLink
                     TestLinkResult.ImportsRunInfoInTestLink(testPlanId, selectedTestsCases, projectName);
+
+                    //Вывод сообщение о тест кейсах
+                    new Results_Manual(selectedTestsCases);
                 }
                 else
                     MessageBox.Show("Тест кейса не существует в тест плане!");
 
+
                 //Закрытие окна закрузки и отображение кнопок
-                openLoadForm.Close();
+                loadingForm.Close();
                 OpenAllElementsMainForm("manual");
 
                 //Очистка словаря
@@ -422,14 +439,14 @@ namespace TLTCImport
             else
             {
                 //Закрытие окна закрузки и отображение кнопок
-                openLoadForm.Close();
+                loadingForm.Close();
                 OpenAllElementsMainForm("manual");
 
                 //Очистка словаря
                 manuallySelectedTests.Clear();
-                
+
                 MessageBox.Show("Ни один тест кейс не был выбран!");
-            }                      
+            }
         }
 
         //Проверка существования кейса в тест плане
@@ -449,13 +466,14 @@ namespace TLTCImport
 
         //Кнопка Ручной режим
         private void btnManualMode_Click(object sender, EventArgs e)
-        {   
+        {
             //Перед ручным режимом блокируем все элементы
             BlockAllElementsMainForm();
 
-            //Окно загрузки
-            var openLoadForm = OpenFormLoadingScreen("Получение информации о папках..");
+            lbl_InfoSuccessTree.Text = "";
 
+            //Окно загрузки
+            loadingForm = new LoadingScreen().OpenFormLoadingScreen("Получение информации о папках..");
             //OpenLoadForm.Size = this.Size;
             //OpenLoadForm.FormBorderStyle = FormBorderStyle.None;
             //OpenLoadForm.BackColor = Color.Black;//цвет фона
@@ -465,8 +483,9 @@ namespace TLTCImport
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
             folders = TreeCreate(treeWithTestCases.FillArrayWithData(projectId, testPlanId, projectName));
 
+            MessageSuccessTreeAdd();
+
             //Закрытие окна закрузки и отображение кнопок
-            openLoadForm.Close();
             OpenAllElementsMainForm("manual");
         }
 
@@ -524,13 +543,13 @@ namespace TLTCImport
                             BlockAllElementsMainForm();
 
                             //Окно загрузки
-                            var openLoadForm = OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
+                            loadingForm = new LoadingScreen().OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
 
                             //Импорт тестов в Тестлинк               
                             testCaseTransferResults = TestLinkResult.ImportsRunInfoInTestLink(testPlanId, valuesCases, projectName);
 
                             //Закрытие окна закрузки
-                            openLoadForm.Close();
+                            loadingForm.Close();
                             OpenAllElementsMainForm("auto");
 
                             //если прерван перенос тесткейсов
@@ -559,14 +578,13 @@ namespace TLTCImport
             BlockAllElementsMainForm();
 
             //Окно загрузки
-            var openLoadForm = OpenFormLoadingScreen("Получение информации о папках..");
+            loadingForm = new LoadingScreen().OpenFormLoadingScreen("Получение информации о папках..");
 
             //Постройка дерева
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
             folders = TreeCreate(treeWithTestCases.FillArrayWithData(projectId, testPlanId, projectName, false), false);
 
             //Закрытие окна закрузки и отображение кнопок
-            openLoadForm.Close();
             OpenAllElementsMainForm("showAllTests");
         }
 
@@ -579,23 +597,10 @@ namespace TLTCImport
         {
             treeView.CollapseAll();
         }
-
+     
         void aboutItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("О программе");
-        }
-        #endregion
-
-        #region Окно загрузки
-        private LoadingScreen OpenFormLoadingScreen(string message)
-        {
-            LoadingScreen OpenLoadForm = new LoadingScreen(message);
-            OpenLoadForm.Location = Location;
-            OpenLoadForm.StartPosition = FormStartPosition.CenterScreen;
-            OpenLoadForm.FormClosing += delegate { Show(); };
-            OpenLoadForm.Show();
-
-            return OpenLoadForm;
         }
         #endregion
 
@@ -625,7 +630,14 @@ namespace TLTCImport
             lblMessageAddJson.ForeColor = Color.Green;
             lblMessageAddJson.Text = "✔ Файл \"" + nameFile + ".json" + "\" успешно добавлен!";
         }
-     
+
+        private void MessageSuccessTreeAdd()
+        {
+            lbl_InfoSuccessTree.Font = new Font(DefaultFont, FontStyle.Bold);
+            lbl_InfoSuccessTree.ForeColor = Color.Green;
+            lbl_InfoSuccessTree.Text = "✔ Дерево успешно добавлено!";
+        }
+
         private void MessagejsonRecognize()
         {
             lblMessageRecognitionJson.Font = new Font(DefaultFont, FontStyle.Bold);
@@ -654,7 +666,7 @@ namespace TLTCImport
             lblAddCasesTestlink.Font = new Font(DefaultFont, FontStyle.Bold);
             lblAddCasesTestlink.ForeColor = Color.DarkRed;
             lblAddCasesTestlink.Text = $"✖ Перенос тест кейсов ​​в Testlink прерван!" +
-                $" \r\n Тестов перенесено {countSubmittedЕestСases} из {countTestCasesJenkins}, имеющихся в json файле.";            
+                $" \r\n Тестов перенесено {countSubmittedЕestСases} из {countTestCasesJenkins}, имеющихся в json файле.";
         }
 
         private void MessageAddCasesTestlink(int countTestCasesJenkins, int countSubmittedЕestСases)
@@ -674,6 +686,7 @@ namespace TLTCImport
             lblMessageRecognitionJson.Text = "";
             lblAddCasesTestlink.Text = "";
             lblNotAllTestCasesRecognized.Text = "";
+            lbl_InfoSuccessTree.Text = "";
         }
         #endregion              
 
@@ -726,7 +739,7 @@ namespace TLTCImport
         private void DisplayElementsDescriptionTestsBlock(bool enabled)
         {
             //Кнопки
-            btnShowAllTests.Enabled = enabled;            
+            btnShowAllTests.Enabled = enabled;
         }
 
         //Блок для работы с деревом (кнопки)
@@ -736,6 +749,9 @@ namespace TLTCImport
             btnCollapseTree.Enabled = enabled;
             btnExpandTree.Enabled = enabled;
             btnCaseTransfer.Enabled = enabled;
+            
+            //Пока не реализовано
+            //btRemoveSelection.Enabled = enabled;
         }
 
         //Блок главное меню
@@ -766,7 +782,7 @@ namespace TLTCImport
                     return false;
                 }
             }
-            else             
+            else
                 File.Copy(urlUploadedFile, pathFile + nameFile + ".json");
             return true;
         }
@@ -788,6 +804,6 @@ namespace TLTCImport
             }
         }
 
-        #endregion 
+        #endregion       
     }
 }

@@ -28,392 +28,408 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.foldersIcons = new System.Windows.Forms.ImageList(this.components);
-            this.MainFormMenu = new System.Windows.Forms.MenuStrip();
-            this.referenceItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.MainFormStatus = new System.Windows.Forms.StatusStrip();
-            this.leftPanel = new System.Windows.Forms.Panel();
-            this.lblDescriptionTests = new System.Windows.Forms.Label();
-            this.btnShowAllTests = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.cbBlocked = new System.Windows.Forms.CheckBox();
-            this.cbFailed = new System.Windows.Forms.CheckBox();
-            this.cbPassed = new System.Windows.Forms.CheckBox();
-            this.lblTestRun = new System.Windows.Forms.Label();
-            this.pbForlblTestRun = new System.Windows.Forms.PictureBox();
-            this.btnManualMode = new System.Windows.Forms.Button();
-            this.btnAutoMode = new System.Windows.Forms.Button();
-            this.lblSoftware = new System.Windows.Forms.Label();
-            this.cbProjectNames = new System.Windows.Forms.ComboBox();
-            this.cbTestPlanName = new System.Windows.Forms.ComboBox();
-            this.topPanel = new System.Windows.Forms.Panel();
-            this.lblCurrentTestPlan = new System.Windows.Forms.Label();
-            this.btnCollapseTree = new System.Windows.Forms.Button();
-            this.pbForlblCurrentTestPlan = new System.Windows.Forms.PictureBox();
-            this.btnExpandTree = new System.Windows.Forms.Button();
-            this.pbForlblSoftware = new System.Windows.Forms.PictureBox();
-            this.treeView = new TLTCImport.UcTreeView();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.btnCaseTransfer = new System.Windows.Forms.Button();
-            this.MainFormMenu.SuspendLayout();
-            this.leftPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbForlblTestRun)).BeginInit();
-            this.topPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbForlblCurrentTestPlan)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbForlblSoftware)).BeginInit();
-            this.panel1.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            foldersIcons = new System.Windows.Forms.ImageList(components);
+            MainFormMenu = new System.Windows.Forms.MenuStrip();
+            referenceItem = new System.Windows.Forms.ToolStripMenuItem();
+            aboutItem = new System.Windows.Forms.ToolStripMenuItem();
+            MainFormStatus = new System.Windows.Forms.StatusStrip();
+            leftPanel = new System.Windows.Forms.Panel();
+            lblDescriptionTests = new System.Windows.Forms.Label();
+            btnShowAllTests = new System.Windows.Forms.Button();
+            pictureBox1 = new System.Windows.Forms.PictureBox();
+            cbBlocked = new System.Windows.Forms.CheckBox();
+            cbFailed = new System.Windows.Forms.CheckBox();
+            cbPassed = new System.Windows.Forms.CheckBox();
+            lblTestRun = new System.Windows.Forms.Label();
+            pbForlblTestRun = new System.Windows.Forms.PictureBox();
+            btnManualMode = new System.Windows.Forms.Button();
+            btnAutoMode = new System.Windows.Forms.Button();
+            lblSoftware = new System.Windows.Forms.Label();
+            cbProjectNames = new System.Windows.Forms.ComboBox();
+            cbTestPlanName = new System.Windows.Forms.ComboBox();
+            topPanel = new System.Windows.Forms.Panel();
+            lbl_InfoSuccessTree = new System.Windows.Forms.Label();
+            lblCurrentTestPlan = new System.Windows.Forms.Label();
+            btnCollapseTree = new System.Windows.Forms.Button();
+            pbForlblCurrentTestPlan = new System.Windows.Forms.PictureBox();
+            btnExpandTree = new System.Windows.Forms.Button();
+            pbForlblSoftware = new System.Windows.Forms.PictureBox();
+            treeView = new UcTreeView();
+            panel1 = new System.Windows.Forms.Panel();
+            btnCaseTransfer = new System.Windows.Forms.Button();
+            btRemoveSelection = new System.Windows.Forms.Button();
+            MainFormMenu.SuspendLayout();
+            leftPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbForlblTestRun).BeginInit();
+            topPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbForlblCurrentTestPlan).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbForlblSoftware).BeginInit();
+            panel1.SuspendLayout();
+            SuspendLayout();
             // 
             // foldersIcons
             // 
-            this.foldersIcons.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.foldersIcons.ImageSize = new System.Drawing.Size(16, 16);
-            this.foldersIcons.TransparentColor = System.Drawing.Color.Transparent;
+            foldersIcons.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            foldersIcons.ImageSize = new System.Drawing.Size(16, 16);
+            foldersIcons.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // MainFormMenu
             // 
-            this.MainFormMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.referenceItem,
-            this.aboutItem});
-            this.MainFormMenu.Location = new System.Drawing.Point(0, 0);
-            this.MainFormMenu.Name = "MainFormMenu";
-            this.MainFormMenu.Size = new System.Drawing.Size(1148, 24);
-            this.MainFormMenu.TabIndex = 0;
-            this.MainFormMenu.Text = "menuStrip1";
+            MainFormMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { referenceItem, aboutItem });
+            MainFormMenu.Location = new System.Drawing.Point(0, 0);
+            MainFormMenu.Name = "MainFormMenu";
+            MainFormMenu.Size = new System.Drawing.Size(1148, 24);
+            MainFormMenu.TabIndex = 0;
+            MainFormMenu.Text = "menuStrip1";
             // 
             // referenceItem
             // 
-            this.referenceItem.Name = "referenceItem";
-            this.referenceItem.Size = new System.Drawing.Size(65, 20);
-            this.referenceItem.Text = "Справка";
+            referenceItem.Name = "referenceItem";
+            referenceItem.Size = new System.Drawing.Size(65, 20);
+            referenceItem.Text = "Справка";
             // 
             // aboutItem
             // 
-            this.aboutItem.Name = "aboutItem";
-            this.aboutItem.Size = new System.Drawing.Size(94, 20);
-            this.aboutItem.Text = "О программе";
+            aboutItem.Name = "aboutItem";
+            aboutItem.Size = new System.Drawing.Size(94, 20);
+            aboutItem.Text = "О программе";
             // 
             // MainFormStatus
             // 
-            this.MainFormStatus.Location = new System.Drawing.Point(0, 640);
-            this.MainFormStatus.Name = "MainFormStatus";
-            this.MainFormStatus.Size = new System.Drawing.Size(1148, 22);
-            this.MainFormStatus.TabIndex = 1;
-            this.MainFormStatus.Text = "statusStrip1";
+            MainFormStatus.Location = new System.Drawing.Point(0, 640);
+            MainFormStatus.Name = "MainFormStatus";
+            MainFormStatus.Size = new System.Drawing.Size(1148, 22);
+            MainFormStatus.TabIndex = 1;
+            MainFormStatus.Text = "statusStrip1";
             // 
             // leftPanel
             // 
-            this.leftPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.leftPanel.BackColor = System.Drawing.Color.Silver;
-            this.leftPanel.Controls.Add(this.lblDescriptionTests);
-            this.leftPanel.Controls.Add(this.btnShowAllTests);
-            this.leftPanel.Controls.Add(this.pictureBox1);
-            this.leftPanel.Controls.Add(this.cbBlocked);
-            this.leftPanel.Controls.Add(this.cbFailed);
-            this.leftPanel.Controls.Add(this.cbPassed);
-            this.leftPanel.Controls.Add(this.lblTestRun);
-            this.leftPanel.Controls.Add(this.pbForlblTestRun);
-            this.leftPanel.Controls.Add(this.btnManualMode);
-            this.leftPanel.Controls.Add(this.btnAutoMode);
-            this.leftPanel.Location = new System.Drawing.Point(0, 24);
-            this.leftPanel.Name = "leftPanel";
-            this.leftPanel.Size = new System.Drawing.Size(210, 1357);
-            this.leftPanel.TabIndex = 2;
+            leftPanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            leftPanel.BackColor = System.Drawing.Color.Silver;
+            leftPanel.Controls.Add(lblDescriptionTests);
+            leftPanel.Controls.Add(btnShowAllTests);
+            leftPanel.Controls.Add(pictureBox1);
+            leftPanel.Controls.Add(cbBlocked);
+            leftPanel.Controls.Add(cbFailed);
+            leftPanel.Controls.Add(cbPassed);
+            leftPanel.Controls.Add(lblTestRun);
+            leftPanel.Controls.Add(pbForlblTestRun);
+            leftPanel.Controls.Add(btnManualMode);
+            leftPanel.Controls.Add(btnAutoMode);
+            leftPanel.Location = new System.Drawing.Point(0, 24);
+            leftPanel.Name = "leftPanel";
+            leftPanel.Size = new System.Drawing.Size(210, 1357);
+            leftPanel.TabIndex = 2;
             // 
             // lblDescriptionTests
             // 
-            this.lblDescriptionTests.AutoSize = true;
-            this.lblDescriptionTests.BackColor = System.Drawing.Color.Gray;
-            this.lblDescriptionTests.ForeColor = System.Drawing.Color.White;
-            this.lblDescriptionTests.Location = new System.Drawing.Point(5, 286);
-            this.lblDescriptionTests.Name = "lblDescriptionTests";
-            this.lblDescriptionTests.Size = new System.Drawing.Size(103, 15);
-            this.lblDescriptionTests.TabIndex = 7;
-            this.lblDescriptionTests.Text = "Описание тестов:";
-            this.lblDescriptionTests.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            lblDescriptionTests.AutoSize = true;
+            lblDescriptionTests.BackColor = System.Drawing.Color.Gray;
+            lblDescriptionTests.ForeColor = System.Drawing.Color.White;
+            lblDescriptionTests.Location = new System.Drawing.Point(5, 286);
+            lblDescriptionTests.Name = "lblDescriptionTests";
+            lblDescriptionTests.Size = new System.Drawing.Size(103, 15);
+            lblDescriptionTests.TabIndex = 7;
+            lblDescriptionTests.Text = "Описание тестов:";
+            lblDescriptionTests.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnShowAllTests
             // 
-            this.btnShowAllTests.Enabled = false;
-            this.btnShowAllTests.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnShowAllTests.Location = new System.Drawing.Point(3, 316);
-            this.btnShowAllTests.Name = "btnShowAllTests";
-            this.btnShowAllTests.Size = new System.Drawing.Size(204, 30);
-            this.btnShowAllTests.TabIndex = 7;
-            this.btnShowAllTests.Text = "Отобразить все тесты продукта";
-            this.btnShowAllTests.UseVisualStyleBackColor = true;
-            this.btnShowAllTests.Click += new System.EventHandler(this.btnShowAllTests_Click);
+            btnShowAllTests.Enabled = false;
+            btnShowAllTests.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnShowAllTests.Location = new System.Drawing.Point(3, 316);
+            btnShowAllTests.Name = "btnShowAllTests";
+            btnShowAllTests.Size = new System.Drawing.Size(204, 30);
+            btnShowAllTests.TabIndex = 7;
+            btnShowAllTests.Text = "Отобразить все тесты продукта";
+            btnShowAllTests.UseVisualStyleBackColor = true;
+            btnShowAllTests.Click += btnShowAllTests_Click;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Gray;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 280);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(204, 30);
-            this.pictureBox1.TabIndex = 8;
-            this.pictureBox1.TabStop = false;
+            pictureBox1.BackColor = System.Drawing.Color.Gray;
+            pictureBox1.Location = new System.Drawing.Point(3, 280);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new System.Drawing.Size(204, 30);
+            pictureBox1.TabIndex = 8;
+            pictureBox1.TabStop = false;
             // 
             // cbBlocked
             // 
-            this.cbBlocked.AutoSize = true;
-            this.cbBlocked.Checked = true;
-            this.cbBlocked.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbBlocked.Enabled = false;
-            this.cbBlocked.Location = new System.Drawing.Point(13, 215);
-            this.cbBlocked.Name = "cbBlocked";
-            this.cbBlocked.Size = new System.Drawing.Size(93, 19);
-            this.cbBlocked.TabIndex = 8;
-            this.cbBlocked.Text = "Блокирован";
-            this.cbBlocked.UseVisualStyleBackColor = true;
+            cbBlocked.AutoSize = true;
+            cbBlocked.Checked = true;
+            cbBlocked.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbBlocked.Enabled = false;
+            cbBlocked.Location = new System.Drawing.Point(13, 215);
+            cbBlocked.Name = "cbBlocked";
+            cbBlocked.Size = new System.Drawing.Size(93, 19);
+            cbBlocked.TabIndex = 8;
+            cbBlocked.Text = "Блокирован";
+            cbBlocked.UseVisualStyleBackColor = true;
             // 
             // cbFailed
             // 
-            this.cbFailed.AutoSize = true;
-            this.cbFailed.Checked = true;
-            this.cbFailed.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbFailed.Enabled = false;
-            this.cbFailed.Location = new System.Drawing.Point(101, 189);
-            this.cbFailed.Name = "cbFailed";
-            this.cbFailed.Size = new System.Drawing.Size(81, 19);
-            this.cbFailed.TabIndex = 7;
-            this.cbFailed.Text = "Провален";
-            this.cbFailed.UseVisualStyleBackColor = true;
+            cbFailed.AutoSize = true;
+            cbFailed.Enabled = false;
+            cbFailed.Location = new System.Drawing.Point(101, 189);
+            cbFailed.Name = "cbFailed";
+            cbFailed.Size = new System.Drawing.Size(81, 19);
+            cbFailed.TabIndex = 7;
+            cbFailed.Text = "Провален";
+            cbFailed.UseVisualStyleBackColor = true;
             // 
             // cbPassed
             // 
-            this.cbPassed.AutoSize = true;
-            this.cbPassed.Checked = true;
-            this.cbPassed.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbPassed.Enabled = false;
-            this.cbPassed.ForeColor = System.Drawing.Color.Transparent;
-            this.cbPassed.Location = new System.Drawing.Point(13, 190);
-            this.cbPassed.Name = "cbPassed";
-            this.cbPassed.Size = new System.Drawing.Size(75, 19);
-            this.cbPassed.TabIndex = 6;
-            this.cbPassed.Text = "Пройден";
-            this.cbPassed.UseVisualStyleBackColor = true;
+            cbPassed.AutoSize = true;
+            cbPassed.Checked = true;
+            cbPassed.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbPassed.Enabled = false;
+            cbPassed.ForeColor = System.Drawing.Color.Transparent;
+            cbPassed.Location = new System.Drawing.Point(13, 190);
+            cbPassed.Name = "cbPassed";
+            cbPassed.Size = new System.Drawing.Size(75, 19);
+            cbPassed.TabIndex = 6;
+            cbPassed.Text = "Пройден";
+            cbPassed.UseVisualStyleBackColor = true;
             // 
             // lblTestRun
             // 
-            this.lblTestRun.AutoSize = true;
-            this.lblTestRun.BackColor = System.Drawing.Color.Gray;
-            this.lblTestRun.ForeColor = System.Drawing.Color.White;
-            this.lblTestRun.Location = new System.Drawing.Point(5, 123);
-            this.lblTestRun.Name = "lblTestRun";
-            this.lblTestRun.Size = new System.Drawing.Size(90, 15);
-            this.lblTestRun.TabIndex = 0;
-            this.lblTestRun.Text = "Прогон тестов:";
-            this.lblTestRun.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblTestRun.AutoSize = true;
+            lblTestRun.BackColor = System.Drawing.Color.Gray;
+            lblTestRun.ForeColor = System.Drawing.Color.White;
+            lblTestRun.Location = new System.Drawing.Point(5, 123);
+            lblTestRun.Name = "lblTestRun";
+            lblTestRun.Size = new System.Drawing.Size(90, 15);
+            lblTestRun.TabIndex = 0;
+            lblTestRun.Text = "Прогон тестов:";
+            lblTestRun.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pbForlblTestRun
             // 
-            this.pbForlblTestRun.BackColor = System.Drawing.Color.Gray;
-            this.pbForlblTestRun.Location = new System.Drawing.Point(3, 117);
-            this.pbForlblTestRun.Name = "pbForlblTestRun";
-            this.pbForlblTestRun.Size = new System.Drawing.Size(204, 30);
-            this.pbForlblTestRun.TabIndex = 4;
-            this.pbForlblTestRun.TabStop = false;
+            pbForlblTestRun.BackColor = System.Drawing.Color.Gray;
+            pbForlblTestRun.Location = new System.Drawing.Point(3, 117);
+            pbForlblTestRun.Name = "pbForlblTestRun";
+            pbForlblTestRun.Size = new System.Drawing.Size(204, 30);
+            pbForlblTestRun.TabIndex = 4;
+            pbForlblTestRun.TabStop = false;
             // 
             // btnManualMode
             // 
-            this.btnManualMode.Enabled = false;
-            this.btnManualMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnManualMode.Location = new System.Drawing.Point(3, 240);
-            this.btnManualMode.Name = "btnManualMode";
-            this.btnManualMode.Size = new System.Drawing.Size(204, 30);
-            this.btnManualMode.TabIndex = 5;
-            this.btnManualMode.Text = "Ручной режим";
-            this.btnManualMode.UseVisualStyleBackColor = true;
-            this.btnManualMode.Click += new System.EventHandler(this.btnManualMode_Click);
+            btnManualMode.Enabled = false;
+            btnManualMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnManualMode.Location = new System.Drawing.Point(3, 240);
+            btnManualMode.Name = "btnManualMode";
+            btnManualMode.Size = new System.Drawing.Size(204, 30);
+            btnManualMode.TabIndex = 5;
+            btnManualMode.Text = "Ручной режим";
+            btnManualMode.UseVisualStyleBackColor = true;
+            btnManualMode.Click += btnManualMode_Click;
             // 
             // btnAutoMode
             // 
-            this.btnAutoMode.Enabled = false;
-            this.btnAutoMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAutoMode.Location = new System.Drawing.Point(3, 153);
-            this.btnAutoMode.Name = "btnAutoMode";
-            this.btnAutoMode.Size = new System.Drawing.Size(203, 30);
-            this.btnAutoMode.TabIndex = 4;
-            this.btnAutoMode.Text = "Авто режим";
-            this.btnAutoMode.UseVisualStyleBackColor = true;
-            this.btnAutoMode.Click += new System.EventHandler(this.btnAutoMode_Click);
+            btnAutoMode.Enabled = false;
+            btnAutoMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnAutoMode.Location = new System.Drawing.Point(3, 153);
+            btnAutoMode.Name = "btnAutoMode";
+            btnAutoMode.Size = new System.Drawing.Size(203, 30);
+            btnAutoMode.TabIndex = 4;
+            btnAutoMode.Text = "Авто режим";
+            btnAutoMode.UseVisualStyleBackColor = true;
+            btnAutoMode.Click += btnAutoMode_Click;
             // 
             // lblSoftware
             // 
-            this.lblSoftware.AutoSize = true;
-            this.lblSoftware.BackColor = System.Drawing.Color.Gray;
-            this.lblSoftware.ForeColor = System.Drawing.Color.White;
-            this.lblSoftware.Location = new System.Drawing.Point(5, 10);
-            this.lblSoftware.Name = "lblSoftware";
-            this.lblSoftware.Size = new System.Drawing.Size(139, 15);
-            this.lblSoftware.TabIndex = 0;
-            this.lblSoftware.Text = "Программный продукт:";
-            this.lblSoftware.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            lblSoftware.AutoSize = true;
+            lblSoftware.BackColor = System.Drawing.Color.Gray;
+            lblSoftware.ForeColor = System.Drawing.Color.White;
+            lblSoftware.Location = new System.Drawing.Point(5, 10);
+            lblSoftware.Name = "lblSoftware";
+            lblSoftware.Size = new System.Drawing.Size(139, 15);
+            lblSoftware.TabIndex = 0;
+            lblSoftware.Text = "Программный продукт:";
+            lblSoftware.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // cbProjectNames
             // 
-            this.cbProjectNames.ForeColor = System.Drawing.Color.Black;
-            this.cbProjectNames.FormattingEnabled = true;
-            this.cbProjectNames.Location = new System.Drawing.Point(3, 34);
-            this.cbProjectNames.Name = "cbProjectNames";
-            this.cbProjectNames.Size = new System.Drawing.Size(204, 23);
-            this.cbProjectNames.TabIndex = 2;
-            this.cbProjectNames.Text = "Выбирите продукт";
-            this.cbProjectNames.SelectedIndexChanged += new System.EventHandler(this.cbProjectNames_SelectedIndexChanged);
+            cbProjectNames.ForeColor = System.Drawing.Color.Black;
+            cbProjectNames.FormattingEnabled = true;
+            cbProjectNames.Location = new System.Drawing.Point(3, 34);
+            cbProjectNames.Name = "cbProjectNames";
+            cbProjectNames.Size = new System.Drawing.Size(204, 23);
+            cbProjectNames.TabIndex = 2;
+            cbProjectNames.Text = "Выберите продукт";
+            cbProjectNames.SelectedIndexChanged += cbProjectNames_SelectedIndexChanged;
             // 
             // cbTestPlanName
             // 
-            this.cbTestPlanName.Enabled = false;
-            this.cbTestPlanName.FormattingEnabled = true;
-            this.cbTestPlanName.Location = new System.Drawing.Point(3, 89);
-            this.cbTestPlanName.Name = "cbTestPlanName";
-            this.cbTestPlanName.Size = new System.Drawing.Size(204, 23);
-            this.cbTestPlanName.TabIndex = 3;
-            this.cbTestPlanName.SelectedIndexChanged += new System.EventHandler(this.cbTestPlanName_SelectedIndexChanged);
+            cbTestPlanName.Enabled = false;
+            cbTestPlanName.FormattingEnabled = true;
+            cbTestPlanName.Location = new System.Drawing.Point(3, 89);
+            cbTestPlanName.Name = "cbTestPlanName";
+            cbTestPlanName.Size = new System.Drawing.Size(204, 23);
+            cbTestPlanName.TabIndex = 3;
+            cbTestPlanName.SelectedIndexChanged += cbTestPlanName_SelectedIndexChanged;
             // 
             // topPanel
             // 
-            this.topPanel.BackColor = System.Drawing.Color.Silver;
-            this.topPanel.Controls.Add(this.lblSoftware);
-            this.topPanel.Controls.Add(this.lblCurrentTestPlan);
-            this.topPanel.Controls.Add(this.btnCollapseTree);
-            this.topPanel.Controls.Add(this.pbForlblCurrentTestPlan);
-            this.topPanel.Controls.Add(this.btnExpandTree);
-            this.topPanel.Controls.Add(this.pbForlblSoftware);
-            this.topPanel.Controls.Add(this.cbTestPlanName);
-            this.topPanel.Controls.Add(this.cbProjectNames);
-            this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.topPanel.Location = new System.Drawing.Point(0, 24);
-            this.topPanel.Name = "topPanel";
-            this.topPanel.Size = new System.Drawing.Size(1148, 115);
-            this.topPanel.TabIndex = 3;
+            topPanel.BackColor = System.Drawing.Color.Silver;
+            topPanel.Controls.Add(btRemoveSelection);
+            topPanel.Controls.Add(lbl_InfoSuccessTree);
+            topPanel.Controls.Add(lblSoftware);
+            topPanel.Controls.Add(lblCurrentTestPlan);
+            topPanel.Controls.Add(btnCollapseTree);
+            topPanel.Controls.Add(pbForlblCurrentTestPlan);
+            topPanel.Controls.Add(btnExpandTree);
+            topPanel.Controls.Add(pbForlblSoftware);
+            topPanel.Controls.Add(cbTestPlanName);
+            topPanel.Controls.Add(cbProjectNames);
+            topPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            topPanel.Location = new System.Drawing.Point(0, 24);
+            topPanel.Name = "topPanel";
+            topPanel.Size = new System.Drawing.Size(1148, 115);
+            topPanel.TabIndex = 3;
+            // 
+            // lbl_InfoSuccessTree
+            // 
+            lbl_InfoSuccessTree.AutoSize = true;
+            lbl_InfoSuccessTree.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            lbl_InfoSuccessTree.Location = new System.Drawing.Point(510, 89);
+            lbl_InfoSuccessTree.Name = "lbl_InfoSuccessTree";
+            lbl_InfoSuccessTree.Size = new System.Drawing.Size(0, 21);
+            lbl_InfoSuccessTree.TabIndex = 7;
             // 
             // lblCurrentTestPlan
             // 
-            this.lblCurrentTestPlan.AutoSize = true;
-            this.lblCurrentTestPlan.BackColor = System.Drawing.Color.Gray;
-            this.lblCurrentTestPlan.ForeColor = System.Drawing.Color.White;
-            this.lblCurrentTestPlan.Location = new System.Drawing.Point(5, 65);
-            this.lblCurrentTestPlan.Name = "lblCurrentTestPlan";
-            this.lblCurrentTestPlan.Size = new System.Drawing.Size(117, 15);
-            this.lblCurrentTestPlan.TabIndex = 0;
-            this.lblCurrentTestPlan.Text = "Текущий тест-план:";
-            this.lblCurrentTestPlan.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblCurrentTestPlan.AutoSize = true;
+            lblCurrentTestPlan.BackColor = System.Drawing.Color.Gray;
+            lblCurrentTestPlan.ForeColor = System.Drawing.Color.White;
+            lblCurrentTestPlan.Location = new System.Drawing.Point(5, 65);
+            lblCurrentTestPlan.Name = "lblCurrentTestPlan";
+            lblCurrentTestPlan.Size = new System.Drawing.Size(117, 15);
+            lblCurrentTestPlan.TabIndex = 0;
+            lblCurrentTestPlan.Text = "Текущий тест-план:";
+            lblCurrentTestPlan.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnCollapseTree
             // 
-            this.btnCollapseTree.Enabled = false;
-            this.btnCollapseTree.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCollapseTree.Location = new System.Drawing.Point(340, 82);
-            this.btnCollapseTree.Name = "btnCollapseTree";
-            this.btnCollapseTree.Size = new System.Drawing.Size(120, 30);
-            this.btnCollapseTree.TabIndex = 6;
-            this.btnCollapseTree.Text = "Закрыть дерево";
-            this.btnCollapseTree.UseVisualStyleBackColor = true;
-            this.btnCollapseTree.Click += new System.EventHandler(this.btnCollapseTree_Click);
+            btnCollapseTree.Enabled = false;
+            btnCollapseTree.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnCollapseTree.Location = new System.Drawing.Point(340, 82);
+            btnCollapseTree.Name = "btnCollapseTree";
+            btnCollapseTree.Size = new System.Drawing.Size(120, 30);
+            btnCollapseTree.TabIndex = 6;
+            btnCollapseTree.Text = "Закрыть дерево";
+            btnCollapseTree.UseVisualStyleBackColor = true;
+            btnCollapseTree.Click += btnCollapseTree_Click;
             // 
             // pbForlblCurrentTestPlan
             // 
-            this.pbForlblCurrentTestPlan.BackColor = System.Drawing.Color.Gray;
-            this.pbForlblCurrentTestPlan.Location = new System.Drawing.Point(3, 58);
-            this.pbForlblCurrentTestPlan.Name = "pbForlblCurrentTestPlan";
-            this.pbForlblCurrentTestPlan.Size = new System.Drawing.Size(204, 30);
-            this.pbForlblCurrentTestPlan.TabIndex = 5;
-            this.pbForlblCurrentTestPlan.TabStop = false;
+            pbForlblCurrentTestPlan.BackColor = System.Drawing.Color.Gray;
+            pbForlblCurrentTestPlan.Location = new System.Drawing.Point(3, 58);
+            pbForlblCurrentTestPlan.Name = "pbForlblCurrentTestPlan";
+            pbForlblCurrentTestPlan.Size = new System.Drawing.Size(204, 30);
+            pbForlblCurrentTestPlan.TabIndex = 5;
+            pbForlblCurrentTestPlan.TabStop = false;
             // 
             // btnExpandTree
             // 
-            this.btnExpandTree.Enabled = false;
-            this.btnExpandTree.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExpandTree.Location = new System.Drawing.Point(216, 82);
-            this.btnExpandTree.Name = "btnExpandTree";
-            this.btnExpandTree.Size = new System.Drawing.Size(120, 30);
-            this.btnExpandTree.TabIndex = 5;
-            this.btnExpandTree.Text = "Раскрыть дерево";
-            this.btnExpandTree.UseVisualStyleBackColor = true;
-            this.btnExpandTree.Click += new System.EventHandler(this.btnExpandTree_Click);
+            btnExpandTree.Enabled = false;
+            btnExpandTree.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnExpandTree.Location = new System.Drawing.Point(216, 82);
+            btnExpandTree.Name = "btnExpandTree";
+            btnExpandTree.Size = new System.Drawing.Size(120, 30);
+            btnExpandTree.TabIndex = 5;
+            btnExpandTree.Text = "Раскрыть дерево";
+            btnExpandTree.UseVisualStyleBackColor = true;
+            btnExpandTree.Click += btnExpandTree_Click;
             // 
             // pbForlblSoftware
             // 
-            this.pbForlblSoftware.BackColor = System.Drawing.Color.Gray;
-            this.pbForlblSoftware.Location = new System.Drawing.Point(3, 3);
-            this.pbForlblSoftware.Name = "pbForlblSoftware";
-            this.pbForlblSoftware.Size = new System.Drawing.Size(204, 30);
-            this.pbForlblSoftware.TabIndex = 6;
-            this.pbForlblSoftware.TabStop = false;
+            pbForlblSoftware.BackColor = System.Drawing.Color.Gray;
+            pbForlblSoftware.Location = new System.Drawing.Point(3, 3);
+            pbForlblSoftware.Name = "pbForlblSoftware";
+            pbForlblSoftware.Size = new System.Drawing.Size(204, 30);
+            pbForlblSoftware.TabIndex = 6;
+            pbForlblSoftware.TabStop = false;
             // 
             // treeView
             // 
-            this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeView.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawText;
-            this.treeView.HideSelection = false;
-            this.treeView.LeftPadding = 7;
-            this.treeView.Location = new System.Drawing.Point(212, 144);
-            this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(936, 427);
-            this.treeView.Spacing = 4;
-            this.treeView.TabIndex = 5;
-            this.treeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView_NodeMouseClick);
+            treeView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            treeView.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawText;
+            treeView.HideSelection = false;
+            treeView.LeftPadding = 7;
+            treeView.Location = new System.Drawing.Point(212, 144);
+            treeView.Name = "treeView";
+            treeView.Size = new System.Drawing.Size(936, 427);
+            treeView.Spacing = 4;
+            treeView.TabIndex = 5;
+            treeView.NodeMouseClick += treeView_NodeMouseClick;
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.Color.Silver;
-            this.panel1.Controls.Add(this.btnCaseTransfer);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 577);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1148, 63);
-            this.panel1.TabIndex = 6;
+            panel1.BackColor = System.Drawing.Color.Silver;
+            panel1.Controls.Add(btnCaseTransfer);
+            panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            panel1.Location = new System.Drawing.Point(0, 577);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(1148, 63);
+            panel1.TabIndex = 6;
             // 
             // btnCaseTransfer
             // 
-            this.btnCaseTransfer.Enabled = false;
-            this.btnCaseTransfer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCaseTransfer.Location = new System.Drawing.Point(216, 18);
-            this.btnCaseTransfer.Name = "btnCaseTransfer";
-            this.btnCaseTransfer.Size = new System.Drawing.Size(120, 30);
-            this.btnCaseTransfer.TabIndex = 7;
-            this.btnCaseTransfer.Text = "Перенести кейсы";
-            this.btnCaseTransfer.UseVisualStyleBackColor = true;
-            this.btnCaseTransfer.Click += new System.EventHandler(this.btCaseTransfer_Click);
+            btnCaseTransfer.Enabled = false;
+            btnCaseTransfer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnCaseTransfer.Location = new System.Drawing.Point(216, 18);
+            btnCaseTransfer.Name = "btnCaseTransfer";
+            btnCaseTransfer.Size = new System.Drawing.Size(120, 30);
+            btnCaseTransfer.TabIndex = 7;
+            btnCaseTransfer.Text = "Перенести кейсы";
+            btnCaseTransfer.UseVisualStyleBackColor = true;
+            btnCaseTransfer.Click += btCaseTransfer_Click;
+            // 
+            // btRemoveSelection
+            // 
+            btRemoveSelection.Enabled = false;
+            btRemoveSelection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btRemoveSelection.Location = new System.Drawing.Point(1017, 80);
+            btRemoveSelection.Name = "btRemoveSelection";
+            btRemoveSelection.Size = new System.Drawing.Size(119, 30);
+            btRemoveSelection.TabIndex = 8;
+            btRemoveSelection.Text = "Снять выделение";
+            btRemoveSelection.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1148, 662);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.treeView);
-            this.Controls.Add(this.topPanel);
-            this.Controls.Add(this.MainFormStatus);
-            this.Controls.Add(this.MainFormMenu);
-            this.Controls.Add(this.leftPanel);
-            this.ForeColor = System.Drawing.Color.White;
-            this.MainMenuStrip = this.MainFormMenu;
-            this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Tag = "";
-            this.Text = "Перенос результатов прогона в TestLink";
-            this.MainFormMenu.ResumeLayout(false);
-            this.MainFormMenu.PerformLayout();
-            this.leftPanel.ResumeLayout(false);
-            this.leftPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbForlblTestRun)).EndInit();
-            this.topPanel.ResumeLayout(false);
-            this.topPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbForlblCurrentTestPlan)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbForlblSoftware)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            BackColor = System.Drawing.Color.White;
+            ClientSize = new System.Drawing.Size(1148, 662);
+            Controls.Add(panel1);
+            Controls.Add(treeView);
+            Controls.Add(topPanel);
+            Controls.Add(MainFormStatus);
+            Controls.Add(MainFormMenu);
+            Controls.Add(leftPanel);
+            ForeColor = System.Drawing.Color.White;
+            MainMenuStrip = MainFormMenu;
+            Name = "MainForm";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Tag = "";
+            Text = "Перенос результатов прогона в TestLink";
+            MainFormMenu.ResumeLayout(false);
+            MainFormMenu.PerformLayout();
+            leftPanel.ResumeLayout(false);
+            leftPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbForlblTestRun).EndInit();
+            topPanel.ResumeLayout(false);
+            topPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pbForlblCurrentTestPlan).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbForlblSoftware).EndInit();
+            panel1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -446,6 +462,8 @@
         private System.Windows.Forms.Label lblDescriptionTests;
         private System.Windows.Forms.Button btnShowAllTests;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label lbl_InfoSuccessTree;
+        private System.Windows.Forms.Button btRemoveSelection;
     }
 }
 

@@ -1,7 +1,6 @@
-﻿
-namespace TLTCImport
+﻿namespace TLTCImport.Forms
 {
-    partial class LoadingScreen
+    partial class LoadingScreenFolders
     {
         /// <summary>
         /// Required designer variable.
@@ -29,17 +28,10 @@ namespace TLTCImport
         /// </summary>
         private void InitializeComponent()
         {
-            SuspendLayout();
-            // 
-            // LoadingScreen
-            // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            BackColor = System.Drawing.Color.White;
-            ClientSize = new System.Drawing.Size(642, 148);
-            Name = "LoadingScreen";
-            Text = "Загрузка...";
-            ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Text = "LoadingScreenFolders";
         }
 
         #endregion
