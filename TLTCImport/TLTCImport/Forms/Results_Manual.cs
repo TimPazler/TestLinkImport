@@ -19,12 +19,7 @@ namespace TLTCImport.Forms
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.Size = new Size(500, 250);
             this.Text = "Список перенесенных тест кейсов";
-
-            //var lblHint = new Label();
-            //lblHint.Size = new Size(250, 50);
-            //lblHint.Location = new Point(10, 20);
-            //lblHint.Text = "где,  p - Пройдено, f - Провалено и s - Пропущено";
-
+           
             listView1 = new System.Windows.Forms.ListView();
             listView1.Location = new Point(10, 100);
             listView1.Size = new Size(250, 50);

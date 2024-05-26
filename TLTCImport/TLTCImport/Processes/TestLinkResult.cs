@@ -224,6 +224,14 @@ namespace TLTCImport
                 try
                 {
                     testLinkApi.ReportTCResult(Int32.Parse(param.Value.testCaseId), testPlanId, param.Value.resultRun, 0, buildId.ToString());
+                    
+                    //Проверка, что данные были перенесены в тестлинк
+                    var getResultTestCase = testLinkApi.GetLastExecutionResult(testPlanId, Int32.Parse(param.Value.testCaseId));
+                    if (getResultTestCase.status == param.Value.resultRun)
+                        continue;
+                    else
+                        MessageBox.Show("Тест кейс " + param.Key + " не был перенесен в тестовый прогон.\r\n " +
+                            "Попробуйте еще раз, либо обратитесь к разработчику.");
                     countAddTestCases++;
                 }
                 catch (TestLinkException e)
