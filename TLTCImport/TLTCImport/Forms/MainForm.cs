@@ -1,22 +1,11 @@
-﻿using Newtonsoft.Json;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
-using TestLinkApi;
 using TLTCImport.FolderStorageTestLink;
 using TLTCImport.Forms;
 
@@ -317,6 +306,7 @@ namespace TLTCImport
                                 {
                                     var fullExternalId = testCase.project.prefixName + "-" + testCase.externalIdTestCase;
                                     manuallySelectedTests.Add(fullExternalId, testCase.typeResult);
+                                    new UcTreeView().UncheckingBox(testCase.treeNode, testCase.eventsTreeNode);
                                 }
                             }
                         }

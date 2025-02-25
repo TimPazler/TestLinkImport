@@ -89,16 +89,24 @@ namespace TLTCImport
             CheckBoxRenderer.DrawCheckBox(e.Graphics, cbx(e.Bounds, 2).Location, bs3);
         }      
         
-        protected override void OnNodeMouseClick(TreeNodeMouseClickEventArgs e)
+        protected override void OnNodeMouseClick(TreeNodeMouseClickEventArgs eventsTreeNode)
         {
-            TreeNodeVirtual n = e.Node as TreeNodeVirtual;
-            if (e == null) return;
+            TreeNodeVirtual treeNode = eventsTreeNode.Node as TreeNodeVirtual;
+            if (eventsTreeNode == null) return;
 
-            if (n != null)
+            if (treeNode != null)
             {
-                HandlerSelectOneOfCheckboxes(n, e);
-                AddProjectInfoForArrFolders(MainForm.folders, n.Label, n.CheckPassed, n.CheckFailed, n.CheckBlocked);
+                HandlerSelectOneOfCheckboxes(treeNode, eventsTreeNode);
+                AddProjectInfoForArrFolders(MainForm.folders, treeNode.Label, treeNode.CheckPassed, treeNode.CheckFailed, treeNode.CheckBlocked,
+                    treeNode, eventsTreeNode);
             }
+        }
+
+        //Снимаем галочку в чекбоксе после нажатия на Перенести кейсы
+        public void UncheckingBox(TreeNodeVirtual treeNode, TreeNodeMouseClickEventArgs eventsTreeNode)
+        {            
+             HandlerSelectOneOfCheckboxes(treeNode, eventsTreeNode);
+             treeNode.TreeView.Select();
         }
 
         //Обработчик, отвечающий за выбор чекбокса
@@ -144,7 +152,8 @@ namespace TLTCImport
 
         //Рекурсия
         //Добавление в массив папок выбранные рез-ат из чекбокса (пройдено, провалено или заблокировано)
-        public void AddProjectInfoForArrFolders(Folder[] folders, string receivedNameTestCase, bool CheckPassed, bool CheckFailed, bool CheckBlocked)
+        public void AddProjectInfoForArrFolders(Folder[] folders, string receivedNameTestCase, bool CheckPassed, bool CheckFailed, bool CheckBlocked,
+            TreeNodeVirtual treeNode = null, TreeNodeMouseClickEventArgs eventsTreeNode = null)
         {            
             receivedNameTestCase = receivedNameTestCase.Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0];
 
@@ -165,6 +174,9 @@ namespace TLTCImport
                                 var externalIdTestCase = prefixName + "-" + externalId;
                                 if (externalIdTestCase.Contains(receivedNameTestCase))
                                 {
+                                    testCase.treeNode = treeNode;
+                                    testCase.eventsTreeNode = eventsTreeNode;
+
                                     //f-Failed 
                                     if (CheckFailed == true)
                                     {

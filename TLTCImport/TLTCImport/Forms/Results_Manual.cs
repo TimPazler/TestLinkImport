@@ -49,6 +49,8 @@ namespace TLTCImport.Forms
             this.Location = Location;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Show();
+
+
         }
     }
 }

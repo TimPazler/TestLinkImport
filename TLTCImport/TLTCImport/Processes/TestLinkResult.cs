@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using NUnit.Framework;
 
 namespace TLTCImport
 {
@@ -78,13 +79,22 @@ namespace TLTCImport
                     if (testLinkApi.GetProjects().Count > 0)
                         return true;
                 }
-                catch (TestLinkException)
+                catch (TestLinkException ex)
                 {
+                    if(ex.Message.Contains("Can not authenticate client"))
+                        MessageBox.Show("Вход не был выполнен.\r\n Возможно api ключ был введен неправильно.", "Ошибка!");
+                    else
+                        MessageBox.Show(ex.Message, "Ошибка!");
+
                     return false;
                 }
             }
+            else if (response.ErrorException.Message.Contains("Этот хост неизвестен"))
+                MessageBox.Show("Этот хост неизвестен.\r\nВозможно он недоступен. Проверьте подключение.", "Ошибка!");
+            else if (response.ErrorException.Message.Contains("empty client base URL"))
+                MessageBox.Show("Url адрес указан неправильно! \r\nАдрес должен иметь вид: http://www.testlink.com/", "Ошибка!");
             else
-                MessageBox.Show("Url адрес указан не правильно! \r\nАдрес должен иметь вид: http://www.testlink.com/", "Ошибка!");
+                MessageBox.Show(response.ErrorException.Message, "Ошибка!");
 
             return false;
         }                                
@@ -228,11 +238,14 @@ namespace TLTCImport
                     //Проверка, что данные были перенесены в тестлинк
                     var getResultTestCase = testLinkApi.GetLastExecutionResult(testPlanId, Int32.Parse(param.Value.testCaseId));
                     if (getResultTestCase.status == param.Value.resultRun)
+                    {
+                        countAddTestCases++;
+
                         continue;
+                    }
                     else
                         MessageBox.Show("Тест кейс " + param.Key + " не был перенесен в тестовый прогон.\r\n " +
                             "Попробуйте еще раз, либо обратитесь к разработчику.");
-                    countAddTestCases++;
                 }
                 catch (TestLinkException e)
                 {
@@ -261,13 +274,22 @@ namespace TLTCImport
         //Получаем External Id и TestCaseId из всех Suites. Взято с TestLink.
         public static Dictionary<string, int> GetTestCasesToTestPlan(int testPlanId, string projectName)
         {
-            var testCases = testLinkApi.GetTestCasesForTestPlan(testPlanId);
-            var prefixName = GetPrefixProjectByName(projectName);
-
             var testCaseExternalIDAndName = new Dictionary<string, int>();
-            for (int i = 0; i < testCases.Count; i++)
+
+            try
             {
-                testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].tc_id);
+                var testCases = testLinkApi.GetTestCasesForTestPlan(testPlanId);
+                var prefixName = GetPrefixProjectByName(projectName);
+
+                for (int i = 0; i < testCases.Count; i++)
+                {
+                    testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].tc_id);
+                }
+            }
+            catch (TestLinkException ex)
+            {
+                if(ex.Message.Contains("corresponding to Developer Key"))
+                    MessageBox.Show("Недостаточно прав для работы с тест планом", "Ошибка!");
             }
             return testCaseExternalIDAndName;
         }
