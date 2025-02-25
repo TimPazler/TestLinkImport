@@ -17,7 +17,7 @@ namespace TLTCImport
         #region Главное меню
         private void llHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("cmd", $"/c start https://t.me/TimPazler"));
+            Process.Start(new ProcessStartInfo("cmd", $"/c start https://t.me/userfortest"));
         }
 
         private void instruction_Click(object sender, EventArgs e)
