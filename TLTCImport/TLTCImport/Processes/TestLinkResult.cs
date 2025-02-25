@@ -275,7 +275,6 @@ namespace TLTCImport
         public static Dictionary<string, int> GetTestCasesToTestPlan(int testPlanId, string projectName)
         {
             var testCaseExternalIDAndName = new Dictionary<string, int>();
-
             try
             {
                 var testCases = testLinkApi.GetTestCasesForTestPlan(testPlanId);
@@ -285,6 +284,9 @@ namespace TLTCImport
                 {
                     testCaseExternalIDAndName.Add(prefixName + "-" + testCases[i].external_id, testCases[i].tc_id);
                 }
+
+                if (MainForm.loadingForm == null)
+                    MainForm.loadingForm = new LoadingScreen().OpenFormLoadingScreen("Получение информации о папках..");
             }
             catch (TestLinkException ex)
             {

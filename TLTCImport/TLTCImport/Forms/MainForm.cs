@@ -100,20 +100,23 @@ namespace TLTCImport
         #region Создание дерева
         private Folder[] TreeCreate(Folder[] folders, bool displayCheckboxes = true)
         {
-            //Удаление пустой папки или старых
-            treeView.Nodes.Clear();
+            if (folders != null)
+            {
+                //Удаление пустой папки или старых
+                treeView.Nodes.Clear();
+           
+                //Отображаем все папки на экране
+                AddAllFolders(folders, displayCheckboxes);
 
-            //Отображаем все папки на экране
-            AddAllFolders(folders, displayCheckboxes);
+                //Для лечения бага прорисовки тесткейсов
+                treeView.Visible = false;
+                treeView.ExpandAll();
+                treeView.CollapseAll();
+                treeView.Visible = true;
 
-            //Для лечения бага прорисовки тесткейсов
-            treeView.Visible = false;
-            treeView.ExpandAll();
-            treeView.CollapseAll();
-            treeView.Visible = true;
-
-            //Добавляем информацию по проекту в массив           
-            AddProjectInfoForArrFolders(folders);
+                //Добавляем информацию по проекту в массив           
+                AddProjectInfoForArrFolders(folders);
+            }
 
             return folders;
         }
@@ -398,7 +401,8 @@ namespace TLTCImport
         private void btCaseTransfer_Click(object sender, EventArgs e)
         {
             //Окно загрузки
-            loadingForm = new LoadingScreen().OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
+            if(loadingForm == null)
+                loadingForm = new LoadingScreen().OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
 
             //Добавить проверку на то что чекбоксы не пустые
             var allTestCasesTestPlan = TestLinkResult.GetTestCasesToTestPlan(testPlanId, projectName);
@@ -422,6 +426,7 @@ namespace TLTCImport
                 //Закрытие окна закрузки и отображение кнопок
                 loadingForm.Close();
                 OpenAllElementsMainForm("manual");
+                loadingForm = null;
 
                 //Очистка словаря
                 manuallySelectedTests.Clear();
@@ -459,11 +464,11 @@ namespace TLTCImport
         {
             //Перед ручным режимом блокируем все элементы
             BlockAllElementsMainForm();
+            UserTip("Ну всё. Можно идти пить чай. Ждать очеееень долго..");
 
             lbl_InfoSuccessTree.Text = "";
 
             //Окно загрузки
-            loadingForm = new LoadingScreen().OpenFormLoadingScreen("Получение информации о папках..");
             //OpenLoadForm.Size = this.Size;
             //OpenLoadForm.FormBorderStyle = FormBorderStyle.None;
             //OpenLoadForm.BackColor = Color.Black;//цвет фона
@@ -473,10 +478,13 @@ namespace TLTCImport
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
             folders = TreeCreate(treeWithTestCases.FillArrayWithData(projectId, testPlanId, projectName));
 
-            MessageSuccessTreeAdd();
+            if(folders != null)
+                MessageSuccessTreeAdd();
 
             //Закрытие окна закрузки и отображение кнопок
             OpenAllElementsMainForm("manual");
+            UserTip("Конец! За работу! Солнце еще высоко!");
+            loadingForm = null;
         }
 
         //Кнопка Автоматический режим
@@ -533,7 +541,8 @@ namespace TLTCImport
                             BlockAllElementsMainForm();
 
                             //Окно загрузки
-                            loadingForm = new LoadingScreen().OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
+                            if (loadingForm == null)
+                                loadingForm = new LoadingScreen().OpenFormLoadingScreen("Выполняется перенос результатов в TestLink...");
 
                             //Импорт тестов в Тестлинк               
                             testCaseTransferResults = TestLinkResult.ImportsRunInfoInTestLink(testPlanId, valuesCases, projectName);
@@ -568,7 +577,8 @@ namespace TLTCImport
             BlockAllElementsMainForm();
 
             //Окно загрузки
-            loadingForm = new LoadingScreen().OpenFormLoadingScreen("Получение информации о папках..");
+            if (loadingForm == null)
+                loadingForm = new LoadingScreen().OpenFormLoadingScreen("Получение информации о папках..");
 
             //Постройка дерева
             TreeWithTestCases treeWithTestCases = new TreeWithTestCases();
@@ -576,6 +586,7 @@ namespace TLTCImport
 
             //Закрытие окна закрузки и отображение кнопок
             OpenAllElementsMainForm("showAllTests");
+            loadingForm = null;
         }
 
         private void btnExpandTree_Click(object sender, EventArgs e)
@@ -688,6 +699,11 @@ namespace TLTCImport
             DisplayElementsTestRunBlock(false);
             DisplayElementsDescriptionTestsBlock(false);
             DisplayElementsTreeViewsBlock(false);
+        }
+
+        private void UserTip(string text)
+        {            
+            toolStripStatusLabel1.Text = text;
         }
 
         private void OpenAllElementsMainForm(string testTransferMode)

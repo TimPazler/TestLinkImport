@@ -34,6 +34,7 @@
             referenceItem = new System.Windows.Forms.ToolStripMenuItem();
             aboutItem = new System.Windows.Forms.ToolStripMenuItem();
             MainFormStatus = new System.Windows.Forms.StatusStrip();
+            toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             leftPanel = new System.Windows.Forms.Panel();
             lblDescriptionTests = new System.Windows.Forms.Label();
             btnShowAllTests = new System.Windows.Forms.Button();
@@ -49,6 +50,7 @@
             cbProjectNames = new System.Windows.Forms.ComboBox();
             cbTestPlanName = new System.Windows.Forms.ComboBox();
             topPanel = new System.Windows.Forms.Panel();
+            btRemoveSelection = new System.Windows.Forms.Button();
             lbl_InfoSuccessTree = new System.Windows.Forms.Label();
             lblCurrentTestPlan = new System.Windows.Forms.Label();
             btnCollapseTree = new System.Windows.Forms.Button();
@@ -58,8 +60,8 @@
             treeView = new UcTreeView();
             panel1 = new System.Windows.Forms.Panel();
             btnCaseTransfer = new System.Windows.Forms.Button();
-            btRemoveSelection = new System.Windows.Forms.Button();
             MainFormMenu.SuspendLayout();
+            MainFormStatus.SuspendLayout();
             leftPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbForlblTestRun).BeginInit();
@@ -98,11 +100,21 @@
             // 
             // MainFormStatus
             // 
+            MainFormStatus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripStatusLabel1 });
             MainFormStatus.Location = new System.Drawing.Point(0, 640);
             MainFormStatus.Name = "MainFormStatus";
             MainFormStatus.Size = new System.Drawing.Size(1148, 22);
             MainFormStatus.TabIndex = 1;
             MainFormStatus.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            toolStripStatusLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripStatusLabel1.ForeColor = System.Drawing.Color.Black;
+            toolStripStatusLabel1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
             // leftPanel
             // 
@@ -291,6 +303,17 @@
             topPanel.Size = new System.Drawing.Size(1148, 115);
             topPanel.TabIndex = 3;
             // 
+            // btRemoveSelection
+            // 
+            btRemoveSelection.Enabled = false;
+            btRemoveSelection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btRemoveSelection.Location = new System.Drawing.Point(1017, 80);
+            btRemoveSelection.Name = "btRemoveSelection";
+            btRemoveSelection.Size = new System.Drawing.Size(119, 30);
+            btRemoveSelection.TabIndex = 8;
+            btRemoveSelection.Text = "Снять выделение";
+            btRemoveSelection.UseVisualStyleBackColor = true;
+            // 
             // lbl_InfoSuccessTree
             // 
             lbl_InfoSuccessTree.AutoSize = true;
@@ -389,17 +412,6 @@
             btnCaseTransfer.UseVisualStyleBackColor = true;
             btnCaseTransfer.Click += btCaseTransfer_Click;
             // 
-            // btRemoveSelection
-            // 
-            btRemoveSelection.Enabled = false;
-            btRemoveSelection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btRemoveSelection.Location = new System.Drawing.Point(1017, 80);
-            btRemoveSelection.Name = "btRemoveSelection";
-            btRemoveSelection.Size = new System.Drawing.Size(119, 30);
-            btRemoveSelection.TabIndex = 8;
-            btRemoveSelection.Text = "Снять выделение";
-            btRemoveSelection.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -419,6 +431,8 @@
             Text = "Перенос результатов прогона в TestLink";
             MainFormMenu.ResumeLayout(false);
             MainFormMenu.PerformLayout();
+            MainFormStatus.ResumeLayout(false);
+            MainFormStatus.PerformLayout();
             leftPanel.ResumeLayout(false);
             leftPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -464,6 +478,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lbl_InfoSuccessTree;
         private System.Windows.Forms.Button btRemoveSelection;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
 

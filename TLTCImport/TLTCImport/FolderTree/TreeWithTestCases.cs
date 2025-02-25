@@ -27,17 +27,21 @@ namespace TLTCImport
             
             //Получение кейсов по тест плану
             if (displayCasesAccordingTestPlan == true)            
-                allTestCasesTestPlan = TestLinkResult.GetTestCasesToTestPlan(testPlanId, projectName);            
+                allTestCasesTestPlan = TestLinkResult.GetTestCasesToTestPlan(testPlanId, projectName);
 
-            //Сначала массив заполняем только папками продукта
-            var folder = GetArrayAllFolders(projectId);
-            //Потом вставляем все кейсы продукта
-            var folders = GetTestCasesForFolders(folder);
+            Folder[] folders = null;
+            if (allTestCasesTestPlan.Count != 0)
+            {
+                //Сначала массив заполняем только папками продукта
+                var folder = GetArrayAllFolders(projectId);
+                //Потом вставляем все кейсы продукта
+                folders = GetTestCasesForFolders(folder);
 
-            //Для переработки массива и отображения только тех кейсов, которые есть в тест плане
-            if (displayCasesAccordingTestPlan == true)            
-                ArrayTestsCasesByTestPlan(folders, allTestCasesTestPlan, prefixName);
-            
+                //Для переработки массива и отображения только тех кейсов, которые есть в тест плане
+                if (displayCasesAccordingTestPlan == true)
+                    ArrayTestsCasesByTestPlan(folders, allTestCasesTestPlan, prefixName);
+            }
+
             return folders;
         }        
 
